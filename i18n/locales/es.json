@@ -1,0 +1,652 @@
+{
+  "play": "Jugar",
+  "settings": "Ajustes",
+  "profile": "Perfil",
+  "leaderboard": "Clasificación",
+  "friends": "Amigos",
+  "lobby": "Vestíbulo",
+  "createRoom": "Crear sala",
+  "joinRoom": "Unirse a sala",
+  "startGame": "Comenzar partida",
+  "yourTurn": "Tu turno",
+  "score": "Puntuación",
+  "winner": "Ganador",
+  "draw": "Empate",
+  "rematch": "Revancha",
+  "quit": "Salir",
+  "language": "Idioma",
+  "sound": "Sonido",
+  "haptics": "Vibración",
+  "theme": "Tema",
+  "darkMode": "Modo oscuro",
+  "notifications": "Notificaciones",
+  "online": "En línea",
+  "offline": "Sin conexión",
+  "bluetooth": "Bluetooth",
+  "loading": "Cargando...",
+  "error": "Error",
+  "retry": "Reintentar",
+  "back": "Atrás",
+  "next": "Siguiente",
+  "confirm": "Confirmar",
+  "cancel": "Cancelar",
+  "login": "Iniciar sesión",
+  "email": "Correo",
+  "password": "Contraseña",
+  "loginButton": "Acceder",
+  "guestMode": "Continuar como invitado",
+  "testAccount": "Cuenta de prueba:",
+  "loginError": "Acceso fallido",
+  "fillAllFields": "Por favor completa todos los campos",
+  "guestError": "Error en modo invitado",
+  "playOnline": "Jugar en línea",
+  "playVsBot": "vs Bot",
+  "playLocal": "Juego local",
+  "findOpponent": "Encuentra un oponente en el mundo",
+  "dailyChallenge": "Reto diario",
+  "gamesPlayed": "Partidas jugadas",
+  "winRate": "Ratio de victorias",
+  "bluffSuccess": "Bluff exitoso",
+  "welcome": "Bienvenido",
+  "getStarted": "Empezar",
+  "skipIntro": "Omitir",
+  "chooseLanguage": "Elige tu idioma",
+  "slide1.title": "Bienvenido a",
+  "slide1.desc": "Tu juego de cartas favorito en móvil.",
+  "slide2.title": "Multijugador",
+  "slide2.desc": "Juega en tiempo real contra jugadores del mundo.",
+  "slide3.title": "Bots IA",
+  "slide3.desc": "8 bots con inteligencia artificial adaptativa.",
+  "slide4.title": "5 idiomas",
+  "slide4.desc": "Árabe, Francés, Darija, Inglés, Español.",
+  "loginTitle": "Iniciar sesión",
+  "loginSubtitle": "Inicia sesión para jugar.",
+  "demoAccount": "Cuenta de prueba",
+  "or": "o",
+  "noAccount": "¿Sin cuenta?",
+  "register": "Crear cuenta",
+  "guest": "Modo invitado",
+  "gamesWon": "Victorias",
+  "elo": "ELO",
+  "achievements": "Logros",
+  "coins": "Monedas",
+  "shop": "Tienda",
+  "edit": "Editar",
+  "memberSince": "Miembro desde",
+  "noGames": "Sin partidas",
+  "noData": "Sin datos",
+  "season": "Temporada",
+  "weekly": "Semanal",
+  "allTime": "Histórico",
+  "challengeDesc": "Termina un Klondike sin usar pista. ¡50 monedas extra!",
+  "startChallenge": "Empezar el reto",
+  "vsBot": "vs Bot",
+  "localPlay": "Local",
+  "light": "Claro",
+  "dark": "Oscuro",
+  "system": "Sistema",
+  "general": "General",
+  "audioHaptics": "Audio y vibración",
+  "soundEffects": "Efectos de sonido",
+  "haptic": "Vibración",
+  "pushNotif": "Notificaciones push",
+  "account": "Cuenta",
+  "exportData": "Exportar mis datos",
+  "signOut": "Cerrar sesión",
+  "dangerZone": "Zona de peligro",
+  "deleteAccount": "Eliminar cuenta",
+  "delete": "Eliminar",
+  "appTagline": "Solo · Estrategia · Victoria",
+  "heroWelcomeUser": "¡Bienvenido, {{name}}!",
+  "heroWelcomeGuest": "¡Bienvenido!",
+  "live": "EN VIVO",
+  "new": "NUEVO",
+  "create": "Crear",
+  "createSub": "2 a 10 jugadores",
+  "join": "Unirse",
+  "joinSub": "Por código o lista",
+  "vsGemini": "vs Bot",
+  "vsGeminiSub": "IA experta",
+  "dailyChallengeReward": "+{{coins}} monedas",
+  "simulation": "Simulación",
+  "simulationSub": "2 a 10 bots de la BD + llamada audio/video",
+  "statGames": "Partidas",
+  "statWins": "Victorias",
+  "statWinRate": "Ratio victorias",
+  "statBestStreak": "Mejor racha",
+  "matchmakingUnavailable": "Emparejamiento no disponible.",
+  "defaultCity": "Casablanca",
+  "scopeWorld": "Mundo",
+  "scopeCountry": "País",
+  "scopeCity": "Ciudad",
+  "filterAllTime": "Histórico",
+  "filterWeekly": "Semanal",
+  "filterSeason": "Temporada",
+  "leaderboardSubtitle": "Temporada · {{scope}}",
+  "statBest": "Mejor",
+  "statStreak": "Racha",
+  "topPlayers": "Top jugadores",
+  "winsShort": "V",
+  "lossesShort": "D",
+  "walletCoins": "Sally Coins",
+  "walletDiamonds": "Diamantes",
+  "recentGames": "Partidas recientes",
+  "noRecentGames": "Sin partidas recientes",
+  "vsOpponent": "vs {{name}}",
+  "minShort": "min",
+  "createRoomTitle": "Crear sala",
+  "joinRoomTitle": "Unirse a sala",
+  "lobbyTitle": "Sala de espera",
+  "simulationTitle": "Simulación",
+  "host": "Anfitrión",
+  "player": "Jugador",
+  "invalidCode": "Código no válido",
+  "invalidCodeDesc": "El código debe tener 6 caracteres.",
+  "codeCopied": "Código copiado",
+  "cantCreateRoom": "No se pudo crear la sala.",
+  "cantJoinRoom": "No se pudo unir a la sala.",
+  "cantStartGame": "No se pudo iniciar la partida.",
+  "cantSimulate": "No se pudo iniciar la simulación.",
+  "purchaseFailed": "La compra falló.",
+  "notYourTurn": "No es tu turno",
+  "waitingFor": "Esperando a {{name}}",
+  "quitGame": "Salir",
+  "quitGameDesc": "¿Salir de la partida?",
+  "exportPrepared": "Tus datos serán preparados.",
+  "deleteWarning": "Acción permanente.",
+  "shopTitle": "Tienda",
+  "maxPlayersLabel": "Número máximo de jugadores",
+  "visibilityLabel": "Visibilidad",
+  "public": "Pública",
+  "publicDesc": "Visible en la lista pública",
+  "private": "Privada",
+  "privateDesc": "Accesible solo con el código",
+  "confirmPurchase": "Confirmar compra",
+  "purchaseSuccess": "¡Compra exitosa!",
+  "purchaseSuccessDesc": "+{{amount}} monedas\nNuevo saldo: {{balance}}",
+  "inviteCode": "Código de invitación",
+  "publicRooms": "SALAS PÚBLICAS",
+  "noPublicRooms": "No hay salas públicas",
+  "createOne": "¡Crea una!",
+  "playersWord": "jugadores",
+  "home": {
+    "playCta": "Jugar una partida",
+    "playCtaSub": "11 variantes — Klondike, Spider, FreeCell…",
+    "soloBadge": "SOLO",
+    "klondikeShort": "El clásico",
+    "spider2Short": "2 palos",
+    "freecellShort": "~99% solucionable",
+    "vsBotShort": "Coach IA — consejos",
+    "shortKlondike": "Klondike",
+    "shortSpider": "Spider",
+    "shortFreeCell": "FreeCell"
+  },
+  "multiplayer": {
+    "tab": "Multi",
+    "title": "Multijugador",
+    "subtitle": "Desafía a otros jugadores o crea tu sala",
+    "intro": "Solitario en modo versus: misma reparto, dos jugadores, el primero en terminar o sumar más puntos gana.",
+    "quickMatch": "Partida rápida",
+    "quickMatchSub": "1v1 con la misma reparto",
+    "createRoom": "Crear sala",
+    "createRoomSub": "Invita a un rival (1v1)",
+    "joinRoom": "Unirse a una sala",
+    "joinRoomSub": "Ingresa un código de invitación",
+    "dailyChallenge": "Desafío diario",
+    "dailyChallengeSub": "Matchmaking automático",
+    "note": "Tip: Partida rápida usa el mismo reparto para los 2 jugadores — la suerte no cuenta, solo la eficiencia.",
+    "shortHub": "Salas · Versus",
+    "shortQM": "1v1 · misma reparto",
+    "waitingForOpponent": "Esperando un 2º jugador…",
+    "soloIs1v1": "El Solitario se juega 1v1 — máximo 2 jugadores.",
+    "playVsBot": "Jugar contra Bot",
+    "activateBot": "Activar Bot"
+  },
+  "variants": {
+    "title": "Elige Solitario",
+    "subtitle": "{{count}} variantes — todas jugables",
+    "intro": "Elige una variante. Verás primero las reglas detalladas, luego podrás iniciar la partida.",
+    "soonBadge": "PRONTO"
+  },
+  "rules": {
+    "notFoundTitle": "Reglas no encontradas",
+    "notFoundBody": "Variante desconocida.",
+    "metaDifficulty": "DIFICULTAD",
+    "metaWin": "VICTORIA",
+    "metaDuration": "DURACIÓN",
+    "metaCards": "CARTAS",
+    "sectionTitle": "📖 Reglas detalladas",
+    "playNow": "Jugar ahora",
+    "comingSoon": "Esta variante estará disponible en una próxima actualización.",
+    "chooseAnother": "Elegir otra variante",
+    "pickDifficulty": "Elige la dificultad",
+    "diff": {
+      "easy": "Fácil",
+      "medium": "Medio",
+      "hard": "Difícil",
+      "hints": "pistas",
+      "noHints": "Sin pistas"
+    }
+  },
+  "solo": {
+    "unavailableTitle": "Variante no disponible",
+    "unavailableBody": "Esta variante aún no está implementada.",
+    "moves": "MOVIMIENTOS",
+    "scoreLabel": "PUNTUACIÓN",
+    "remaining": "RESTANTES",
+    "tableau": "Tablero",
+    "tableauCols": "Tablero ({{n}} columnas)",
+    "tableauCards": "Tablero ({{n}} cartas)",
+    "restart": "Reiniciar",
+    "auto": "Auto",
+    "draw": "Robar",
+    "deal": "Repartir",
+    "autoFoundations": "Auto cimientos",
+    "waste": "DESCARTE",
+    "empty": "VACÍO",
+    "klondikeSubtitle": "Klondike Robar {{drawCount}}",
+    "spiderSubtitle": "{{suitMode}} palo(s) — 8 series",
+    "freecellSubtitle": "Pura lógica — 99,999% solucionable",
+    "yukonSubtitle": "Yukón — sin mazo de robar",
+    "golfSubtitle": "Golf — mínimo de cartas restantes",
+    "pyramidSubtitle": "Pirámide — pares con suma 13",
+    "tripeaksSubtitle": "TriPeaks — combo x{{combo}}",
+    "fortyThievesSubtitle": "Cuarenta Ladrones — 2 mazos, 1 carta",
+    "accordionSubtitle": "Acordeón — {{count}} pilas",
+    "hintKlondikeSelected": "👆 Una carta seleccionada. Toca una columna destino, o vuelve a tocar para cancelar.",
+    "hintKlondikeIdle": "Toca una carta → intenta enviar al cimiento. Toca otra vez → modo movimiento.",
+    "hintSpiderSelected": "👆 Toca una columna destino",
+    "hintSpiderIdle": "Toca una carta o el final de una serie para seleccionarla.",
+    "hintFreeCellSelected": "👆 Toca un destino (columna, celda libre, o cimiento)",
+    "hintFreeCellIdle": "Toca una carta para seleccionarla.",
+    "hintYukonSelected": "👆 Toca una columna destino",
+    "hintYukonIdle": "Toca una carta destapada. Yukón: puedes mover cualquier grupo.",
+    "hintGolfIdle": "Toca la carta superior de una columna cuyo valor sea ±1 respecto al descarte.",
+    "hintGolfLost": "😞 No quedan jugadas. ¡Reinicia!",
+    "hintPyramid": "Empareja 2 cartas con suma 13. El Rey (13) se quita solo. A=1, J=11, Q=12, K=13.",
+    "hintTriPeaks": "Toca una carta ±1 del descarte. A↔K (circular). No robar = combo que duplica la puntuación.",
+    "hintFortyThieves": "Descendiente MISMO palo. 1 carta a la vez. Toca = intentar cimiento, si no seleccionar para mover.",
+    "hintAccordion": "Toca una carta y luego una a 1 o 3 espacios izquierda (mismo valor O mismo palo). Reduce todo a 1 sola pila.",
+    "hintAccordionLost": "😞 No quedan jugadas.",
+    "spiderRunsLabel": "Series: {{done}} / {{total}}",
+    "freeCellStatus": "Celdas libres: {{freeCells}}/4 · Columnas vacías: {{emptyCols}}/8 · Mov. máx: {{maxMove}} cartas",
+    "winTitle": "¡Bien hecho — has ganado!",
+    "winStats": "{{moves}} movimientos · Puntuación {{score}}",
+    "playAgain": "Jugar de nuevo",
+    "quit": "Salir",
+    "diff": {
+      "easy": "FÁCIL",
+      "medium": "MEDIO",
+      "hard": "DIFÍCIL",
+      "noHint": "Ninguno"
+    },
+    "ai": {
+      "start": "IA",
+      "stop": "ALTO",
+      "speed": "Velocidad",
+      "tutorialTitle": "🤖 Modo IA",
+      "tutorialBody": "La IA juega la solución óptima automáticamente. El distintivo azul muestra el próximo movimiento. Cambia la velocidad con el contador ⚡ (0.5× a Turbo).",
+      "tutorialOk": "¡Entendido!"
+    },
+    "noHintTitle": "Sin movimiento",
+    "noHintBody": "No hay movimiento legal. Reinicia o roba.",
+    "stuck": {
+      "title": "🔒 Partida bloqueada",
+      "body": "No hay ningún movimiento legal posible. Puedes reiniciar para un nuevo reparto, seguir explorando el tablero o salir.",
+      "again": "Nueva partida",
+      "continue": "Seguir explorando"
+    },
+    "hintDrawTitle": "💡 Sin movimiento útil",
+    "hintDrawBody": "No hay movimiento real con las cartas visibles. Toca el mazo para revelar nuevas cartas — tu pista se conserva.",
+    "hintDealBody": "No hay movimiento posible. Toca el mazo para repartir una fila — tu pista se conserva.",
+    "impossible": {
+      "title": "🚫 Juego imposible",
+      "body": "Has revisado el mazo 2 veces sin progresar. Este reparto no tiene solución. ¡Empieza una nueva partida para un mejor reparto!",
+      "again": "Nueva partida"
+    }
+  },
+  "variant": {
+    "klondike-1": {
+      "name": "Klondike (Robar 1)",
+      "shortDesc": "El solitario clásico — roba 1 carta a la vez.",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Coloca las 52 cartas en los 4 cimientos, organizadas por palo, As → Rey."
+        },
+        {
+          "title": "Disposición",
+          "body": "7 columnas en el tablero (1, 2, 3, 4, 5, 6, 7 cartas). Solo la última carta de cada columna está destapada. Las 24 restantes forman el mazo."
+        },
+        {
+          "title": "En el tablero",
+          "body": "Secuencia descendente (Rey → As) con colores alternos: rojo sobre negro, negro sobre rojo."
+        },
+        {
+          "title": "En los cimientos",
+          "body": "Secuencia ascendente As → Rey del mismo palo."
+        },
+        {
+          "title": "Columna vacía",
+          "body": "Solo un Rey puede ocupar una columna vacía."
+        },
+        {
+          "title": "Mover una serie",
+          "body": "Puedes mover una serie completa de cartas destapadas si sigue la regla."
+        },
+        {
+          "title": "Mazo",
+          "body": "Toca el mazo → 1 carta al descarte. Cuando el mazo se vacía, se recicla del descarte (ilimitado)."
+        },
+        {
+          "title": "Victoria",
+          "body": "Los 4 cimientos completos (52 cartas)."
+        }
+      ]
+    },
+    "klondike-3": {
+      "name": "Klondike (Robar 3)",
+      "shortDesc": "Variante más difícil — roba 3 cartas pero solo la 3ª es jugable.",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Como Klondike Robar 1 — coloca las 52 cartas en los 4 cimientos."
+        },
+        {
+          "title": "Diferencia",
+          "body": "Toca el mazo → 3 cartas reveladas. Solo la 3ª es jugable inmediatamente."
+        },
+        {
+          "title": "Estrategia",
+          "body": "Anticipa los tríos. Más difícil que Robar 1 porque solo 1/3 de las cartas son accesibles directamente."
+        },
+        {
+          "title": "Re-robo",
+          "body": "Ilimitado (variante estándar)."
+        }
+      ]
+    },
+    "klondike-vegas": {
+      "name": "Klondike Vegas",
+      "shortDesc": "Apuesta inicial 52$. +5$ por carta en cimientos. 3 pasadas máx.",
+      "rules": [
+        {
+          "title": "Apuesta inicial",
+          "body": "52 $ apostados al inicio (1 $ por carta)."
+        },
+        {
+          "title": "Puntuación",
+          "body": "+5 $ por carta colocada en cimientos. Objetivo: superar 52 $ para ganar."
+        },
+        {
+          "title": "Mazo",
+          "body": "3 cartas por robo. Máximo 3 pasadas — después no se puede robar más."
+        },
+        {
+          "title": "Meta",
+          "body": "Coloca al menos 11 cartas en cimientos para no perder."
+        }
+      ]
+    },
+    "spider-1": {
+      "name": "Spider 1 palo",
+      "shortDesc": "Variante fácil — 104 cartas pero un solo palo (♠).",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Construir 8 series completas Rey → As del mismo palo. Cada serie se quita automáticamente."
+        },
+        {
+          "title": "Disposición",
+          "body": "10 columnas (4 de 6 cartas, 6 de 5 cartas). 50 cartas en mazo (5 repartos de 10)."
+        },
+        {
+          "title": "Tablero",
+          "body": "Descendente (Rey → As). Cualquier palo puede apilar, PERO solo se mueve una serie del mismo palo."
+        },
+        {
+          "title": "Mazo",
+          "body": "Toca → reparte 1 carta en cada una de las 10 columnas. NO se puede repartir si hay columna vacía."
+        },
+        {
+          "title": "Victoria",
+          "body": "8 series Rey → As retiradas."
+        }
+      ]
+    },
+    "spider-2": {
+      "name": "Spider 2 palos",
+      "shortDesc": "Dificultad media — 2 palos (♠ + ♥).",
+      "rules": [
+        {
+          "title": "Disposición",
+          "body": "Como Spider 1 palo, pero con ♠ Y ♥."
+        },
+        {
+          "title": "Dificultad añadida",
+          "body": "Los palos alternan al azar. Más difícil formar series puras."
+        }
+      ]
+    },
+    "spider-4": {
+      "name": "Spider 4 palos",
+      "shortDesc": "La versión más difícil — los 4 palos.",
+      "rules": [
+        {
+          "title": "Disposición",
+          "body": "2 mazos completos (♠ ♥ ♦ ♣ × 2)."
+        },
+        {
+          "title": "El reto",
+          "body": "Debes aislar cada palo para moverlo en bloque. Solo para expertos."
+        }
+      ]
+    },
+    "freecell": {
+      "name": "FreeCell",
+      "shortDesc": "99,999% de los repartos son solucionables — pensamiento puro.",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Coloca las 52 cartas en los 4 cimientos (As → Rey por palo)."
+        },
+        {
+          "title": "Disposición",
+          "body": "8 columnas (4 de 7, 4 de 6). Todas las cartas destapadas. 4 celdas libres + 4 cimientos vacíos."
+        },
+        {
+          "title": "Celdas libres",
+          "body": "Cada una contiene 1 carta, como aparcamiento temporal."
+        },
+        {
+          "title": "Tablero",
+          "body": "Descendente + colores alternos. Una columna vacía acepta cualquier carta."
+        },
+        {
+          "title": "Movimientos múltiples",
+          "body": "Oficialmente 1 carta a la vez. En la práctica: (celdas libres + 1) × 2^(columnas vacías) cartas."
+        },
+        {
+          "title": "Estrategia",
+          "body": "Mantén siempre 1 celda libre y 1 columna vacía. Identifica Ases y 2 enterrados."
+        }
+      ]
+    },
+    "pyramid": {
+      "name": "Pirámide",
+      "shortDesc": "Quita pares cuya suma sea 13.",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Vaciar toda la pirámide (28 cartas) quitando pares con suma 13."
+        },
+        {
+          "title": "Disposición",
+          "body": "7 filas piramidales (1, 2, 3, 4, 5, 6, 7). Una carta es usable si nada la cubre desde abajo."
+        },
+        {
+          "title": "Valores",
+          "body": "As = 1, 2-10 = valor facial, J = 11, Q = 12, K = 13."
+        },
+        {
+          "title": "Pares válidos",
+          "body": "A + Q (1+12), 2 + J, 3 + 10, 4 + 9, 5 + 8, 6 + 7. El Rey = 13 se quita solo."
+        },
+        {
+          "title": "Mazo",
+          "body": "Toca el mazo para revelar una carta en el descarte. Puedes emparejar pirámide con descarte."
+        },
+        {
+          "title": "Victoria",
+          "body": "Pirámide retirada por completo. Más cartas = más puntuación."
+        }
+      ]
+    },
+    "tripeaks": {
+      "name": "TriPeaks",
+      "shortDesc": "3 picos — encadena cartas ±1.",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Vaciar los 3 picos — 28 cartas del tablero."
+        },
+        {
+          "title": "Disposición",
+          "body": "3 picos compartiendo una fila inferior. Solo la fila inferior está destapada al inicio."
+        },
+        {
+          "title": "Regla",
+          "body": "Puedes quitar una carta destapada si su valor es ±1 respecto al descarte. El palo no importa."
+        },
+        {
+          "title": "Circular",
+          "body": "As ↔ Rey: el As puede seguir al Rey y viceversa."
+        },
+        {
+          "title": "Combos",
+          "body": "Cada carta encadenada sin robar duplica la puntuación: 1, 2, 4, 8, 16, 32… Tocar el mazo reinicia el combo."
+        },
+        {
+          "title": "Mazo",
+          "body": "Sin re-robo: 23 cartas máx en el mazo."
+        }
+      ]
+    },
+    "yukon": {
+      "name": "Yukón",
+      "shortDesc": "Klondike sin mazo — todas las cartas en el tablero.",
+      "rules": [
+        {
+          "title": "Disposición",
+          "body": "7 columnas: 1 / 6 / 7 / 8 / 9 / 10 / 11. Sin mazo, las 52 cartas se reparten."
+        },
+        {
+          "title": "Tablero",
+          "body": "Descendente con colores alternos (rojo sobre negro, negro sobre rojo)."
+        },
+        {
+          "title": "Flexibilidad única",
+          "body": "Puedes mover CUALQUIER carta destapada con TODAS las cartas debajo, aunque no formen secuencia válida."
+        },
+        {
+          "title": "Columna vacía",
+          "body": "Solo un Rey (con lo que sigue) puede ocupar columna vacía."
+        },
+        {
+          "title": "Cimientos",
+          "body": "As → Rey por palo (♠ ♥ ♦ ♣)."
+        },
+        {
+          "title": "Victoria",
+          "body": "Los 4 cimientos completos (52 cartas)."
+        }
+      ]
+    },
+    "golf": {
+      "name": "Golf",
+      "shortDesc": "Puntuación = cartas restantes (objetivo: 0).",
+      "rules": [
+        {
+          "title": "Objetivo",
+          "body": "Vaciar el tablero. Como en golf, puntuación = cartas restantes: MÍNIMO = mejor."
+        },
+        {
+          "title": "Disposición",
+          "body": "7 columnas de 5 cartas destapadas (35). 17 cartas en mazo, 1 en descarte."
+        },
+        {
+          "title": "Regla",
+          "body": "Coloca al descarte una carta superior de columna si su valor es ±1 del descarte. Palo irrelevante."
+        },
+        {
+          "title": "Rey terminal",
+          "body": "El Rey (13) es terminal: nada se encadena. Debes robar."
+        },
+        {
+          "title": "Mazo",
+          "body": "Toca → 1 carta al descarte. Sin re-robo."
+        },
+        {
+          "title": "Victoria",
+          "body": "Tablero vaciado por completo."
+        }
+      ]
+    },
+    "forty-thieves": {
+      "name": "Cuarenta Ladrones",
+      "shortDesc": "Muy difícil — 2 mazos, 1 carta a la vez.",
+      "rules": [
+        {
+          "title": "Disposición",
+          "body": "2 mazos completos. 10 columnas de 4 cartas. 64 en mazo. 8 cimientos."
+        },
+        {
+          "title": "Tablero",
+          "body": "Descendente MISMO palo (♠ sobre ♠, ♥ sobre ♥). SIN alternancia."
+        },
+        {
+          "title": "1 carta a la vez",
+          "body": "Solo se mueve UNA carta a la vez (la última de columna o descarte)."
+        },
+        {
+          "title": "Columna vacía",
+          "body": "Cualquier carta puede ocupar columna vacía."
+        },
+        {
+          "title": "Mazo",
+          "body": "Toca → 1 carta al descarte. Sin re-robo."
+        },
+        {
+          "title": "Cimientos",
+          "body": "8 cimientos (2 por palo). As → Rey. Victoria = todos completos (104)."
+        }
+      ]
+    },
+    "accordion": {
+      "name": "Acordeón",
+      "shortDesc": "Reduce 52 cartas a una sola pila.",
+      "rules": [
+        {
+          "title": "Disposición",
+          "body": "52 cartas en una fila, todas destapadas."
+        },
+        {
+          "title": "Regla",
+          "body": "Coloca una carta sobre su vecina inmediata (1 espacio) o la 3ª a la izquierda, si MISMO VALOR O MISMO PALO."
+        },
+        {
+          "title": "Apilamiento",
+          "body": "La carta movida cae sobre la pila objetivo. Las cartas a la derecha se desplazan."
+        },
+        {
+          "title": "Estrategia",
+          "body": "No te apresures: una mala apilación bloquea la partida. Piensa varios movimientos adelante."
+        },
+        {
+          "title": "Victoria",
+          "body": "Reducir las 52 cartas a UNA sola pila. Muy raro (~0,3%), reto de paciencia."
+        }
+      ]
+    }
+  }
+}

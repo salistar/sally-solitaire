@@ -1,0 +1,175 @@
+/**
+ * @file room/create.tsx
+ * @description Création d'une room Solitaire. Sliders pour maxPlayers (2-10),
+ * choix public/privé, puis partage du code via expo-sharing.
+ */
+
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  Share,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
+import AppHeader from '../../src/components/AppHeader';
+import { useTheme } from '../../src/contexts/AppProviders';
+import { logger } from '../../src/utils/logger';
+import * as api from '../../shared/api';
+
+const log = logger.scoped('CreateRoom');
+
+export default function CreateRoomScreen() {
+  const router = useRouter();
+  const { t } = useTranslation();
+  const { palette } = useTheme();
+  // Solitaire is fundamentally 1v1 — locked to 2 players.
+  const [maxPlayers] = useState(2);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [creating, setCreating] = useState(false);
+
+  const handleCreate = async () => {
+    setCreating(true);
+    try {
+      log.bin('POST /rooms', { gameType: 'solitaire', maxPlayers, isPrivate });
+      const room = await api.createRoomFull('solitaire', { maxPlayers, isPrivate });
+      log.bout('201 /rooms', { code: room.code, mode: room.mode });
+      log.explain(`room ${room.code} créée (${room.mode}, max ${maxPlayers}j) → navigation vers le lobby`);
+      router.replace(`/room/lobby?code=${room.code}`);
+    } catch (e: any) {
+      log.error('createRoom failed', e?.message);
+      Alert.alert(t('error'), e?.message || t('cantCreateRoom'));
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const styles = createStyles(palette);
+
+  return (
+    <View style={styles.root}>
+      <LinearGradient colors={palette.bgGradient} style={StyleSheet.absoluteFill} />
+      <AppHeader title={t('createRoomTitle')} showBack />
+
+      <View style={styles.body}>
+        <Text style={[styles.label, { color: palette.text }]}>{t('maxPlayersLabel')}</Text>
+        {/* Solitaire = 1v1 → on n'expose que la valeur 2 (verrouillée). */}
+        <View style={styles.playerSelector}>
+          <View
+            style={[
+              styles.playerChip,
+              { backgroundColor: palette.accent, borderColor: palette.accent },
+            ]}
+          >
+            <Text style={[styles.playerChipText, { color: '#fff' }]}>2</Text>
+          </View>
+          <View style={[styles.lockNote, { borderColor: palette.border, backgroundColor: palette.card }]}>
+            <Ionicons name="lock-closed" size={14} color={palette.textSecondary} />
+            <Text style={[styles.lockNoteText, { color: palette.textSecondary }]}>
+              {t('multiplayer.soloIs1v1', { defaultValue: 'Le Solitaire se joue en 1v1 — 2 joueurs maximum.' })}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.label, { color: palette.text, marginTop: 28 }]}>{t('visibilityLabel')}</Text>
+        <View style={styles.modeRow}>
+          <TouchableOpacity
+            onPress={() => setIsPrivate(false)}
+            style={[
+              styles.modeCard,
+              {
+                backgroundColor: !isPrivate ? palette.accent + '22' : palette.card,
+                borderColor: !isPrivate ? palette.accent : palette.border,
+              },
+            ]}
+          >
+            <Ionicons name="globe-outline" size={28} color={!isPrivate ? palette.accent : palette.textSecondary} />
+            <Text style={[styles.modeTitle, { color: palette.text }]}>{t('public')}</Text>
+            <Text style={[styles.modeDesc, { color: palette.textSecondary }]}>
+              {t('publicDesc')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsPrivate(true)}
+            style={[
+              styles.modeCard,
+              {
+                backgroundColor: isPrivate ? palette.accent + '22' : palette.card,
+                borderColor: isPrivate ? palette.accent : palette.border,
+              },
+            ]}
+          >
+            <Ionicons name="lock-closed-outline" size={28} color={isPrivate ? palette.accent : palette.textSecondary} />
+            <Text style={[styles.modeTitle, { color: palette.text }]}>{t('private')}</Text>
+            <Text style={[styles.modeDesc, { color: palette.textSecondary }]}>
+              {t('privateDesc')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          onPress={handleCreate}
+          disabled={creating}
+          style={styles.createBtn}
+          activeOpacity={0.85}
+        >
+          <LinearGradient
+            colors={palette.accentGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.createBtnGrad}
+          >
+            {creating ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="rocket" size={22} color="#fff" />
+                <Text style={styles.createBtnText}>{t('createRoom')}</Text>
+              </>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function createStyles(palette: ReturnType<typeof useTheme>['palette']) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: palette.bg },
+    body: { padding: 20 },
+    label: { fontSize: 14, fontFamily: 'Inter-Bold', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 10 },
+    playerSelector: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, alignItems: 'center' },
+    playerChip: {
+      width: 56, height: 56, borderRadius: 16,
+      borderWidth: 2,
+      alignItems: 'center', justifyContent: 'center',
+    },
+    playerChipText: { fontSize: 20, fontFamily: 'Inter-Black' },
+    lockNote: {
+      flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8,
+      paddingHorizontal: 10, paddingVertical: 10,
+      borderRadius: 12, borderWidth: 1,
+    },
+    lockNoteText: { flex: 1, fontSize: 11, fontFamily: 'Inter-SemiBold', lineHeight: 16 },
+    modeRow: { flexDirection: 'row', gap: 12 },
+    modeCard: {
+      flex: 1, padding: 16, borderRadius: 16,
+      borderWidth: 2, alignItems: 'center', gap: 6,
+    },
+    modeTitle: { fontSize: 16, fontFamily: 'Inter-Bold', marginTop: 6 },
+    modeDesc: { fontSize: 11, fontFamily: 'Inter-Regular', textAlign: 'center' },
+    createBtn: { marginTop: 40, borderRadius: 16, overflow: 'hidden' },
+    createBtnGrad: {
+      paddingVertical: 18,
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
+    },
+    createBtnText: { color: '#fff', fontSize: 17, fontFamily: 'Inter-Black', letterSpacing: 1 },
+  });
+}
