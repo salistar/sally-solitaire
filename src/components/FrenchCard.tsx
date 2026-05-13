@@ -9,6 +9,8 @@
  */
 import React from 'react';
 import { Image, View, Text, ImageStyle, ViewStyle } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useCardSkin, getSkinDef, type SkinId } from '../contexts/useCardSkin';
 
 // Pre-bundle the 52 PNGs + back. Static `require()` calls so Metro can
 // resolve them at build time.
@@ -86,6 +88,12 @@ interface FrenchCardProps {
   height?: number;
   style?: ViewStyle;
   imageStyle?: ImageStyle;
+  /**
+   * Override the user's current card-back skin. If omitted, reads from
+   * `useCardSkin()` so all cards in the app stay in sync with the user's
+   * selected cosmetic. Pass 'default' explicitly to force the un-skinned look.
+   */
+  skinId?: SkinId;
 }
 
 /** Suit glyph + color for the text fallback. */
@@ -106,9 +114,18 @@ function labelOf(code: string): { value: string; suit: string; color: string } {
   return { value, suit: meta.glyph, color: meta.color };
 }
 
-export default function FrenchCard({ code, width = 60, height = 84, style, imageStyle }: FrenchCardProps) {
+export default function FrenchCard({ code, width = 60, height = 84, style, imageStyle, skinId }: FrenchCardProps) {
   const src = FRENCH_CARD_IMAGES[code];
   const meta = labelOf(code);
+
+  // Pull the user's current card-back skin from context, unless caller
+  // passed an explicit override. Only the BACK uses the skin — face cards
+  // stay unchanged so suit colors remain readable.
+  const skinCtx = useCardSkin();
+  const activeSkinId = skinId ?? skinCtx.current;
+  const skin = getSkinDef(activeSkinId);
+  const isBack = code === 'BACK';
+  const applyOverlay = isBack && skin.overlayAlpha > 0;
 
   return (
     <View
@@ -118,7 +135,7 @@ export default function FrenchCard({ code, width = 60, height = 84, style, image
           height,
           borderRadius: 8,
           overflow: 'hidden',
-          backgroundColor: code === 'BACK' ? '#1E1B3A' : '#fff',
+          backgroundColor: isBack ? '#1E1B3A' : '#fff',
           shadowColor: '#000',
           shadowOpacity: 0.25,
           shadowRadius: 4,
@@ -131,7 +148,7 @@ export default function FrenchCard({ code, width = 60, height = 84, style, image
       ]}
     >
       {/* Always render the text fallback FIRST (visible if image fails). */}
-      {code !== 'BACK' && (
+      {!isBack && (
         <View style={{ position: 'absolute', top: 4, left: 6, zIndex: 0 }}>
           <Text style={{ color: meta.color, fontSize: Math.max(10, width / 5), fontFamily: 'Inter-Black', lineHeight: Math.max(12, width / 5) }}>
             {meta.value}
@@ -142,7 +159,7 @@ export default function FrenchCard({ code, width = 60, height = 84, style, image
         </View>
       )}
       {/* Center suit (for back: white pattern; for front: large glyph fallback). */}
-      {code === 'BACK' && (
+      {isBack && (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ color: '#C084FC', fontSize: Math.max(20, width / 2.5), fontFamily: 'Inter-Black' }}>♠♥♦♣</Text>
         </View>
@@ -157,6 +174,22 @@ export default function FrenchCard({ code, width = 60, height = 84, style, image
             // eslint-disable-next-line no-console
             console.warn('[FrenchCard] image load failed for', code, e?.nativeEvent);
           }}
+        />
+      )}
+      {/* Skin overlay — gradient tint applied on top of the back-of-card
+          image when the user owns and selected a cosmetic skin. Pointer-events
+          disabled so taps still reach the parent. */}
+      {applyOverlay && (
+        <LinearGradient
+          colors={skin.gradient as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            opacity: skin.overlayAlpha,
+          }}
+          pointerEvents="none"
         />
       )}
     </View>

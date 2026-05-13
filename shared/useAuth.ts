@@ -24,43 +24,50 @@ export function useAuth() {
     user: null,
   });
 
-  // Restore token on mount
+  // Restore token on mount.
+  //
+  // Flow:
+  //   1. `api.bootstrapAuth()` reads the persisted session from AsyncStorage
+  //      and applies the two-rule policy:
+  //        - Absolute: more than 30 days since first login → expire
+  //        - Rolling:  more than 7 days since last app open → expire
+  //      If valid, it advances lastSeenAt = now (rolling extension) and
+  //      restores `authToken` + `refreshToken` into memory; otherwise it
+  //      clears everything.
+  //   2. If we have tokens, call /users/me to validate them server-side.
+  //      If that 401s, the api client auto-tries /auth/refresh once. If
+  //      that also fails, we clear storage and route to login.
   useEffect(() => {
     const bootstrapAsync = async () => {
       try {
-        // Check if we have a token stored
+        const restored = await api.bootstrapAuth();
+        if (!restored) {
+          // No session, or expired by 7d/30d rules — go to login.
+          dispatch({
+            isLoading: false,
+            isSignout: true,
+            userToken: null,
+            user: null,
+          });
+          return;
+        }
+
         const token = api.getAuthToken();
-        if (token) {
-          try {
-            const user = await api.getMe();
-            dispatch({
-              isLoading: false,
-              isSignout: false,
-              userToken: token,
-              user,
-            });
-          } catch (e) {
-            // Token is invalid, try to refresh
-            try {
-              await api.refreshTokenAsync();
-              const user = await api.getMe();
-              dispatch({
-                isLoading: false,
-                isSignout: false,
-                userToken: api.getAuthToken(),
-                user,
-              });
-            } catch (error) {
-              console.error('Failed to restore session:', error);
-              dispatch({
-                isLoading: false,
-                isSignout: true,
-                userToken: null,
-                user: null,
-              });
-            }
-          }
-        } else {
+        try {
+          const user = await api.getMe();
+          dispatch({
+            isLoading: false,
+            isSignout: false,
+            userToken: token,
+            user,
+          });
+        } catch (e) {
+          // Server rejected the token even though our local clock said it was
+          // valid — most likely server-side revocation or JWT_SECRET rotation.
+          // The api client already tried /auth/refresh once; if we land here,
+          // we have to send the user back to login.
+          console.error('Server rejected restored token:', e);
+          await api.logout();
           dispatch({
             isLoading: false,
             isSignout: true,

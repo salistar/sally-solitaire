@@ -5,7 +5,7 @@
  * mounted screen. No more dead setState.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -61,6 +61,50 @@ export default function SettingsScreen() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  // Per-category push notification preferences. Fetched from server once
+  // on mount, mutated optimistically on toggle. Failure path silently
+  // reverts if the server rejects — no UI thrash.
+  const [meId, setMeId] = useState<string | null>(null);
+  const [prefMatchReady, setPrefMatchReady] = useState(true);
+  const [prefAchievement, setPrefAchievement] = useState(true);
+  const [prefTournamentResult, setPrefTournamentResult] = useState(true);
+  const [prefStreakReminder, setPrefStreakReminder] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const me = await api.getMe().catch(() => null);
+      if (!me?.id) return;
+      setMeId(me.id);
+      const prefs = await api.fetchNotificationPrefs(me.id);
+      if (prefs) {
+        setPrefMatchReady(prefs.matchReady);
+        setPrefAchievement(prefs.achievement);
+        setPrefTournamentResult(prefs.tournamentResult);
+        setPrefStreakReminder(prefs.streakReminder);
+      }
+    })();
+  }, []);
+
+  const togglePref = async (
+    field: 'matchReady' | 'achievement' | 'tournamentResult' | 'streakReminder',
+    next: boolean,
+  ) => {
+    if (!meId) return;
+    // Optimistic flip first
+    if (field === 'matchReady') setPrefMatchReady(next);
+    else if (field === 'achievement') setPrefAchievement(next);
+    else if (field === 'tournamentResult') setPrefTournamentResult(next);
+    else setPrefStreakReminder(next);
+    const result = await api.updateNotificationPrefs(meId, { [field]: next });
+    if (!result) {
+      // Revert on failure
+      if (field === 'matchReady') setPrefMatchReady(!next);
+      else if (field === 'achievement') setPrefAchievement(!next);
+      else if (field === 'tournamentResult') setPrefTournamentResult(!next);
+      else setPrefStreakReminder(!next);
+    }
+  };
 
   const current = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
 
@@ -153,6 +197,56 @@ export default function SettingsScreen() {
             value={<Switch value={notificationsEnabled} onValueChange={setNotificationsEnabled} trackColor={{ false: '#444', true: palette.accent }} />}
             palette={palette}
           />
+          {meId && (
+            <>
+              <SettingRow
+                icon="trophy-outline"
+                label="Match prêt (tournoi)"
+                value={<Switch
+                  value={prefMatchReady}
+                  onValueChange={(v) => togglePref('matchReady', v)}
+                  trackColor={{ false: '#444', true: palette.accent }}
+                />}
+                palette={palette}
+              />
+              <SettingRow
+                icon="ribbon-outline"
+                label="Achievements débloqués"
+                value={<Switch
+                  value={prefAchievement}
+                  onValueChange={(v) => togglePref('achievement', v)}
+                  trackColor={{ false: '#444', true: palette.accent }}
+                />}
+                palette={palette}
+              />
+              <SettingRow
+                icon="medal-outline"
+                label="Résultat de tournoi"
+                value={<Switch
+                  value={prefTournamentResult}
+                  onValueChange={(v) => togglePref('tournamentResult', v)}
+                  trackColor={{ false: '#444', true: palette.accent }}
+                />}
+                palette={palette}
+              />
+              <SettingRow
+                icon="flame-outline"
+                label="Rappel streak quotidien"
+                value={<Switch
+                  value={prefStreakReminder}
+                  onValueChange={(v) => togglePref('streakReminder', v)}
+                  trackColor={{ false: '#444', true: palette.accent }}
+                />}
+                palette={palette}
+              />
+              <SettingRow
+                icon="mail-outline"
+                label="Historique des notifications"
+                onPress={() => router.push('/notifications')}
+                palette={palette}
+              />
+            </>
+          )}
         </LinearGradient>
 
         <Text style={[s.sectionTitle, { color: palette.textSecondary }]}>

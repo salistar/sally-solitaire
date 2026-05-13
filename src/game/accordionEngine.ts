@@ -17,6 +17,8 @@
  * Difficulty: ~0.3% theoretical win rate — extremely hard.
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -70,7 +72,7 @@ function buildDeck(): Card[] {
   return deck;
 }
 
-function shuffle(deck: Card[]): Card[] {
+function shuffle(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -354,30 +356,37 @@ function validateAccordionSolution(state: GameState, solution: GameAction[]): bo
   return s.piles.length === 1;
 }
 
-export function createInitialState(): GameState {
-  console.log("[Accordion Solver] 🎲 Reverse-Deal — solution forward par inversion d'historique");
-  const __t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[Accordion Solver] 🎲 Reverse-Deal — solution forward par inversion d'historique");
+    const __t0 = Date.now();
 
-  // STRATÉGIE PRIORITAIRE : émettre la solution forward depuis l'historique
-  // des inverse-collapses. Accordion ~0.3% solvable au random ; le greedy n'a
-  // aucune chance — l'inversion d'historique est la SEULE approche fiable.
-  const MAX_ATTEMPTS = 12;
-  let bestCand: GameState | null = null;
-  let bestSol: GameAction[] = [];
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const { state, history } = reverseDealAccordionWithHistory();
-    const sol = buildAccordionForwardSolution(state, history);
-    if (validateAccordionSolution(state, sol)) {
-      _accordionSolution = sol;
-      console.log(`[Accordion Solver] ✅ DONNE V2 SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${sol.length} coups`);
-      return state;
+    // STRATÉGIE PRIORITAIRE : émettre la solution forward depuis l'historique
+    // des inverse-collapses. Accordion ~0.3% solvable au random ; le greedy n'a
+    // aucune chance — l'inversion d'historique est la SEULE approche fiable.
+    const MAX_ATTEMPTS = 12;
+    let bestCand: GameState | null = null;
+    let bestSol: GameAction[] = [];
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const { state, history } = reverseDealAccordionWithHistory();
+      const sol = buildAccordionForwardSolution(state, history);
+      if (validateAccordionSolution(state, sol)) {
+        _accordionSolution = sol;
+        console.log(`[Accordion Solver] ✅ DONNE V2 SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${sol.length} coups`);
+        return state;
+      }
+      if (sol.length > bestSol.length) { bestCand = state; bestSol = sol; }
     }
-    if (sol.length > bestSol.length) { bestCand = state; bestSol = sol; }
+    const fallback = bestCand ?? reverseDealAccordion();
+    _accordionSolution = bestSol.length > 0 ? bestSol : computeAccordionSolution(fallback);
+    console.log(`[Accordion Solver] ⚠️ FALLBACK (${Date.now() - __t0}ms) — ${_accordionSolution.length} coups partiels, ${fallback.piles.length} piles`);
+    return fallback;
+  } finally {
+    Math.random = _origRandom;
   }
-  const fallback = bestCand ?? reverseDealAccordion();
-  _accordionSolution = bestSol.length > 0 ? bestSol : computeAccordionSolution(fallback);
-  console.log(`[Accordion Solver] ⚠️ FALLBACK (${Date.now() - __t0}ms) — ${_accordionSolution.length} coups partiels, ${fallback.piles.length} piles`);
-  return fallback;
 }
 
 export function topOf(pile: Pile): Card {

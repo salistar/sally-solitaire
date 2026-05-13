@@ -187,8 +187,8 @@
     "autoComplete": "Auto-completar",
     "botBoard": "Tablero del bot",
     "botBoardSub": "{{moves}} movs · {{difficulty}}",
-    "victoryVsBot": "¡Victoria! Ganaste al bot 🎉",
-    "defeatVsBot": "Derrota — el bot terminó primero 🤖",
+    "victoryVsBot": "¡Victoria! Ganaste al bot ",
+    "defeatVsBot": "Derrota — el bot terminó primero ",
     "victorySolo": "¡Victoria!",
     "winSubBot": "Tú: {{u}}/{{tot}} · Bot: {{b}}/{{tot}} · {{m}} movs",
     "winSubSolo": "Terminado en {{m}} movimientos",
@@ -198,12 +198,3496 @@
   "vsbot": {
     "botActive": "BOT ({{difficulty}})",
     "botWaiting": "BOT EN ESPERA",
-    "statsLine": "🏆 {{foundations}} · 🎯 {{moves}} movs",
+    "statsLine": " {{foundations}} · {{moves}} movs",
     "activate": "Activar bot oponente",
     "modalUserWon": "¡Ganaste al bot!",
     "modalBotWon": "El bot terminó primero",
     "modalBotStats": "Bot: {{foundations}} fundaciones · {{moves}} movs",
     "replay": "Jugar de nuevo",
     "quit": "Salir"
+  },
+  "variant": {
+    "klondike_classic": {
+      "name": "Klondike (Clásico)",
+      "shortDesc": "El solitario clásico de Windows — roba 1, reciclajes ilimitados.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Colocar las 52 cartas en los 4 fundamentos, por palo, del As al Rey."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "7 columnas en el tablero (1 a 7 cartas). Solo la última carta de cada columna está boca arriba. Las 24 cartas restantes forman el mazo."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Secuencia descendente (Rey → As) con colores alternos: rojo sobre negro, negro sobre rojo."
+        },
+        "3": {
+          "title": "Robo",
+          "body": "Toca el mazo → 1 carta al descarte. Reciclajes ilimitados."
+        },
+        "4": {
+          "title": "Victoria",
+          "body": "Los 4 fundamentos completos (52 cartas, As → Rey)."
+        }
+      }
+    },
+    "klondike_turn1": {
+      "name": "Klondike Turn 1",
+      "shortDesc": "Klondike con robo de 1 carta — la versión más accesible.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Como Klondike clásico: 4 fundamentos completos del As al Rey."
+        },
+        "1": {
+          "title": "Diferencia",
+          "body": "Cada toque del mazo revela UNA carta — todas las cartas son jugables. La versión más fácil."
+        },
+        "2": {
+          "title": "Reciclajes",
+          "body": "Ilimitados."
+        },
+        "3": {
+          "title": "Consejo",
+          "body": "Prioriza descubrir una carta oculta antes que jugar desde el descarte."
+        }
+      }
+    },
+    "klondike_turn3": {
+      "name": "Klondike Turn 3",
+      "shortDesc": "Roba 3 cartas a la vez — solo la superior es jugable.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Como Klondike clásico: 4 fundamentos del As al Rey."
+        },
+        "1": {
+          "title": "Diferencia",
+          "body": "Cada robo muestra 3 cartas. Solo la superior es jugable de inmediato."
+        },
+        "2": {
+          "title": "Estrategia",
+          "body": "Anticipa los tríos. Memoriza las posiciones 1/3 y 2/3."
+        },
+        "3": {
+          "title": "Reciclajes",
+          "body": "Ilimitados en la versión estándar."
+        }
+      }
+    },
+    "vegas_solitaire": {
+      "name": "Solitario Vegas",
+      "shortDesc": "Klondike Turn 3 con apuesta de 52 $ y un solo paso por el mazo.",
+      "rules": {
+        "0": {
+          "title": "Apuesta inicial",
+          "body": "Apuestas 52 $ al inicio (1 $ por carta)."
+        },
+        "1": {
+          "title": "Puntuación",
+          "body": "+5 $ por cada carta en los fundamentos."
+        },
+        "2": {
+          "title": "Mazo",
+          "body": "3 cartas por robo. Un solo paso — sin reciclaje."
+        },
+        "3": {
+          "title": "Objetivo mínimo",
+          "body": "Coloca al menos 11 cartas para rentabilizar."
+        }
+      }
+    },
+    "double_klondike": {
+      "name": "Doble Klondike",
+      "shortDesc": "Klondike con 2 mazos — 8 fundamentos a completar.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "9 columnas, 8 fundamentos."
+        },
+        "1": {
+          "title": "Tablero",
+          "body": "Descendente con colores alternos."
+        },
+        "2": {
+          "title": "Robo",
+          "body": "1 carta, reciclajes ilimitados."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Esta sesión usa el motor estándar de 1 mazo."
+        }
+      }
+    },
+    "westcliff": {
+      "name": "Westcliff",
+      "shortDesc": "Klondike con 10 columnas de 3 — todas las cartas visibles.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "10 columnas de 3 cartas, 22 en el mazo."
+        },
+        "1": {
+          "title": "Particularidad",
+          "body": "Todas las cartas visibles desde el inicio."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Descendente con colores alternos."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Esta sesión usa el motor Klondike estándar."
+        }
+      }
+    },
+    "thumb_and_pouch": {
+      "name": "Thumb and Pouch",
+      "shortDesc": "Klondike con reglas de apilado relajadas.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Apila en cualquier color, excepto el mismo palo."
+        },
+        "1": {
+          "title": "Columna vacía",
+          "body": "Cualquier carta puede ocuparla."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Esta sesión usa reglas estrictas."
+        }
+      }
+    },
+    "spider_1suit": {
+      "name": "Spider 1 palo",
+      "shortDesc": "Variante fácil — 104 cartas, un solo palo.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Forma 8 secuencias completas Rey → As (todas en picas)."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "10 columnas, 54 cartas en tablero, 50 en el mazo."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Secuencias descendentes."
+        },
+        "3": {
+          "title": "Mazo",
+          "body": "Reparte 1 carta a cada columna. Prohibido si hay columna vacía."
+        },
+        "4": {
+          "title": "Victoria",
+          "body": "8 secuencias Rey → As completas."
+        }
+      }
+    },
+    "spider_2suits": {
+      "name": "Spider 2 palos",
+      "shortDesc": "Dificultad media — 2 palos.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Usa ♠ y ♥. Solo puedes mover una secuencia si es del mismo palo."
+        },
+        "1": {
+          "title": "Estrategia",
+          "body": "Construye sub-secuencias puras antes de moverlas."
+        }
+      }
+    },
+    "spider_4suits": {
+      "name": "Spider 4 palos",
+      "shortDesc": "La versión más difícil — los 4 palos.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "2 mazos completos."
+        },
+        "1": {
+          "title": "Reto",
+          "body": "Aísla cada palo en sub-secuencias antes de moverlas."
+        },
+        "2": {
+          "title": "Consejo",
+          "body": "Mantén siempre una columna vacía como reserva."
+        }
+      }
+    },
+    "spiderette": {
+      "name": "Spiderette",
+      "shortDesc": "Mini-Spider con 1 mazo — 7 columnas.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas (1-2-3-4-5-6-7), 4 fundamentos, 24 cartas en mazo."
+        },
+        "1": {
+          "title": "Tablero",
+          "body": "Como Spider 1 palo."
+        },
+        "2": {
+          "title": "Victoria",
+          "body": "4 secuencias completas."
+        }
+      }
+    },
+    "freecell_classic": {
+      "name": "FreeCell (Clásico)",
+      "shortDesc": "99,999% solubles — pura lógica.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Colocar 52 cartas en 4 fundamentos."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "8 columnas, 4 celdas libres, 4 fundamentos."
+        },
+        "2": {
+          "title": "Celdas libres",
+          "body": "Cada celda contiene 1 carta."
+        },
+        "3": {
+          "title": "Tablero",
+          "body": "Descendente con colores alternos."
+        }
+      }
+    },
+    "bakers_game": {
+      "name": "Juego de Baker",
+      "shortDesc": "FreeCell con apilado del mismo palo — más difícil.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Apila por mismo palo descendente."
+        },
+        "1": {
+          "title": "Resto idéntico",
+          "body": "8 columnas, 4 celdas, 4 fundamentos."
+        },
+        "2": {
+          "title": "Estrategia",
+          "body": "Reserva celdas para el final."
+        }
+      }
+    },
+    "eight_off": {
+      "name": "Eight Off",
+      "shortDesc": "FreeCell con 8 celdas — más indulgente.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "8 columnas de 6 cartas, 4 cartas pre-colocadas."
+        },
+        "1": {
+          "title": "Celdas libres",
+          "body": "8 en total."
+        },
+        "2": {
+          "title": "Apilado",
+          "body": "Mismo palo descendente."
+        }
+      }
+    },
+    "seahaven_towers": {
+      "name": "Seahaven Towers",
+      "shortDesc": "10 columnas de 5 + 2 celdas pre-ocupadas.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "10 columnas de 5 cartas, 4 celdas."
+        },
+        "1": {
+          "title": "Apilado",
+          "body": "Mismo palo descendente."
+        },
+        "2": {
+          "title": "Columna vacía",
+          "body": "Solo un Rey."
+        }
+      }
+    },
+    "yukon_classic": {
+      "name": "Yukon (Clásico)",
+      "shortDesc": "Klondike sin mazo — todas las cartas en el tablero.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas (1, 6, 7, 8, 9, 10, 11). Sin mazo."
+        },
+        "1": {
+          "title": "Flexibilidad única",
+          "body": "Puedes mover cualquier carta con todas las que tiene debajo."
+        },
+        "2": {
+          "title": "Columna vacía",
+          "body": "Solo Rey."
+        }
+      }
+    },
+    "russian_solitaire": {
+      "name": "Solitario Ruso",
+      "shortDesc": "Yukon con apilado del mismo palo.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Apila por mismo palo descendente."
+        },
+        "1": {
+          "title": "Flexibilidad",
+          "body": "Mantiene la libertad de Yukon."
+        }
+      }
+    },
+    "alaska": {
+      "name": "Alaska",
+      "shortDesc": "Yukon donde apilas hacia arriba O hacia abajo.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Mismo palo, ascendente o descendente."
+        }
+      }
+    },
+    "golf_classic": {
+      "name": "Golf (Clásico)",
+      "shortDesc": "Puntuación = cartas restantes (objetivo: 0).",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Vaciar el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "7 columnas de 5, 17 en mazo."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Carta del tope ±1 vs descarte."
+        },
+        "3": {
+          "title": "Rey terminal",
+          "body": "El Rey termina la cadena."
+        }
+      }
+    },
+    "putt_putt": {
+      "name": "Putt Putt",
+      "shortDesc": "Golf circular — As encadena con Rey.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Secuencia circular: As ↔ Rey."
+        }
+      }
+    },
+    "pyramid_classic": {
+      "name": "Pirámide (Clásica)",
+      "shortDesc": "Elimina parejas que sumen 13.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Vaciar la pirámide (28 cartas)."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "7 filas (1 a 7 cartas)."
+        },
+        "2": {
+          "title": "Valores",
+          "body": "As=1, J=11, Q=12, K=13."
+        },
+        "3": {
+          "title": "Parejas",
+          "body": "Suma = 13. Rey solo."
+        }
+      }
+    },
+    "pyramid_relaxed": {
+      "name": "Pirámide (Relajada)",
+      "shortDesc": "Pirámide con reciclajes ilimitados.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Reciclajes ilimitados del mazo."
+        }
+      }
+    },
+    "tripeaks_classic": {
+      "name": "TriPeaks (Clásico)",
+      "shortDesc": "3 picos — encadena cartas ±1.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Vaciar los 3 picos."
+        },
+        "1": {
+          "title": "Regla",
+          "body": "Carta ±1 vs descarte."
+        },
+        "2": {
+          "title": "Circular",
+          "body": "As ↔ Rey."
+        },
+        "3": {
+          "title": "Combos",
+          "body": "Encadenamientos duplican puntos."
+        }
+      }
+    },
+    "forty_thieves_classic": {
+      "name": "Cuarenta Ladrones (Clásico)",
+      "shortDesc": "Muy difícil — 2 mazos, 1 carta a la vez.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "2 mazos, 10 columnas de 4, 64 en mazo, 8 fundamentos."
+        },
+        "1": {
+          "title": "Tablero",
+          "body": "Mismo palo descendente."
+        },
+        "2": {
+          "title": "Movimiento",
+          "body": "1 carta a la vez."
+        },
+        "3": {
+          "title": "Mazo",
+          "body": "Sin reciclaje."
+        }
+      }
+    },
+    "accordion_classic": {
+      "name": "Acordeón (Clásico)",
+      "shortDesc": "Comprime 52 cartas en UNA sola pila.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "52 cartas en línea, visibles."
+        },
+        "1": {
+          "title": "Regla",
+          "body": "Mueve a 1 o 3 a la izquierda, mismo valor o palo."
+        },
+        "2": {
+          "title": "Estrategia",
+          "body": "Piensa varios movimientos."
+        },
+        "3": {
+          "title": "Victoria",
+          "body": "Reducir a una pila."
+        }
+      }
+    },
+    "triple_klondike": {
+      "name": "Triple Klondike",
+      "shortDesc": "Klondike con 3 mazos — 12 fundamentos.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "13 columnas, 12 fundamentos."
+        },
+        "1": {
+          "title": "Tablero",
+          "body": "Descendente con colores alternos."
+        },
+        "2": {
+          "title": "Robo",
+          "body": "1 carta, reciclajes ilimitados."
+        }
+      }
+    },
+    "easthaven": {
+      "name": "Easthaven",
+      "shortDesc": "Híbrido Klondike-Spider.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas de 3 cartas, 31 en mazo."
+        },
+        "1": {
+          "title": "Robo",
+          "body": "Reparte 1 carta a cada columna."
+        },
+        "2": {
+          "title": "Fundamentos",
+          "body": "4 fundamentos As → Rey."
+        }
+      }
+    },
+    "agnes_sorel": {
+      "name": "Agnes Sorel",
+      "shortDesc": "Klondike con rango base variable.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas Klondike, la 1ª del mazo define el rango."
+        },
+        "1": {
+          "title": "Tablero",
+          "body": "Mismo palo descendente."
+        },
+        "2": {
+          "title": "Sin mazo",
+          "body": "Sin robo después de la distribución."
+        }
+      }
+    },
+    "agnes_bernauer": {
+      "name": "Agnes Bernauer",
+      "shortDesc": "Agnes con reserva de 7 cartas.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas + 7 cartas de reserva."
+        },
+        "1": {
+          "title": "Reserva",
+          "body": "Jugable en cualquier momento."
+        }
+      }
+    },
+    "black_widow": {
+      "name": "Viuda Negra",
+      "shortDesc": "Spider 4 con colores alternos.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Apila por colores alternos."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "2 mazos, 10 columnas."
+        }
+      }
+    },
+    "scorpion": {
+      "name": "Escorpión",
+      "shortDesc": "Spider 1 mazo, 7x7, movimiento libre.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas de 7, 3 cartas en mazo."
+        },
+        "1": {
+          "title": "Movimiento",
+          "body": "Cualquier carta con lo que tiene encima."
+        }
+      }
+    },
+    "wasp": {
+      "name": "Avispa",
+      "shortDesc": "Escorpión más permisivo.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas de 7."
+        },
+        "1": {
+          "title": "Diferencia",
+          "body": "Cualquier secuencia en columna vacía."
+        }
+      }
+    },
+    "simple_simon": {
+      "name": "Simple Simón",
+      "shortDesc": "Spider 1 mazo, sin mazo.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "10 columnas 8-7-6-5-4-3-2-1-8-8."
+        },
+        "1": {
+          "title": "Sin mazo",
+          "body": "Todas las cartas visibles."
+        }
+      }
+    },
+    "relaxed_spider": {
+      "name": "Spider Relajado",
+      "shortDesc": "Spider 4 con reglas relajadas.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Robo permitido con columna vacía."
+        }
+      }
+    },
+    "forecell": {
+      "name": "ForeCell",
+      "shortDesc": "FreeCell estricto con Reyes pre-colocados.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "8 columnas de 6, 4 Reyes en celdas."
+        },
+        "1": {
+          "title": "Celdas",
+          "body": "Ocupadas al inicio."
+        }
+      }
+    },
+    "relaxed_freecell": {
+      "name": "FreeCell Relajado",
+      "shortDesc": "FreeCell con automatismos.",
+      "rules": {
+        "0": {
+          "title": "Asistencia",
+          "body": "Multi-movimientos automáticos."
+        },
+        "1": {
+          "title": "Auto-fundamentos",
+          "body": "Cartas seguras suben solas."
+        }
+      }
+    },
+    "challenge_freecell": {
+      "name": "FreeCell Challenge",
+      "shortDesc": "FreeCell con barajado difícil.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Ases enterrados, Reyes arriba."
+        }
+      }
+    },
+    "australian_patience": {
+      "name": "Patience Australiano",
+      "shortDesc": "Yukon con palo y mazo.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "7 columnas de 4, 24 en mazo."
+        },
+        "1": {
+          "title": "Tablero",
+          "body": "Mismo palo descendente."
+        }
+      }
+    },
+    "moosehide": {
+      "name": "Moosehide",
+      "shortDesc": "Yukon con palos diferentes.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Cualquier palo diferente."
+        }
+      }
+    },
+    "black_hole": {
+      "name": "Agujero Negro",
+      "shortDesc": "Golf radial alrededor de un As.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "17 mini-pilas de 3 cartas."
+        },
+        "1": {
+          "title": "Regla",
+          "body": "±1 con la carta central, circular."
+        }
+      }
+    },
+    "giza": {
+      "name": "Giza",
+      "shortDesc": "Pirámide con 3 reservas de 8.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "Pirámide + 3 reservas de 8 cartas."
+        },
+        "1": {
+          "title": "Reservas",
+          "body": "Empareja con cualquier carta visible."
+        }
+      }
+    },
+    "two_pyramids": {
+      "name": "Dos Pirámides",
+      "shortDesc": "2 pirámides en paralelo.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "2 pirámides, 56 cartas."
+        }
+      }
+    },
+    "pharaoh": {
+      "name": "Faraón",
+      "shortDesc": "Pirámide con fundamentos.",
+      "rules": {
+        "0": {
+          "title": "Objetivo doble",
+          "body": "Vaciar pirámide o llenar fundamentos."
+        }
+      }
+    },
+    "tripeaks": {
+      "name": "TriPeaks",
+      "shortDesc": "3 picos, ±1 circular.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Vaciar 3 picos."
+        },
+        "1": {
+          "title": "Regla",
+          "body": "±1 circular."
+        }
+      }
+    },
+    "all_in_a_row": {
+      "name": "All in a Row",
+      "shortDesc": "TriPeaks lineal.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "52 cartas en 4 filas."
+        },
+        "1": {
+          "title": "Regla",
+          "body": "±1 en extremos, circular."
+        }
+      }
+    },
+    "limited": {
+      "name": "Limited",
+      "shortDesc": "Cuarenta Ladrones corto.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "12 columnas de 3, 68 en mazo."
+        }
+      }
+    },
+    "lucas": {
+      "name": "Lucas",
+      "shortDesc": "Forty Thieves con Ases ya colocados.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "13 columnas de 3, 8 Ases en fundamentos."
+        }
+      }
+    },
+    "napoleon_st_helena": {
+      "name": "Napoleón en Santa Helena",
+      "shortDesc": "Forty Thieves con fundamentos dobles.",
+      "rules": {
+        "0": {
+          "title": "Disposición",
+          "body": "10 columnas de 4, 8 fundamentos (4 A→K, 4 K→A)."
+        }
+      }
+    },
+    "methuselah": {
+      "name": "Matusalén",
+      "shortDesc": "Acordeón con saltos ±1, ±3, ±5.",
+      "rules": {
+        "0": {
+          "title": "Diferencia",
+          "body": "Saltos ±1, ±3 o ±5 a la izquierda."
+        }
+      }
+    },
+    "royal_marriage": {
+      "name": "Boda Real",
+      "shortDesc": "Reúne al Rey y la Reina de Corazones.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Acercar Rey y Reina de Corazones."
+        },
+        "1": {
+          "title": "Regla",
+          "body": "Retira si 2 vecinas comparten palo o valor."
+        }
+      }
+    },
+    "canfield_classic": {
+      "name": "Canfield (classic)",
+      "shortDesc": "Variante Canfield (classic) de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Canfield (classic)."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "demon": {
+      "name": "Demon",
+      "shortDesc": "Variante Demon de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Demon."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "storehouse": {
+      "name": "Storehouse",
+      "shortDesc": "Variante Storehouse de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Storehouse."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "selective_canfield": {
+      "name": "Selective Canfield",
+      "shortDesc": "Variante Selective Canfield de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Selective Canfield."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "rainbow": {
+      "name": "Rainbow",
+      "shortDesc": "Variante Rainbow de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Rainbow."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "american_toad": {
+      "name": "American Toad",
+      "shortDesc": "Variante American Toad de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout American Toad."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "duchess": {
+      "name": "Duchess",
+      "shortDesc": "Variante Duchess de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Duchess."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "eagle_wing": {
+      "name": "Eagle Wing",
+      "shortDesc": "Variante Eagle Wing de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Eagle Wing."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "acme": {
+      "name": "Acme",
+      "shortDesc": "Variante Acme de la familia canfield.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Acme."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "beleaguered_castle": {
+      "name": "Beleaguered Castle",
+      "shortDesc": "Variante Beleaguered Castle de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Beleaguered Castle."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "citadel": {
+      "name": "Citadel",
+      "shortDesc": "Variante Citadel de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Citadel."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "streets_and_alleys": {
+      "name": "Streets and Alleys",
+      "shortDesc": "Variante Streets and Alleys de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Streets and Alleys."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "castles_end": {
+      "name": "Castles End",
+      "shortDesc": "Variante Castles End de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Castles End."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "stronghold": {
+      "name": "Stronghold",
+      "shortDesc": "Variante Stronghold de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Stronghold."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "fortress": {
+      "name": "Fortress",
+      "shortDesc": "Variante Fortress de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Fortress."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "chessboard": {
+      "name": "Chessboard",
+      "shortDesc": "Variante Chessboard de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Chessboard."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "bastion": {
+      "name": "Bastion",
+      "shortDesc": "Variante Bastion de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Bastion."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "penelope": {
+      "name": "Penelope",
+      "shortDesc": "Variante Penelope de la familia castle.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Penelope."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "la_belle_lucie": {
+      "name": "La Belle Lucie",
+      "shortDesc": "Variante La Belle Lucie de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Belle Lucie."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "trefoil": {
+      "name": "Trefoil",
+      "shortDesc": "Variante Trefoil de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Trefoil."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "shamrocks": {
+      "name": "Shamrocks",
+      "shortDesc": "Variante Shamrocks de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Shamrocks."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "bristol": {
+      "name": "Bristol",
+      "shortDesc": "Variante Bristol de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Bristol."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "fan": {
+      "name": "Fan",
+      "shortDesc": "Variante Fan de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Fan."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "house_in_the_wood": {
+      "name": "House in the Wood",
+      "shortDesc": "Variante House in the Wood de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout House in the Wood."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "house_on_the_hill": {
+      "name": "House on the Hill",
+      "shortDesc": "Variante House on the Hill de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout House on the Hill."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "falling_star": {
+      "name": "Falling Star",
+      "shortDesc": "Variante Falling Star de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Falling Star."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "clover_leaf": {
+      "name": "Clover Leaf",
+      "shortDesc": "Variante Clover Leaf de la familia fans.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Clover Leaf."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "clock_solitaire": {
+      "name": "Clock Solitaire (classic)",
+      "shortDesc": "Variante Clock Solitaire (classic) de la familia clock.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Clock Solitaire (classic)."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "big_ben": {
+      "name": "Big Ben",
+      "shortDesc": "Variante Big Ben de la familia clock.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Big Ben."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "grandfathers_clock": {
+      "name": "Grandfather's Clock",
+      "shortDesc": "Variante Grandfather's Clock de la familia clock.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo. Vacía el tablero."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Grandfather's Clock."
+        },
+        "2": {
+          "title": "Regla",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico — afinaciones futuras."
+        }
+      }
+    },
+    "king_albert": {
+      "name": "King Albert",
+      "shortDesc": "King Albert — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout King Albert."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "raglan": {
+      "name": "Raglan",
+      "shortDesc": "Raglan — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Raglan."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "brigade": {
+      "name": "Brigade",
+      "shortDesc": "Brigade — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Brigade."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "belvedere": {
+      "name": "Belvedere",
+      "shortDesc": "Belvedere — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Belvedere."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "salic_law": {
+      "name": "Salic Law",
+      "shortDesc": "Salic Law — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Salic Law."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "glencoe": {
+      "name": "Glencoe",
+      "shortDesc": "Glencoe — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Glencoe."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "british_square": {
+      "name": "British Square",
+      "shortDesc": "British Square — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout British Square."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "royal_cotillion": {
+      "name": "Royal Cotillion",
+      "shortDesc": "Royal Cotillion — familia royal coronation.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Royal Cotillion."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "gypsy": {
+      "name": "Gypsy",
+      "shortDesc": "Gypsy — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Gypsy."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "easy_gypsy": {
+      "name": "Easy Gypsy",
+      "shortDesc": "Easy Gypsy — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Easy Gypsy."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "whitehead": {
+      "name": "Whitehead",
+      "shortDesc": "Whitehead — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Whitehead."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "blockade": {
+      "name": "Blockade",
+      "shortDesc": "Blockade — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Blockade."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "milligan": {
+      "name": "Milligan",
+      "shortDesc": "Milligan — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Milligan."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "trusty_twelve": {
+      "name": "Trusty Twelve",
+      "shortDesc": "Trusty Twelve — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Trusty Twelve."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "irmgard": {
+      "name": "Irmgard",
+      "shortDesc": "Irmgard — familia gypsy.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Irmgard."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "russian_patience": {
+      "name": "Russian Patience",
+      "shortDesc": "Russian Patience — familia russian bezique.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Russian Patience."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "crapette": {
+      "name": "Crapette",
+      "shortDesc": "Crapette — familia russian bezique.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Crapette."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "bezique_solitaire": {
+      "name": "Bezique Solitaire",
+      "shortDesc": "Bezique Solitaire — familia russian bezique.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Bezique Solitaire."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "boudoir": {
+      "name": "Boudoir",
+      "shortDesc": "Boudoir — familia russian bezique.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Boudoir."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "bakers_dozen": {
+      "name": "Baker's Dozen",
+      "shortDesc": "Baker's Dozen — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Baker's Dozen."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "freecell_two_decks": {
+      "name": "FreeCell Two Decks",
+      "shortDesc": "FreeCell Two Decks — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout FreeCell Two Decks."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "carlton": {
+      "name": "Carlton",
+      "shortDesc": "Carlton — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Carlton."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "patience_carree": {
+      "name": "Patience Carrée",
+      "shortDesc": "Patience Carrée — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Patience Carrée."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "quatre_coins": {
+      "name": "Patience des Quatre Coins",
+      "shortDesc": "Patience des Quatre Coins — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Patience des Quatre Coins."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "glouton": {
+      "name": "Glouton",
+      "shortDesc": "Glouton — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Glouton."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "maria": {
+      "name": "Maria",
+      "shortDesc": "Maria — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Maria."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "streets": {
+      "name": "Streets",
+      "shortDesc": "Streets — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Streets."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "number_ten": {
+      "name": "Number Ten",
+      "shortDesc": "Number Ten — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Number Ten."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "rank_and_file": {
+      "name": "Rank and File",
+      "shortDesc": "Rank and File — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Rank and File."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "indian": {
+      "name": "Indian",
+      "shortDesc": "Indian — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Indian."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "josephine": {
+      "name": "Joséphine",
+      "shortDesc": "Joséphine — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Joséphine."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "deuces": {
+      "name": "Deuces",
+      "shortDesc": "Deuces — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Deuces."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "corona": {
+      "name": "Corona",
+      "shortDesc": "Corona — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Corona."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "famous_fifty": {
+      "name": "Famous Fifty",
+      "shortDesc": "Famous Fifty — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Famous Fifty."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "big_forty": {
+      "name": "Big Forty",
+      "shortDesc": "Big Forty — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Big Forty."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "drapeaux": {
+      "name": "La Réussite des Drapeaux",
+      "shortDesc": "La Réussite des Drapeaux — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Réussite des Drapeaux."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "tapis_vert": {
+      "name": "Le Tapis Vert",
+      "shortDesc": "Le Tapis Vert — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Le Tapis Vert."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "belle_lucie_fr": {
+      "name": "La Belle Lucie (FR)",
+      "shortDesc": "La Belle Lucie (FR) — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Belle Lucie (FR)."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "les_huit": {
+      "name": "Les Huit",
+      "shortDesc": "Les Huit — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Les Huit."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "le_cadran": {
+      "name": "Le Cadran",
+      "shortDesc": "Le Cadran — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Le Cadran."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "la_tour": {
+      "name": "La Tour",
+      "shortDesc": "La Tour — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Tour."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "la_pendule": {
+      "name": "La Pendule",
+      "shortDesc": "La Pendule — familia french traditional.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Pendule."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "curds_and_whey": {
+      "name": "Curds and Whey",
+      "shortDesc": "Curds and Whey — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Curds and Whey."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "scuffle": {
+      "name": "Scuffle",
+      "shortDesc": "Scuffle — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Scuffle."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "la_cigale": {
+      "name": "La Cigale",
+      "shortDesc": "La Cigale — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Cigale."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "la_fourmi": {
+      "name": "La Fourmi",
+      "shortDesc": "La Fourmi — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout La Fourmi."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "step_by_step": {
+      "name": "Step by Step",
+      "shortDesc": "Step by Step — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Step by Step."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "spiderwort": {
+      "name": "Spiderwort",
+      "shortDesc": "Spiderwort — familia spider.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Spiderwort."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "will_o_wisp": {
+      "name": "Will o' the Wisp",
+      "shortDesc": "Will o' the Wisp — familia spider.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Will o' the Wisp."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "beetle": {
+      "name": "Beetle",
+      "shortDesc": "Beetle — familia spider.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Beetle."
+        },
+        "2": {
+          "title": "Tablero",
+          "body": "Reglas específicas de la variante."
+        },
+        "3": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "mrs_mop": {
+      "name": "Mrs. Mop",
+      "shortDesc": "Mrs. Mop — familia spider.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Mrs. Mop."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "penguin": {
+      "name": "Penguin",
+      "shortDesc": "Penguin — familia freecell.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Penguin."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "stalactites": {
+      "name": "Stalactites",
+      "shortDesc": "Stalactites — familia freecell.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Stalactites."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "bath": {
+      "name": "Bath",
+      "shortDesc": "Bath — familia freecell.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Bath."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "super_challenge_freecell": {
+      "name": "Super Challenge FreeCell",
+      "shortDesc": "Super Challenge FreeCell — familia freecell.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Super Challenge FreeCell."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "tuts_tomb": {
+      "name": "Tut's Tomb",
+      "shortDesc": "Tut's Tomb — familia pyramid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Tut's Tomb."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "apophis": {
+      "name": "Apophis",
+      "shortDesc": "Apophis — familia pyramid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Apophis."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "cheops": {
+      "name": "Cheops",
+      "shortDesc": "Cheops — familia pyramid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Cheops."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "relaxed_pyramid": {
+      "name": "Relaxed Pyramid",
+      "shortDesc": "Relaxed Pyramid — familia pyramid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Relaxed Pyramid."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "triangle": {
+      "name": "Triangle",
+      "shortDesc": "Triangle — familia pyramid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Triangle."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "golf": {
+      "name": "Golf (dataset)",
+      "shortDesc": "Golf (dataset) — familia tripeaks golf.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Golf (dataset)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "triple_peaks": {
+      "name": "Triple Peaks",
+      "shortDesc": "Triple Peaks — familia tripeaks golf.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Triple Peaks."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "pumpkin": {
+      "name": "Pumpkin",
+      "shortDesc": "Pumpkin — familia tripeaks golf.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Pumpkin."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "diamond_mine": {
+      "name": "Diamond Mine",
+      "shortDesc": "Diamond Mine — familia tripeaks golf.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Diamond Mine."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "robert": {
+      "name": "Robert",
+      "shortDesc": "Robert — familia tripeaks golf.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Robert."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "tower_of_hanoy": {
+      "name": "Tower of Hanoy",
+      "shortDesc": "Tower of Hanoy — familia accordion.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Tower of Hanoy."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "idle_year": {
+      "name": "Idle Year",
+      "shortDesc": "Idle Year — familia accordion.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Idle Year."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "streets_and_alleys_acc": {
+      "name": "Streets and Alleys (Accordéon)",
+      "shortDesc": "Streets and Alleys (Accordéon) — familia accordion.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Streets and Alleys (Accordéon)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "maze": {
+      "name": "Maze",
+      "shortDesc": "Maze — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Maze."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "display": {
+      "name": "Display",
+      "shortDesc": "Display — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Display."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "strategy_modern": {
+      "name": "Strategy (moderne)",
+      "shortDesc": "Strategy (moderne) — familia modern hybrid.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Strategy (moderne)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "monte_carlo": {
+      "name": "Monte Carlo",
+      "shortDesc": "Monte Carlo — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Monte Carlo."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "aces_up": {
+      "name": "Aces Up",
+      "shortDesc": "Aces Up — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Aces Up."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "hickory_dickory_dock": {
+      "name": "Hickory Dickory Dock",
+      "shortDesc": "Hickory Dickory Dock — familia clock.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Hickory Dickory Dock."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "travellers": {
+      "name": "Travellers (Voyageurs)",
+      "shortDesc": "Travellers (Voyageurs) — familia clock.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Travellers (Voyageurs)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "yukon_cells": {
+      "name": "Yukon Cells",
+      "shortDesc": "Yukon Cells — familia yukon.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Yukon Cells."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "forty_thieves": {
+      "name": "Forty Thieves (dataset)",
+      "shortDesc": "Forty Thieves (dataset) — familia forty thieves.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Forty Thieves (dataset)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "nestor": {
+      "name": "Nestor",
+      "shortDesc": "Nestor — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Nestor."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "tens": {
+      "name": "Tens",
+      "shortDesc": "Tens — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Tens."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "pairs": {
+      "name": "Pairs",
+      "shortDesc": "Pairs — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Pairs."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "decade": {
+      "name": "Decade",
+      "shortDesc": "Decade — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Decade."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "vertical": {
+      "name": "Vertical",
+      "shortDesc": "Vertical — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Vertical."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "quinze": {
+      "name": "Quinze",
+      "shortDesc": "Quinze — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Quinze."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "idiots_delight": {
+      "name": "Idiot's Delight",
+      "shortDesc": "Idiot's Delight — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Idiot's Delight."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "aces_and_kings": {
+      "name": "Aces and Kings",
+      "shortDesc": "Aces and Kings — familia pairs.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Aces and Kings."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "calculation": {
+      "name": "Calculation",
+      "shortDesc": "Calculation — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Calculation."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "betsy_ross": {
+      "name": "Betsy Ross",
+      "shortDesc": "Betsy Ross — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Betsy Ross."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "auld_lang_syne": {
+      "name": "Auld Lang Syne",
+      "shortDesc": "Auld Lang Syne — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Auld Lang Syne."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "sir_tommy": {
+      "name": "Sir Tommy",
+      "shortDesc": "Sir Tommy — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Sir Tommy."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "strategy": {
+      "name": "Strategy",
+      "shortDesc": "Strategy — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Strategy."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "lady_betty": {
+      "name": "Lady Betty",
+      "shortDesc": "Lady Betty — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Lady Betty."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "quadrille": {
+      "name": "Quadrille",
+      "shortDesc": "Quadrille — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Quadrille."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "above_and_below": {
+      "name": "Above and Below",
+      "shortDesc": "Above and Below — familia numeric math.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Above and Below."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "mahjong_cards": {
+      "name": "Mahjong Solitaire (cartes)",
+      "shortDesc": "Mahjong Solitaire (cartes) — familia mahjong cards.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Mahjong Solitaire (cartes)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "pegged": {
+      "name": "Pegged",
+      "shortDesc": "Pegged — familia mahjong cards.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Pegged."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "crystal_cluster": {
+      "name": "Crystal Cluster",
+      "shortDesc": "Crystal Cluster — familia mahjong cards.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Crystal Cluster."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "spite_and_malice": {
+      "name": "Spite and Malice",
+      "shortDesc": "Spite and Malice — familia multiplayer.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Spite and Malice."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "crapette_2p": {
+      "name": "Crapette (2 joueurs)",
+      "shortDesc": "Crapette (2 joueurs) — familia multiplayer.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Crapette (2 joueurs)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "nerts": {
+      "name": "Nerts (Pounce)",
+      "shortDesc": "Nerts (Pounce) — familia multiplayer.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Nerts (Pounce)."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "racing_demon": {
+      "name": "Racing Demon",
+      "shortDesc": "Racing Demon — familia multiplayer.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Racing Demon."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    },
+    "double_solitaire": {
+      "name": "Double Solitaire",
+      "shortDesc": "Double Solitaire — familia multiplayer.",
+      "rules": {
+        "0": {
+          "title": "Objetivo",
+          "body": "Llena los fundamentos As → Rey por palo."
+        },
+        "1": {
+          "title": "Disposición",
+          "body": "Layout Double Solitaire."
+        },
+        "2": {
+          "title": "Nota",
+          "body": "Motor genérico tableau-foundation."
+        }
+      }
+    }
   }
 }

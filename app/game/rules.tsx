@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import AppHeader from '../../src/components/AppHeader';
 import { useTheme } from '../../src/contexts/AppProviders';
+import { useIsLocal } from '../../src/contexts/useAppMode';
 import { APP_CONFIG } from '../../src/config/app.config';
 import { findVariant } from '../../src/game/variants';
 import { fetchRandomSpiderV2Deal } from '../../shared/api';
@@ -23,6 +24,7 @@ export default function RulesScreen() {
   const [pickedDifficulty, setPickedDifficulty] = React.useState<'easy' | 'medium' | 'hard'>('medium');
   const [loadingBD, setLoadingBD] = React.useState(false);
   const isSpiderVariant = v?.key?.startsWith('spider-') ?? false;
+  const isLocal = useIsLocal();
 
   if (!v) {
     return (
@@ -53,10 +55,17 @@ export default function RulesScreen() {
 
   const play = async () => {
     if (!v) return;
-    // STRATÉGIE BD-FIRST : toutes les variantes utilisent les deals validés
-    // de la BD (deal_seeds pour la plupart, spider_deals_v2 pour spider-1)
-    // car les générateurs locaux peuvent produire des solutions tronquées
-    // → bouton "indice" tombe à court de coups → blocage faux-positif.
+    // Local mode = pas de backend. Skip fetchRandomSpiderV2Deal + drop
+    // `fromBD=true` pour que useBDFirstLoad ne tente jamais de hit l'API.
+    // Le générateur TS local fait le boulot intégralement.
+    if (isLocal) {
+      router.push(`/game/solo?variant=${v.key}&difficulty=${pickedDifficulty}`);
+      return;
+    }
+    // STRATÉGIE BD-FIRST (cloud uniquement) : toutes les variantes utilisent
+    // les deals validés de la BD (deal_seeds pour la plupart, spider_deals_v2
+    // pour spider-1) car les générateurs locaux peuvent produire des solutions
+    // tronquées → bouton "indice" tombe à court de coups → blocage faux-positif.
     //
     //   - spider-1 : fetch direct spider_deals_v2 (qualité Python, +turns[])
     //   - autres variantes : fromBD=true → useBDFirstLoad fetch random
@@ -206,10 +215,14 @@ export default function RulesScreen() {
           </View>
         )}
 
-        {/* CTA — 2 boutons pour TOUTES les variantes : Local OU BD */}
+        {/* CTA — en mode cloud 2 boutons (Local OU BD), en mode local
+            UN SEUL bouton "Jouer maintenant" (le backend n'est pas accessible). */}
         {v.available ? (
           <>
-            {/* Bouton 1 : Génération LOCALE (TS engine) */}
+            {/* Bouton 1 : Génération LOCALE (TS engine). En mode local on
+                drop le suffixe "(Local)" — c'est le seul mode de jeu, pas
+                besoin de désambiguïser. En mode cloud, l'utilisateur a
+                aussi le choix "(BD)" donc on garde l'étiquette claire. */}
             <TouchableOpacity
               onPress={play}
               disabled={loadingBD}
@@ -220,24 +233,29 @@ export default function RulesScreen() {
               <Text style={styles.playText}>
                 {loadingBD
                   ? 'Chargement…'
-                  : isSpiderVariant
-                    ? `${t('rules.playNow')} (BD)`
-                    : `${t('rules.playNow')} (Local)`}
+                  : isLocal
+                    ? t('rules.playNow')
+                    : isSpiderVariant
+                      ? `${t('rules.playNow')} (BD)`
+                      : `${t('rules.playNow')} (Local)`}
               </Text>
             </TouchableOpacity>
 
-            {/* Bouton 2 : DONNE BD (toutes variantes) */}
-            <TouchableOpacity
-              onPress={playFromBD}
-              disabled={loadingBD}
-              style={[styles.playBtn, { backgroundColor: '#0EA5E9', marginTop: 10, opacity: loadingBD ? 0.55 : 1 }]}
-              activeOpacity={0.85}
-            >
-              <Ionicons name="server-outline" size={20} color="#fff" />
-              <Text style={styles.playText}>
-                {isSpiderVariant ? 'Donne BD (forcer)' : 'Donne BD (depuis MongoDB)'}
-              </Text>
-            </TouchableOpacity>
+            {/* Bouton 2 : DONNE BD — caché en mode local (le backend
+                MongoDB n'est pas accessible). */}
+            {!isLocal && (
+              <TouchableOpacity
+                onPress={playFromBD}
+                disabled={loadingBD}
+                style={[styles.playBtn, { backgroundColor: '#0EA5E9', marginTop: 10, opacity: loadingBD ? 0.55 : 1 }]}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="server-outline" size={20} color="#fff" />
+                <Text style={styles.playText}>
+                  {isSpiderVariant ? 'Donne BD (forcer)' : 'Donne BD (depuis MongoDB)'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </>
         ) : (
           <View style={[styles.unavailable, { backgroundColor: 'rgba(245,158,11,0.15)', borderColor: '#F59E0B' }]}>

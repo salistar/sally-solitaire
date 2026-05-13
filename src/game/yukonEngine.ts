@@ -18,6 +18,8 @@
  *  col 7 = 11 cards (5↓ + 6↑)
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 export type CardColor = 'red' | 'black';
@@ -84,7 +86,7 @@ export function buildDeck(): Card[] {
   return deck;
 }
 
-export function shuffleDeck(deck: Card[]): Card[] {
+export function shuffleDeck(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -328,26 +330,33 @@ function hashStateCycle(s: any): string {
   return (h >>> 0).toString(36);
 }
 
-export function createInitialState(): GameState {
-  console.log("[Yukon Solver] 🎲 Reverse-Deal Yukon — random + validation gagnante");
-  const t0 = Date.now();
-  const MAX_ATTEMPTS = 8;
-  let lastCand: GameState | null = null;
-  let lastSol: GameAction[] = [];
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const cand = reverseDealYukon();
-    const sol = computeYukonSolution(cand);
-    if (validateYukonSolution(cand, sol)) {
-      _yukonSolution = sol;
-      console.log(`[Yukon Solver] ✅ DONNE SOLUBLE (${Date.now() - t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups (validée gagnante)`);
-      return cand;
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[Yukon Solver] 🎲 Reverse-Deal Yukon — random + validation gagnante");
+    const t0 = Date.now();
+    const MAX_ATTEMPTS = 8;
+    let lastCand: GameState | null = null;
+    let lastSol: GameAction[] = [];
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const cand = reverseDealYukon();
+      const sol = computeYukonSolution(cand);
+      if (validateYukonSolution(cand, sol)) {
+        _yukonSolution = sol;
+        console.log(`[Yukon Solver] ✅ DONNE SOLUBLE (${Date.now() - t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups (validée gagnante)`);
+        return cand;
+      }
+      if (sol.length > lastSol.length) { lastCand = cand; lastSol = sol; }
     }
-    if (sol.length > lastSol.length) { lastCand = cand; lastSol = sol; }
+    const fallback = lastCand ?? reverseDealYukon();
+    _yukonSolution = lastSol.length > 0 ? lastSol : computeYukonSolution(fallback);
+    console.log(`[Yukon Solver] ⚠️ FALLBACK (${Date.now() - t0}ms) — ${_yukonSolution.length} coups partiels`);
+    return fallback;
+  } finally {
+    Math.random = _origRandom;
   }
-  const fallback = lastCand ?? reverseDealYukon();
-  _yukonSolution = lastSol.length > 0 ? lastSol : computeYukonSolution(fallback);
-  console.log(`[Yukon Solver] ⚠️ FALLBACK (${Date.now() - t0}ms) — ${_yukonSolution.length} coups partiels`);
-  return fallback;
 }
 
 export function canStackOnTableau(a: Card, b: Card): boolean {

@@ -56,6 +56,16 @@ export default function MultiplayerHubScreen() {
     router.push('/room/join');
   }, [router]);
 
+  const goRaceHistory = useCallback(() => {
+    log.screen('nav → /race-history');
+    router.push('/race-history');
+  }, [router]);
+
+  const goTournaments = useCallback(() => {
+    log.screen('nav → /tournaments');
+    router.push('/tournaments');
+  }, [router]);
+
   const goDailyChallenge = useCallback(async () => {
     setBusy(true);
     try {
@@ -106,6 +116,22 @@ export default function MultiplayerHubScreen() {
       icon: 'trophy',
       gradient: ['#F59E0B', '#EF4444'],
       onPress: goDailyChallenge,
+    },
+    {
+      key: 'history',
+      title: t('multiplayer.raceHistory', { defaultValue: 'Mes races' }),
+      subtitle: t('multiplayer.raceHistorySub', { defaultValue: 'Historique & replays' }),
+      icon: 'time',
+      gradient: ['#0EA5E9', '#6366F1'],
+      onPress: goRaceHistory,
+    },
+    {
+      key: 'tournaments',
+      title: t('multiplayer.tournaments', { defaultValue: 'Tournois' }),
+      subtitle: t('multiplayer.tournamentsSub', { defaultValue: 'Bracket 4 / 8 / 16 joueurs' }),
+      icon: 'trophy-outline',
+      gradient: ['#F59E0B', '#7C3AED'],
+      onPress: goTournaments,
     },
   ];
 

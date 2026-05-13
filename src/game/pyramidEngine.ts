@@ -17,6 +17,8 @@
  * Win = entire pyramid removed (the 28 cards).
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -70,7 +72,7 @@ function buildDeck(): Card[] {
   return deck;
 }
 
-function shuffle(deck: Card[]): Card[] {
+function shuffle(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -448,41 +450,48 @@ function simulatePyramidCascade(state: GameState, maxMoves = 400, totalTimeoutMs
   return isWon(s) ? path : null;
 }
 
-export function createInitialState(): GameState {
-  console.log("[Pyramid Solver] 🎲 Reverse-Deal Pyramid V2 — donne 100% solvable garantie");
-  const __t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[Pyramid Solver] 🎲 Reverse-Deal Pyramid V2 — donne 100% solvable garantie");
+    const __t0 = Date.now();
 
-  // STRATÉGIE (inspirée Spider 1-couleur) :
-  //   1. Random deal + cascade oracle (jusqu'à 6 essais, deal authentique-mélangé)
-  //   2. Fallback : reverseDealPyramid (plan topologique constructif → garantie)
+    // STRATÉGIE (inspirée Spider 1-couleur) :
+    //   1. Random deal + cascade oracle (jusqu'à 6 essais, deal authentique-mélangé)
+    //   2. Fallback : reverseDealPyramid (plan topologique constructif → garantie)
 
-  const MAX_ATTEMPTS = 6;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const candidate = dealOnce();
-    const sol = simulatePyramidCascade(candidate, 400, 600);
-    if (sol !== null && sol.length > 0) {
-      // Vérification stricte
-      let s = candidate;
-      let won = false;
-      for (const action of sol) {
-        const next = gameReducer(s, action);
-        if (next === s) break;
-        s = next;
-        if (isWon(s)) { won = true; break; }
-      }
-      if (won) {
-        _pyramidSolution = sol;
-        console.log(`[Pyramid Solver] ✅ DONNE RANDOM SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups via cascade`);
-        return candidate;
+    const MAX_ATTEMPTS = 6;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const candidate = dealOnce();
+      const sol = simulatePyramidCascade(candidate, 400, 600);
+      if (sol !== null && sol.length > 0) {
+        // Vérification stricte
+        let s = candidate;
+        let won = false;
+        for (const action of sol) {
+          const next = gameReducer(s, action);
+          if (next === s) break;
+          s = next;
+          if (isWon(s)) { won = true; break; }
+        }
+        if (won) {
+          _pyramidSolution = sol;
+          console.log(`[Pyramid Solver] ✅ DONNE RANDOM SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups via cascade`);
+          return candidate;
+        }
       }
     }
-  }
 
-  // Fallback constructif
-  const { state, solution } = reverseDealPyramid();
-  _pyramidSolution = solution;
-  console.log(`[Pyramid Solver] ✅ DONNE FALLBACK V2 SOLUBLE (${Date.now() - __t0}ms) — solution = ${solution.length} coups (${solution.length} TAP_PYRAMID)`);
-  return state;
+    // Fallback constructif
+    const { state, solution } = reverseDealPyramid();
+    _pyramidSolution = solution;
+    console.log(`[Pyramid Solver] ✅ DONNE FALLBACK V2 SOLUBLE (${Date.now() - __t0}ms) — solution = ${solution.length} coups (${solution.length} TAP_PYRAMID)`);
+    return state;
+  } finally {
+    Math.random = _origRandom;
+  }
 }
 
 /** A pyramid card is available when both its direct children (below) are removed. */

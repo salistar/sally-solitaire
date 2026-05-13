@@ -17,6 +17,8 @@
  * Score: lower is better — equals tableau cards remaining at end of game.
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -64,7 +66,7 @@ function buildDeck(): Card[] {
   return deck;
 }
 
-function shuffle(deck: Card[]): Card[] {
+function shuffle(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -343,54 +345,61 @@ function dfsSolveGolf(state: GameState, totalTimeoutMs = 1500): GameAction[] | n
   return recurse(state, []);
 }
 
-export function createInitialState(): GameState {
-  console.log("[Golf Solver] 🎲 Golf — random + cascade greedy + DFS profond");
-  const __t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[Golf Solver] 🎲 Golf — random + cascade greedy + DFS profond");
+    const __t0 = Date.now();
 
-  // 1) Random deal + cascade greedy (rapide, ~15-30% solvable naturellement)
-  const MAX_ATTEMPTS = 8;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const candidate = dealOnce();
-    const sol = simulateGolfCascade(candidate, 200, 400);
-    if (sol && sol.length > 0) {
-      const tableauEmpty = (() => {
-        let s = candidate;
-        for (const a of sol) s = gameReducer(s, a);
-        return s.tableau.every((c) => c.cards.length === 0);
-      })();
-      if (tableauEmpty) {
+    // 1) Random deal + cascade greedy (rapide, ~15-30% solvable naturellement)
+    const MAX_ATTEMPTS = 8;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const candidate = dealOnce();
+      const sol = simulateGolfCascade(candidate, 200, 400);
+      if (sol && sol.length > 0) {
+        const tableauEmpty = (() => {
+          let s = candidate;
+          for (const a of sol) s = gameReducer(s, a);
+          return s.tableau.every((c) => c.cards.length === 0);
+        })();
+        if (tableauEmpty) {
+          _golfSolution = sol;
+          console.log(`[Golf Solver] ✅ DONNE GREEDY SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups`);
+          return candidate;
+        }
+      }
+    }
+
+    // 2) Random deal + DFS profond (jusqu'à 6 essais, plus puissant que greedy)
+    console.log(`[Golf Solver] ⚠️ Greedy a échoué ${MAX_ATTEMPTS}× — passage au DFS profond`);
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const candidate = dealOnce();
+      const sol = dfsSolveGolf(candidate, 1500);
+      if (sol && sol.length > 0) {
         _golfSolution = sol;
-        console.log(`[Golf Solver] ✅ DONNE GREEDY SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups`);
+        console.log(`[Golf Solver] ✅ DONNE DFS SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/6) — solution = ${sol.length} coups`);
         return candidate;
       }
     }
-  }
 
-  // 2) Random deal + DFS profond (jusqu'à 6 essais, plus puissant que greedy)
-  console.log(`[Golf Solver] ⚠️ Greedy a échoué ${MAX_ATTEMPTS}× — passage au DFS profond`);
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const candidate = dealOnce();
-    const sol = dfsSolveGolf(candidate, 1500);
+    // 3) Fallback : reverse-walk (peu fiable mais existe pour compat)
+    console.log(`[Golf Solver] ⚠️ DFS aussi échoué — fallback reverse-walk`);
+    const cand = reverseDealGolf();
+    const sol = dfsSolveGolf(cand, 2000);
     if (sol && sol.length > 0) {
       _golfSolution = sol;
-      console.log(`[Golf Solver] ✅ DONNE DFS SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/6) — solution = ${sol.length} coups`);
-      return candidate;
+      console.log(`[Golf Solver] ✅ DONNE FALLBACK + DFS (${Date.now() - __t0}ms) — solution = ${sol.length} coups`);
+      return cand;
     }
-  }
-
-  // 3) Fallback : reverse-walk (peu fiable mais existe pour compat)
-  console.log(`[Golf Solver] ⚠️ DFS aussi échoué — fallback reverse-walk`);
-  const cand = reverseDealGolf();
-  const sol = dfsSolveGolf(cand, 2000);
-  if (sol && sol.length > 0) {
-    _golfSolution = sol;
-    console.log(`[Golf Solver] ✅ DONNE FALLBACK + DFS (${Date.now() - __t0}ms) — solution = ${sol.length} coups`);
+    // Last-resort : utiliser le greedy même si incomplet
+    _golfSolution = computeGolfSolution(cand);
+    console.log(`[Golf Solver] ⚠️ FALLBACK greedy partiel (${Date.now() - __t0}ms) — solution = ${_golfSolution.length} coups (peut être incomplète)`);
     return cand;
+  } finally {
+    Math.random = _origRandom;
   }
-  // Last-resort : utiliser le greedy même si incomplet
-  _golfSolution = computeGolfSolution(cand);
-  console.log(`[Golf Solver] ⚠️ FALLBACK greedy partiel (${Date.now() - __t0}ms) — solution = ${_golfSolution.length} coups (peut être incomplète)`);
-  return cand;
 }
 
 export function isPlayableOn(card: Card, wasteTop: Card | undefined): boolean {

@@ -25,6 +25,8 @@ import { logger } from '../../src/utils/logger';
 import { APP_CONFIG } from '../../src/config/app.config';
 import { findVariant } from '../../src/game/variants';
 import VsBotOverlay from '../../src/components/VsBotOverlay';
+import VsBotLayout from '../../src/components/VsBotLayout';
+import GenericBotPlateau from '../../src/components/GenericBotPlateau';
 import P2PCall from '../../src/components/P2PCall';
 import ExternalJitsiCall from '../../src/components/ExternalJitsiCall';
 
@@ -37,6 +39,19 @@ import * as Pyramid from '../../src/game/pyramidEngine';
 import * as TriPeaks from '../../src/game/tripeaksEngine';
 import * as FortyThieves from '../../src/game/fortyThievesEngine';
 import * as Accordion from '../../src/game/accordionEngine';
+import GenericTableauScreen from '../../src/components/GenericTableauScreen';
+import GenericDistributionScreen from '../../src/components/GenericDistributionScreen';
+import PairsScreen from '../../src/components/PairsScreen';
+import GolfChainScreen from '../../src/components/GolfScreen';
+import MathScreen from '../../src/components/MathScreen';
+import SpiderV2Screen from '../../src/components/SpiderV2Screen';
+import MazeScreen from '../../src/components/MazeScreen';
+import { useRaceReport } from '../../src/contexts/useRaceReport';
+import { useRace } from '../../src/contexts/RaceContext';
+import { useInventory } from '../../src/contexts/useInventory';
+import { useAutoClaimDailyOnWin } from '../../src/contexts/useAutoClaimDailyOnWin';
+import { useGameWithUndo } from '../../src/contexts/useGameWithUndo';
+import FloatingUndoButton from '../../src/components/FloatingUndoButton';
 
 import * as api from '../../shared/api';
 import * as Replays from '../../src/game/replays';
@@ -71,15 +86,49 @@ function useChrono(active: boolean) {
   return { seconds, reset, elapsedMs };
 }
 
-/** Hook indices : tient le compteur restant selon la difficulté. */
+/**
+ * Hook indices : combine deux sources :
+ *   - Pool de difficulté (Easy=∞, Medium=3, Hard=0) — fourni d'office, gratuit.
+ *   - Pool inventaire (hint_1 / hint_5 achetés au /spend) — utilisé en
+ *     surplus, consommé sur le serveur via /shop/consume.
+ *
+ * Le bouton hint reste activé tant que l'une des deux sources est non vide.
+ * Quand on `consume()`, on prend d'abord du pool difficulté ; quand il est
+ * épuisé, on tire de l'inventaire (qui est asynchrone — l'optimistic-update
+ * dans useInventory évite le lag visuel).
+ */
 function useHints(difficulty: Difficulty) {
   const max = hintsAllowed(difficulty);
   const [used, setUsed] = useState(0);
-  const remaining = max === Infinity ? Infinity : Math.max(0, max - used);
-  const canUseHint = difficulty !== 'hard' && (max === Infinity || used < max);
-  const consume = useCallback(() => setUsed((u) => u + 1), []);
+  const inv = useInventory();
+  const difficultyRemaining = max === Infinity ? Infinity : Math.max(0, max - used);
+  const inventoryHints = inv.totalHints();
+  const remaining = difficultyRemaining === Infinity ? Infinity : difficultyRemaining + inventoryHints;
+  const canUseHint =
+    difficulty !== 'hard' &&
+    (difficultyRemaining > 0 || inventoryHints > 0);
+  const consume = useCallback(() => {
+    if (difficulty === 'hard') return;
+    if (difficultyRemaining > 0 && difficultyRemaining !== Infinity) {
+      setUsed((u) => u + 1);
+      return;
+    }
+    if (difficultyRemaining === Infinity) {
+      // Easy mode: free unlimited hints, no inventory cost
+      return;
+    }
+    // Difficulty pool exhausted → drain inventory
+    inv.consumeHint();
+  }, [difficulty, difficultyRemaining, inv]);
   const reset = useCallback(() => setUsed(0), []);
-  return { remaining, canUseHint, consume, reset, used };
+  return {
+    remaining,
+    canUseHint,
+    consume,
+    reset,
+    used,
+    inventoryHints, // exposed for UI badge "+N from inventory"
+  };
 }
 
 /** Format mm:ss */
@@ -475,7 +524,7 @@ const AI_SPEEDS = [
  * enregistrer la séquence d'actions. Au won, `commit()` sauvegarde le replay.
  *
  * Usage :
- *   const [state, baseDispatch] = useReducer(...);
+ *   const [state, baseDispatch, undoCtl] = useGameWithUndo(...);
  *   const replayRec = useReplayRecorder(state, baseDispatch);
  *   const dispatch = replayRec.dispatch; // remplace baseDispatch
  *   useEffect(() => { if (won) replayRec.commit(...) }, [won]);
@@ -1032,39 +1081,40 @@ export default function SoloGameScreen() {
     );
   }
 
-  // Sélectionne l'écran engine (Klondike, Spider, FreeCell, etc.).
-  // Quand `vs=bot`, on l'enveloppe dans un wrapper qui pose VsBotOverlay
-  // au-dessus pour la course temporelle (générique tout-engine).
-  let engineScreen: React.ReactNode = null;
-  if (v.engine === 'klondike') engineScreen = <KlondikeScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'spider') engineScreen = <SpiderScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'freecell') engineScreen = <FreeCellScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'yukon') engineScreen = <YukonScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'golf') engineScreen = <GolfScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'pyramid') engineScreen = <PyramidScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'tripeaks') engineScreen = <TriPeaksScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'fortythieves') engineScreen = <FortyThievesScreen variant={v} difficulty={difficulty} />;
-  else if (v.engine === 'accordion') engineScreen = <AccordionScreen variant={v} difficulty={difficulty} />;
+  // Factory : crée une NOUVELLE instance de l'écran moteur à chaque appel.
+  // Indispensable pour pouvoir rendre Plateau 1 ET Plateau 2 avec le MÊME
+  // écran moteur (mêmes règles, mêmes visuels, mêmes assets), mais chacun
+  // avec son propre state interne. Chaque retour d'élément JSX donne une
+  // instance React indépendante avec ses propres hooks/useReducer/seed.
+  const buildEngineScreen = (): React.ReactNode => {
+    if (v.engine === 'klondike') return <KlondikeScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'spider') return <SpiderScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'freecell') return <FreeCellScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'yukon') return <YukonScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'golf') return <GolfScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'pyramid') return <PyramidScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'tripeaks') return <TriPeaksScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'fortythieves') return <FortyThievesScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'accordion') return <AccordionScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'generic_tableau') return <GenericTableauScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'generic_distribution') return <GenericDistributionScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'pairs') return <PairsScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'golf_chain') return <GolfChainScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'math') return <MathScreen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'spider_v2') return <SpiderV2Screen variant={v} difficulty={difficulty} />;
+    if (v.engine === 'maze') return <MazeScreen variant={v} difficulty={difficulty} />;
+    return null;
+  };
+  const engineScreen = buildEngineScreen();
 
   if (!engineScreen) return null;
 
   if (!isVsBot) return <>{engineScreen}</>;
 
-  // Mode vs=bot : overlay flottant en haut + écran engine en dessous.
-  // On passe le MODULE engine correspondant à la variante choisie pour
-  // que VsBotOverlay puisse instancier un reducer parallèle et rendre
-  // le vrai mini-plateau du bot (cartes visibles, pas juste une barre).
-  const engineMod =
-    v.engine === 'klondike' ? Klondike :
-    v.engine === 'spider' ? Spider :
-    v.engine === 'freecell' ? FreeCell :
-    v.engine === 'yukon' ? Yukon :
-    v.engine === 'golf' ? Golf :
-    v.engine === 'pyramid' ? Pyramid :
-    v.engine === 'tripeaks' ? TriPeaks :
-    v.engine === 'fortythieves' ? FortyThieves :
-    v.engine === 'accordion' ? Accordion :
-    Klondike;
+  // Mode vs=bot : Plateau 2 utilise le MÊME écran moteur que Plateau 1.
+  // L'ancien `engineMod` (qui choisissait un module legacy pour
+  // VsBotOverlay) n'est plus nécessaire — buildEngineScreen() rend une
+  // instance React indépendante qui gère son propre state interne.
 
   // Si `?call=webrtc-p2p` ou `?call=jitsi-local` ET `?room=CODE`, on
   // incruste un panneau caméra (réduit) en haut-droite — l'utilisateur
@@ -1076,59 +1126,68 @@ export default function SoloGameScreen() {
     return undefined as string | undefined;
   })();
 
+  // ═════════════════════════════════════════════════════════════════════
+  // PLATEAU 2 — VISUEL IDENTIQUE À PLATEAU 1
+  // ═════════════════════════════════════════════════════════════════════
+  // Le bot joue sur le MÊME écran moteur que l'utilisateur. On appelle
+  // `buildEngineScreen()` une seconde fois pour obtenir une instance React
+  // distincte avec son propre state interne. Visuellement c'est identique
+  // à Plateau 1 (même variante, mêmes cartes françaises PNG, même header
+  // GameHeader, mêmes stats, même hint button).
+  //
+  // Wrapper `pointerEvents="none"` → bloque toutes les interactions tactiles
+  // sur Plateau 2 (l'utilisateur ne peut pas accidentellement jouer pour le
+  // bot). Le bot dispose de son propre seed/deal indépendant — donc les 2
+  // plateaux peuvent avoir des donnes différentes (à syncer plus tard via
+  // RaceContext si on veut comparer les coups sur une donne identique).
+  //
+  // L'ancien <VsBotOverlay> et <GenericBotPlateau> ne sont plus utilisés ici
+  // (fichiers conservés pour ne pas casser d'autres callsites éventuels).
+  const botEngineScreen = buildEngineScreen();
+  const botPlateauNode = (
+    <View pointerEvents="none" style={{ flex: 1 }}>
+      {botEngineScreen}
+    </View>
+  );
+
+  const callPanelNode = showCallPanel ? (
+    call === 'webrtc-p2p' ? (
+      <P2PCall
+        roomCode={room!}
+        displayName="Player"
+        authToken={api.getAuthToken() || ''}
+        simulatedPeers={[]}
+        onClose={() => router.setParams({ call: undefined } as any)}
+        layout="horizontal"
+        botFallback={{ displayName: `Bot ${v.name}`, emoji: '🤖' }}
+      />
+    ) : (
+      <ExternalJitsiCall
+        roomCode={room!}
+        displayName="Player"
+        host={(global as any).__JITSI_LOCAL_HOST__ || 'localhost:8000'}
+        simulatedPeers={[]}
+        onClose={() => router.setParams({ call: undefined } as any)}
+      />
+    )
+  ) : null;
+
+  if (showCallPanel) {
+    // Mode appel → layout structuré, scrollable, caméra en strip dédiée.
+    return (
+      <VsBotLayout
+        userPlateau={engineScreen}
+        botPlateau={botPlateauNode}
+        callPanel={callPanelNode}
+      />
+    );
+  }
+
+  // Mode vs=bot sans appel → split simple haut/bas (comportement legacy).
   return (
     <View style={{ flex: 1 }}>
-      {/* Split 65/35 : plateau du USER en haut (assez de place pour
-          header + stock + 4 foundations + 7 colonnes tableau), plateau
-          du BOT compact en bas. */}
-      <View style={{ flex: 65 }}>
-        {engineScreen}
-      </View>
-      <View style={{ flex: 35 }}>
-        <VsBotOverlay
-          engine={engineMod as any}
-          difficulty={difficulty as any}
-          variantName={v.name}
-          onQuit={() => router.back()}
-        />
-      </View>
-      {/* Caméra incrustée (coin droit) si appel demandé */}
-      {showCallPanel && (
-        <View style={{
-          position: 'absolute',
-          right: 8,
-          bottom: 80,
-          width: 200,
-          height: 280,
-          borderRadius: 12,
-          overflow: 'hidden',
-          zIndex: 60,
-          backgroundColor: '#000',
-          shadowColor: '#000',
-          shadowOpacity: 0.6,
-          shadowRadius: 10,
-          shadowOffset: { width: 0, height: 4 },
-          elevation: 10,
-        }}>
-          {call === 'webrtc-p2p' ? (
-            <P2PCall
-              roomCode={room!}
-              displayName="Player"
-              authToken={api.getAuthToken() || ''}
-              simulatedPeers={[]}
-              onClose={() => router.setParams({ call: undefined } as any)}
-            />
-          ) : (
-            <ExternalJitsiCall
-              roomCode={room!}
-              displayName="Player"
-              host={(global as any).__JITSI_LOCAL_HOST__ || 'localhost:8000'}
-              simulatedPeers={[]}
-              onClose={() => router.setParams({ call: undefined } as any)}
-            />
-          )}
-        </View>
-      )}
+      <View style={{ flex: 65 }}>{engineScreen}</View>
+      <View style={{ flex: 35 }}>{botPlateauNode}</View>
     </View>
   );
 }
@@ -1284,16 +1343,18 @@ function GameHeader({ difficulty, seconds, hintsRemaining, canUseHint, onHint, o
 // ─────────────────────────────────────────────────────────────────────────
 // KLONDIKE
 // ─────────────────────────────────────────────────────────────────────────
-function KlondikeScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function KlondikeScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
   const drawCount: 1 | 3 = variant.options?.drawCount ?? 1;
 
-  const [state, baseDispatch] = useReducer(Klondike.gameReducer, undefined, () =>
-    Klondike.createInitialState(),
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(Klondike.gameReducer, undefined, () =>
+    Klondike.createInitialState(_race?.seed),
   );
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -1337,6 +1398,7 @@ function KlondikeScreen({ variant, difficulty }: { variant: any; difficulty: Dif
   const [selected, setSelected] = useState<{ src: 'tableau' | 'waste'; col?: number; cardIndex?: number } | null>(null);
 
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   const solvable = useSolvabilityCheck(state, state.moves, Klondike.analyzeKlondikeWinnability, 'Klondike');
@@ -1504,6 +1566,7 @@ function KlondikeScreen({ variant, difficulty }: { variant: any; difficulty: Dif
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader
         title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })}
         subtitle={t('solo.klondikeSubtitle', { drawCount })}
@@ -1626,7 +1689,7 @@ function KlondikeScreen({ variant, difficulty }: { variant: any; difficulty: Dif
 // ─────────────────────────────────────────────────────────────────────────
 // SPIDER
 // ─────────────────────────────────────────────────────────────────────────
-function SpiderScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function SpiderScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
@@ -1653,12 +1716,14 @@ function SpiderScreen({ variant, difficulty }: { variant: any; difficulty: Diffi
   // En mode BD : on évite la génération locale coûteuse (solveur V2). On
   // initialise avec un placeholder VIDE, le useEffect plus bas chargera le
   // vrai deal depuis MongoDB et le dispatchera via LOAD_FROM_BD.
-  const [state, baseDispatch] = useReducer(Spider.gameReducer, undefined, () =>
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(Spider.gameReducer, undefined, () =>
     isBDMode
       ? Spider.createEmptyPlaceholderState(suitMode)
-      : Spider.createInitialState(suitMode),
+      : Spider.createInitialState(suitMode, _race?.seed),
   );
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
 
   // Fetch + load le deal BD au montage UNIQUEMENT si fromBD=true
@@ -1759,6 +1824,7 @@ function SpiderScreen({ variant, difficulty }: { variant: any; difficulty: Diffi
   }, [state, showStuck]);
   const [selected, setSelected] = useState<{ col: number; cardIndex: number } | null>(null);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   // En mode BD : Python garantit la solvabilité → forceWinning=true bypass
@@ -1984,6 +2050,7 @@ function SpiderScreen({ variant, difficulty }: { variant: any; difficulty: Diffi
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={isBDMode ? `BD : ${dealIdParam}` : t('solo.spiderSubtitle', { suitMode })} showBack />
 
       <ScrollView contentContainerStyle={styles.body}>
@@ -2078,14 +2145,16 @@ function SpiderScreen({ variant, difficulty }: { variant: any; difficulty: Diffi
 // ─────────────────────────────────────────────────────────────────────────
 // FREECELL
 // ─────────────────────────────────────────────────────────────────────────
-function FreeCellScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function FreeCellScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(FreeCell.gameReducer, undefined, () =>
-    FreeCell.createInitialState(),
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(FreeCell.gameReducer, undefined, () =>
+    FreeCell.createInitialState(_race?.seed),
   );
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -2126,6 +2195,7 @@ function FreeCellScreen({ variant, difficulty }: { variant: any; difficulty: Dif
   }, [state, showStuck]);
   const [selected, setSelected] = useState<{ cardId: string } | null>(null);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   const solvable = useSolvabilityCheck(state, state.moves, FreeCell.analyzeFreeCellWinnability, 'FreeCell');
@@ -2217,6 +2287,7 @@ function FreeCellScreen({ variant, difficulty }: { variant: any; difficulty: Dif
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t('variant.freecell.name', { defaultValue: 'FreeCell' })} subtitle={t('solo.freecellSubtitle')} showBack />
 
       <ScrollView contentContainerStyle={styles.body}>
@@ -2316,12 +2387,14 @@ function FreeCellScreen({ variant, difficulty }: { variant: any; difficulty: Dif
 // ─────────────────────────────────────────────────────────────────────────
 // YUKON
 // ─────────────────────────────────────────────────────────────────────────
-function YukonScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function YukonScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(Yukon.gameReducer, undefined, () => Yukon.createInitialState());
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(Yukon.gameReducer, undefined, () => Yukon.createInitialState(_race?.seed));
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -2362,6 +2435,7 @@ function YukonScreen({ variant, difficulty }: { variant: any; difficulty: Diffic
   }, [state, showStuck]);
   const [selected, setSelected] = useState<{ col: number; idx: number } | null>(null);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   const solvable = useSolvabilityCheck(state, state.moves, Yukon.analyzeYukonWinnability, 'Yukon');
@@ -2443,6 +2517,7 @@ function YukonScreen({ variant, difficulty }: { variant: any; difficulty: Diffic
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={t('solo.yukonSubtitle')} showBack />
       <ScrollView contentContainerStyle={styles.body}>
         <GameHeader difficulty={difficulty} seconds={chrono.seconds} hintsRemaining={hints.remaining} canUseHint={hints.canUseHint} onHint={onHint} onReset={reset} palette={palette} aiPlaying={aiPlaying} onToggleAi={() => setAiPlaying((p) => !p)} aiPreview={aiNext ? describeAction(aiNext) : null} aiSpeed={aiSpeed} onCycleSpeed={cycleSpeed} />
@@ -2514,12 +2589,14 @@ function YukonScreen({ variant, difficulty }: { variant: any; difficulty: Diffic
 // ─────────────────────────────────────────────────────────────────────────
 // GOLF
 // ─────────────────────────────────────────────────────────────────────────
-function GolfScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function GolfScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(Golf.gameReducer, undefined, () => Golf.createInitialState());
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(Golf.gameReducer, undefined, () => Golf.createInitialState(_race?.seed));
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -2559,6 +2636,7 @@ function GolfScreen({ variant, difficulty }: { variant: any; difficulty: Difficu
     }
   }, [state, showStuck]);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const lost = state.phase === 'lost';
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
@@ -2631,6 +2709,7 @@ function GolfScreen({ variant, difficulty }: { variant: any; difficulty: Difficu
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={t('solo.golfSubtitle')} showBack />
       <ScrollView contentContainerStyle={styles.body}>
         <GameHeader difficulty={difficulty} seconds={chrono.seconds} hintsRemaining={hints.remaining} canUseHint={hints.canUseHint} onHint={onHint} onReset={reset} palette={palette} aiPlaying={aiPlaying} onToggleAi={() => setAiPlaying((p) => !p)} aiPreview={aiNext ? describeAction(aiNext) : null} aiSpeed={aiSpeed} onCycleSpeed={cycleSpeed} />
@@ -2697,12 +2776,14 @@ function GolfScreen({ variant, difficulty }: { variant: any; difficulty: Difficu
 // ─────────────────────────────────────────────────────────────────────────
 // PYRAMID
 // ─────────────────────────────────────────────────────────────────────────
-function PyramidScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function PyramidScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(Pyramid.gameReducer, undefined, () => Pyramid.createInitialState());
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(Pyramid.gameReducer, undefined, () => Pyramid.createInitialState(_race?.seed));
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -2742,6 +2823,7 @@ function PyramidScreen({ variant, difficulty }: { variant: any; difficulty: Diff
     }
   }, [state, showStuck]);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   const solvable = useSolvabilityCheck(state, state.moves, Pyramid.analyzePyramidWinnability, 'Pyramid');
@@ -2813,6 +2895,7 @@ function PyramidScreen({ variant, difficulty }: { variant: any; difficulty: Diff
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={t('solo.pyramidSubtitle')} showBack />
       <ScrollView contentContainerStyle={styles.body}>
         <GameHeader difficulty={difficulty} seconds={chrono.seconds} hintsRemaining={hints.remaining} canUseHint={hints.canUseHint} onHint={onHint} onReset={reset} palette={palette} aiPlaying={aiPlaying} onToggleAi={() => setAiPlaying((p) => !p)} aiPreview={aiNext ? describeAction(aiNext) : null} aiSpeed={aiSpeed} onCycleSpeed={cycleSpeed} />
@@ -2880,12 +2963,14 @@ function PyramidScreen({ variant, difficulty }: { variant: any; difficulty: Diff
 // ─────────────────────────────────────────────────────────────────────────
 // TRIPEAKS
 // ─────────────────────────────────────────────────────────────────────────
-function TriPeaksScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function TriPeaksScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(TriPeaks.gameReducer, undefined, () => TriPeaks.createInitialState());
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(TriPeaks.gameReducer, undefined, () => TriPeaks.createInitialState(_race?.seed));
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -2925,6 +3010,7 @@ function TriPeaksScreen({ variant, difficulty }: { variant: any; difficulty: Dif
     }
   }, [state, showStuck]);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   const solvable = useSolvabilityCheck(state, state.moves, TriPeaks.analyzeTriPeaksWinnability, 'TriPeaks');
@@ -3002,6 +3088,7 @@ function TriPeaksScreen({ variant, difficulty }: { variant: any; difficulty: Dif
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={t('solo.tripeaksSubtitle', { combo: state.combo })} showBack />
       <ScrollView contentContainerStyle={styles.body}>
         <GameHeader difficulty={difficulty} seconds={chrono.seconds} hintsRemaining={hints.remaining} canUseHint={hints.canUseHint} onHint={onHint} onReset={reset} palette={palette} aiPlaying={aiPlaying} onToggleAi={() => setAiPlaying((p) => !p)} aiPreview={aiNext ? describeAction(aiNext) : null} aiSpeed={aiSpeed} onCycleSpeed={cycleSpeed} />
@@ -3063,12 +3150,14 @@ function TriPeaksScreen({ variant, difficulty }: { variant: any; difficulty: Dif
 // ─────────────────────────────────────────────────────────────────────────
 // FORTY THIEVES
 // ─────────────────────────────────────────────────────────────────────────
-function FortyThievesScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function FortyThievesScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(FortyThieves.gameReducer, undefined, () => FortyThieves.createInitialState());
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(FortyThieves.gameReducer, undefined, () => FortyThieves.createInitialState(_race?.seed));
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -3109,6 +3198,7 @@ function FortyThievesScreen({ variant, difficulty }: { variant: any; difficulty:
   }, [state, showStuck]);
   const [selected, setSelected] = useState<{ src: 'tableau' | 'waste'; col?: number } | null>(null);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
   const solvable = useSolvabilityCheck(state, state.moves, FortyThieves.analyzeFortyThievesWinnability, 'FortyThieves');
@@ -3216,6 +3306,7 @@ function FortyThievesScreen({ variant, difficulty }: { variant: any; difficulty:
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={t('solo.fortyThievesSubtitle')} showBack />
       <ScrollView contentContainerStyle={styles.body}>
         <GameHeader difficulty={difficulty} seconds={chrono.seconds} hintsRemaining={hints.remaining} canUseHint={hints.canUseHint} onHint={onHint} onReset={reset} palette={palette} aiPlaying={aiPlaying} onToggleAi={() => setAiPlaying((p) => !p)} aiPreview={aiNext ? describeAction(aiNext) : null} aiSpeed={aiSpeed} onCycleSpeed={cycleSpeed} />
@@ -3299,12 +3390,14 @@ function FortyThievesScreen({ variant, difficulty }: { variant: any; difficulty:
 // ─────────────────────────────────────────────────────────────────────────
 // ACCORDION
 // ─────────────────────────────────────────────────────────────────────────
-function AccordionScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
+export function AccordionScreen({ variant, difficulty }: { variant: any; difficulty: Difficulty }) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useTranslation();
-  const [state, baseDispatch] = useReducer(Accordion.gameReducer, undefined, () => Accordion.createInitialState());
+  const _race = useRace();
+  const [state, baseDispatch, undoCtl] = useGameWithUndo(Accordion.gameReducer, undefined, () => Accordion.createInitialState(_race?.seed));
   const _replayRec = useReplayRecorder(state, baseDispatch);
+  useRaceReport({ score: state.score, moves: state.moves, finished: state.phase === 'won', getActions: _replayRec.getActions });
   const dispatch = _replayRec.dispatch;
   const [showWin, setShowWin] = useState(false);
   const [showStuck, setShowStuck] = useState(false);
@@ -3365,6 +3458,7 @@ function AccordionScreen({ variant, difficulty }: { variant: any; difficulty: Di
     }
   }, [state, showStuck]);
   const won = state.phase === 'won';
+  useAutoClaimDailyOnWin(variant.key, won);
   const lost = state.phase === 'lost';
   const chrono = useChrono(!won);
   const hints = useHints(difficulty);
@@ -3407,6 +3501,7 @@ function AccordionScreen({ variant, difficulty }: { variant: any; difficulty: Di
   return (
     <View style={[styles.root, { backgroundColor: palette.bg }]}>
       <LinearGradient colors={palette.bgGradient as any} style={StyleSheet.absoluteFill} />
+      <FloatingUndoButton undoCtl={undoCtl} />
       <AppHeader title={t(`variant.${variant.key}.name`, { defaultValue: variant.name })} subtitle={t('solo.accordionSubtitle', { count: state.piles.length })} showBack />
       <ScrollView contentContainerStyle={styles.body}>
         <GameHeader difficulty={difficulty} seconds={chrono.seconds} hintsRemaining={hints.remaining} canUseHint={hints.canUseHint} onHint={onHint} onReset={reset} palette={palette} aiPlaying={aiPlaying} onToggleAi={() => setAiPlaying((p) => !p)} aiPreview={aiNext ? describeAction(aiNext) : null} aiSpeed={aiSpeed} onCycleSpeed={cycleSpeed} />

@@ -19,10 +19,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import AppHeader from '../../src/components/AppHeader';
 import { useTheme } from '../../src/contexts/AppProviders';
+import { useIsLocal } from '../../src/contexts/useAppMode';
 import { logger } from '../../src/utils/logger';
 import * as api from '../../shared/api';
 
-const HERO = require('../../assets/hero/profile-chips.jpg');
+const HERO = require('../../assets/hero/welcome-deck.jpg');
 const log = logger.scoped('ProfileScreen');
 
 function StatCard({ icon, label, value, color, palette }: any) {
@@ -45,12 +46,22 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { palette } = useTheme();
   const styles = createStyles(palette);
+  const isLocal = useIsLocal();
   const [user, setUser] = useState<any>(null);
   const [rank, setRank] = useState<any>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  // Solitaire ecosystem (race + daily rewards) — orthogonal to the legacy
+  // `user.stats` aggregate. Fetched best-effort, never blocks the page.
+  const [raceElo, setRaceElo] = useState<api.RaceEloEntry | null>(null);
+  const [rewards, setRewards] = useState<api.UserRewards | null>(null);
 
   useEffect(() => {
     log.screen('mounted');
+    // Local mode = no account, no /users/me, no rank. Skip all backend calls.
+    if (isLocal) {
+      log.explain('mode local — aucun appel backend, UI offline');
+      return;
+    }
     (async () => {
       // 1) /users/me : critique
       try {
@@ -59,7 +70,18 @@ export default function ProfileScreen() {
         log.bout('200 /users/me', { username: u.username, elo: u.elo });
         setUser(u);
         setLoadError(null);
+
+        // 1a) Solitaire ecosystem stats — fire after we have a userId.
+        // Failures are silent: the section just hides or shows zeros.
+        api.fetchUserRaceElo(u.id, 'global').then(setRaceElo).catch(() => {});
+        api.fetchUserRewards(u.id).then(setRewards).catch(() => {});
       } catch (e: any) {
+        // NoSessionError = no token in memory. Don't redirect (could be a
+        // legit guest UI that just hasn't logged in yet). Don't log noise.
+        if (e?.name === 'NoSessionError') {
+          log.explain('pas de session — UI invite à se connecter');
+          return;
+        }
         const msg = e?.message ?? e?.toString?.() ?? 'unknown';
         const status = e?.status ?? '?';
         log.error('GET /users/me failed', { status, msg });
@@ -77,13 +99,49 @@ export default function ProfileScreen() {
         setRank(r);
         log.explain('profil + rang chargés');
       } catch (e: any) {
-        const msg = e?.message ?? e?.toString?.() ?? 'unknown';
         const status = e?.status ?? '?';
         if (status === 404) log.explain('pas encore de rang solitaire pour ce joueur');
-        else log.error('GET /my-rank failed (non bloquant)', { status, msg });
+        else if (status === 401) log.explain('rang non chargé — pas de session');
+        else log.error('GET /my-rank failed (non bloquant)', { status, msg: e?.message });
       }
     })();
-  }, []);
+  }, [isLocal]);
+
+  // Local mode: no account, no backend stats. Show a focused offline profile
+  // with a CTA to switch to cloud mode if the user wants online features.
+  if (isLocal) {
+    return (
+      <View style={styles.container}>
+        <LinearGradient colors={palette.bgGradient} style={StyleSheet.absoluteFill} />
+        <AppHeader title={t('profile')} />
+        <View style={{ padding: 24, alignItems: 'center', marginTop: 40, gap: 14 }}>
+          <Ionicons name="person-circle-outline" size={84} color={palette.textSecondary} />
+          <Text style={{ color: palette.text, fontSize: 18, fontFamily: 'Inter-Black' }}>
+            Mode local
+          </Text>
+          <Text style={{ color: palette.textSecondary, fontSize: 13, textAlign: 'center', maxWidth: 280, lineHeight: 18 }}>
+            Tu joues hors-ligne. Aucun compte requis. Tes parties restent sur cet appareil.
+          </Text>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row', alignItems: 'center', gap: 8,
+              paddingHorizontal: 18, paddingVertical: 12,
+              borderRadius: 10, backgroundColor: '#7C3AED', marginTop: 8,
+            }}
+            onPress={() => router.push('/auth/mode-select')}
+          >
+            <Ionicons name="cloud-upload" size={18} color="#fff" />
+            <Text style={{ color: '#fff', fontFamily: 'Inter-Bold', fontSize: 13 }}>
+              Passer en mode connecté
+            </Text>
+          </TouchableOpacity>
+          <Text style={{ color: palette.textSecondary, fontSize: 11, textAlign: 'center', marginTop: 12, maxWidth: 260 }}>
+            Le mode connecté débloque : classements mondiaux, multijoueur 1v1, tournois, daily challenge, achievements en ligne.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   if (!user) {
     return (
@@ -174,6 +232,92 @@ export default function ProfileScreen() {
             </View>
           </LinearGradient>
         </View>
+
+        {/* ─── Solitaire ecosystem : Race ELO + Daily rewards ──────────── */}
+        {/* This section bridges the legacy `user.stats` aggregate (above) and
+           the new solitaire-specific layers (race ELO, daily rewards, shop,
+           achievements). Each card is tappable and routes to the matching
+           feature screen. Hidden if both data sources are still loading. */}
+        {(raceElo || rewards) && (
+          <View style={styles.soloSection}>
+            <Text style={[styles.sectionTitle, { color: palette.text, marginLeft: 0, marginTop: 0 }]}>
+              🎯 Solitaire Race & Daily
+            </Text>
+
+            <View style={styles.soloStatsRow}>
+              {raceElo && (
+                <TouchableOpacity
+                  onPress={() => router.push('/leaderboard-race')}
+                  activeOpacity={0.85}
+                  style={[styles.soloStatCard, { backgroundColor: palette.card, borderColor: palette.border }]}
+                >
+                  <Text style={styles.soloStatValue}>{raceElo.elo}</Text>
+                  <Text style={[styles.soloStatLabel, { color: palette.textSecondary }]}>RACE ELO</Text>
+                  <Text style={[styles.soloStatSub, { color: palette.textSecondary }]}>
+                    {raceElo.wins}V · {raceElo.losses}D · {Math.round(raceElo.winRate * 100)}%
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {rewards && (
+                <TouchableOpacity
+                  onPress={() => router.push('/daily-challenge')}
+                  activeOpacity={0.85}
+                  style={[styles.soloStatCard, { backgroundColor: palette.card, borderColor: palette.border }]}
+                >
+                  <Text style={[styles.soloStatValue, { color: '#EF4444' }]}>🔥 {rewards.dailyStreak}</Text>
+                  <Text style={[styles.soloStatLabel, { color: palette.textSecondary }]}>STREAK</Text>
+                  <Text style={[styles.soloStatSub, { color: palette.textSecondary }]}>
+                    Best {rewards.bestStreak} · {rewards.xp} XP
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Quick-nav grid : 4 entry points to the solitaire ecosystem.
+                Same pattern as the multiplayer hub — chips with icon + label. */}
+            <View style={styles.soloLinksGrid}>
+              <TouchableOpacity
+                style={[styles.soloLinkChip, { backgroundColor: palette.card, borderColor: palette.border }]}
+                onPress={() => router.push('/race-history')}
+              >
+                <Ionicons name="time" size={16} color="#0EA5E9" />
+                <Text style={[styles.soloLinkText, { color: palette.text }]}>Mes races</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.soloLinkChip, { backgroundColor: palette.card, borderColor: palette.border }]}
+                onPress={() => router.push('/achievements-online')}
+              >
+                <Ionicons name="trophy" size={16} color="#F59E0B" />
+                <Text style={[styles.soloLinkText, { color: palette.text }]}>Achievements</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.soloLinkChip, { backgroundColor: palette.card, borderColor: palette.border }]}
+                onPress={() => router.push('/spend')}
+              >
+                <Ionicons name="cart" size={16} color="#A78BFA" />
+                <Text style={[styles.soloLinkText, { color: palette.text }]}>Boutique</Text>
+              </TouchableOpacity>
+              {user?.id && (
+                <TouchableOpacity
+                  style={[styles.soloLinkChip, { backgroundColor: palette.card, borderColor: palette.border }]}
+                  onPress={() => router.push(`/user/${user.id}`)}
+                >
+                  <Ionicons name="person" size={16} color="#10B981" />
+                  <Text style={[styles.soloLinkText, { color: palette.text }]}>Profil public</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {rewards && rewards.coins > 0 && (
+              <View style={[styles.soloRewardsBalance, { borderColor: palette.border }]}>
+                <Text style={[styles.soloRewardsBalanceText, { color: palette.textSecondary }]}>
+                  🪙 {rewards.coins} coins gagnés à dépenser en boutique items
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
 
         {/* Stats grid 3x2 */}
         <View style={styles.statsGrid}>
@@ -304,6 +448,25 @@ function createStyles(palette: ReturnType<typeof useTheme>['palette']) {
 
     statsGrid: { padding: 14 },
     statsRow: { flexDirection: 'row' },
+
+    soloSection: { paddingHorizontal: 14, paddingTop: 14, gap: 10 },
+    soloStatsRow: { flexDirection: 'row', gap: 8 },
+    soloStatCard: {
+      flex: 1, padding: 12, borderRadius: 12, borderWidth: 1, alignItems: 'center', gap: 2,
+    },
+    soloStatValue: { color: '#FCD34D', fontSize: 20, fontFamily: 'Inter-Black' },
+    soloStatLabel: { fontSize: 9, fontFamily: 'Inter-Black', letterSpacing: 1, marginTop: 2 },
+    soloStatSub: { fontSize: 10, fontFamily: 'Inter-Regular', marginTop: 2 },
+    soloLinksGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    soloLinkChip: {
+      flexDirection: 'row', alignItems: 'center', gap: 6,
+      paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1,
+    },
+    soloLinkText: { fontSize: 12, fontFamily: 'Inter-Bold' },
+    soloRewardsBalance: {
+      padding: 10, borderWidth: 1, borderStyle: 'dashed', borderRadius: 8, marginTop: 4,
+    },
+    soloRewardsBalanceText: { fontSize: 11, fontFamily: 'Inter-Regular', textAlign: 'center' },
 
     sectionTitle: { fontSize: 14, fontFamily: 'Inter-Bold', marginHorizontal: 14, marginTop: 10, marginBottom: 8 },
     achievementPill: {

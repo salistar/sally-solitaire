@@ -19,6 +19,8 @@
  * gives 1, 2, 4, 8, 16, ... points (doubles each card; resets on draw).
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -93,7 +95,7 @@ function buildDeck(): Card[] {
   return deck;
 }
 
-function shuffle(deck: Card[]): Card[] {
+function shuffle(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -321,27 +323,34 @@ function simulateTriPeaksCascade(state: GameState, maxMoves = 200, totalTimeoutM
   return s.slots.every((sl) => sl.card === null) ? path : null;
 }
 
-export function createInitialState(): GameState {
-  console.log("[TriPeaks Solver] 🎲 TriPeaks — random + cascade oracle, fallback reverse-walk");
-  const __t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[TriPeaks Solver] 🎲 TriPeaks — random + cascade oracle, fallback reverse-walk");
+    const __t0 = Date.now();
 
-  // 1) Random deal + cascade oracle
-  const MAX_ATTEMPTS = 6;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const candidate = dealOnce();
-    const sol = simulateTriPeaksCascade(candidate);
-    if (sol && sol.length > 0) {
-      _tripeaksSolution = sol;
-      console.log(`[TriPeaks Solver] ✅ DONNE RANDOM SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups`);
-      return candidate;
+    // 1) Random deal + cascade oracle
+    const MAX_ATTEMPTS = 6;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const candidate = dealOnce();
+      const sol = simulateTriPeaksCascade(candidate);
+      if (sol && sol.length > 0) {
+        _tripeaksSolution = sol;
+        console.log(`[TriPeaks Solver] ✅ DONNE RANDOM SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution = ${sol.length} coups`);
+        return candidate;
+      }
     }
-  }
 
-  // 2) Fallback : reverse-walk + greedy
-  const cand = reverseDealTriPeaks();
-  _tripeaksSolution = computeTriPeaksSolution(cand);
-  console.log(`[TriPeaks Solver] ✅ DONNE FALLBACK V2 (${Date.now() - __t0}ms) — solution greedy = ${_tripeaksSolution.length} coups`);
-  return cand;
+    // 2) Fallback : reverse-walk + greedy
+    const cand = reverseDealTriPeaks();
+    _tripeaksSolution = computeTriPeaksSolution(cand);
+    console.log(`[TriPeaks Solver] ✅ DONNE FALLBACK V2 (${Date.now() - __t0}ms) — solution greedy = ${_tripeaksSolution.length} coups`);
+    return cand;
+  } finally {
+    Math.random = _origRandom;
+  }
 }
 
 function recomputeFaceUp(slots: Slot[]): Slot[] {

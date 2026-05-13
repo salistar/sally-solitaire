@@ -34,6 +34,8 @@ const CARD_HERO  = require('../../assets/cards/12O.png');
 // Per-slide background pattern (built from local card PNGs).
 import CardsPattern, { CardsPatternVariant } from '../../src/components/CardsPattern';
 import { APP_CONFIG } from '../../src/config/app.config';
+import { BrandLogo } from '../../src/components/BrandLogo';
+import { OnboardIllustration } from '../../src/components/OnboardIllustration';
 
 const SLIDE_BACKGROUNDS = {
   slide2: APP_CONFIG.slides.slide2,
@@ -56,11 +58,14 @@ export default function WelcomeScreen() {
     log.screen('mounted');
   }, []);
 
-  const SLIDES = [
-    { key: 'logo',   useCard: true },
-    { key: 'slide2', icon: '🌐', titleKey: 'slide2.title', descKey: 'slide2.desc' },
-    { key: 'slide3', icon: '🧠', titleKey: 'slide3.title', descKey: 'slide3.desc' },
-    { key: 'slide4', icon: '🏆', titleKey: 'slide4.title', descKey: 'slide4.desc' },
+  const SLIDES: Array<
+    | { key: 'logo'; useCard: true }
+    | { key: string; illustration: 'multiplayer' | 'intelligence' | 'trophy'; titleKey: string; descKey: string }
+  > = [
+    { key: 'logo', useCard: true },
+    { key: 'slide2', illustration: 'multiplayer', titleKey: 'slide2.title', descKey: 'slide2.desc' },
+    { key: 'slide3', illustration: 'intelligence', titleKey: 'slide3.title', descKey: 'slide3.desc' },
+    { key: 'slide4', illustration: 'trophy', titleKey: 'slide4.title', descKey: 'slide4.desc' },
   ];
 
   const handleSelectLanguage = (code: LocaleCode) => {
@@ -76,13 +81,13 @@ export default function WelcomeScreen() {
       setCurrentIndex(currentIndex + 1);
     } else {
       log.screen('finish onboarding → /auth/login');
-      router.replace('/auth/login');
+      router.replace('/auth/mode-select');
     }
   };
 
   const handleSkip = () => {
     log.screen('skip intro → /auth/login');
-    router.replace('/auth/login');
+    router.replace('/auth/mode-select');
   };
 
   // ─── Language picker step ───────────────────────
@@ -95,7 +100,9 @@ export default function WelcomeScreen() {
         />
         <SafeAreaView style={s.container}>
           <View style={s.langContainer}>
-            <Text style={s.langHero}>🎴</Text>
+            <View style={s.langLogoWrap}>
+              <BrandLogo size={92} />
+            </View>
             <Text style={s.sallyHeader}>Sally <Text style={{ color: APP_COLOR }}>Solitaire</Text></Text>
             <Text style={s.langTitle}>{t('chooseLanguage') ?? 'Choose your language'}</Text>
             <View style={s.langButtons}>
@@ -120,39 +127,35 @@ export default function WelcomeScreen() {
     );
   }
 
-  const renderSlide = ({ item, index }: { item: typeof SLIDES[0]; index: number }) => {
+  const renderSlide = ({ item, index }: { item: (typeof SLIDES)[number]; index: number }) => {
     const bg = (SLIDE_BACKGROUNDS as any)[item.key];
     return (
-    <View style={[s.slide, { width }]}>
-      {bg && <CardsPattern variant={bg.variant} tint={bg.tint} overlayStrength={0.55} />}
-      {index === 0 ? (
-        <>
-          <ImageBackground
-            source={HERO}
-            style={{ width: width * 0.85, height: 280, alignItems: 'center', justifyContent: 'center' }}
-            imageStyle={{ borderRadius: 24 }}
-          >
-            <LinearGradient
-              colors={['rgba(124,58,237,0.2)', 'rgba(10,10,26,0.75)']}
-              style={[StyleSheet.absoluteFill, { borderRadius: 24 }]}
-            />
-            <Animated.Image source={CARD_HERO} style={{ width: 120, height: 180 }} resizeMode="contain" />
-          </ImageBackground>
-          <View style={s.titleRow}>
-            <Text style={s.sallyText}>Sally</Text>
-            <Text style={[s.appNameText, { color: APP_COLOR }]}>Solitaire</Text>
-          </View>
-          <Text style={s.slideDesc}>{t('slide1.desc') ?? 'Welcome to Solitaire — the card game that rewards bluffs.'}</Text>
-        </>
-      ) : (
-        <>
-          <Text style={s.slideIcon}>{item.icon}</Text>
-          <Text style={[s.slideTitle, { color: APP_COLOR }]}>{t(item.titleKey!)}</Text>
-          <Text style={s.slideDesc}>{t(item.descKey!)}</Text>
-        </>
-      )}
-    </View>
-  );
+      <View style={[s.slide, { width }]}>
+        {bg && <CardsPattern variant={bg.variant} tint={bg.tint} overlayStrength={0.55} />}
+        {index === 0 ? (
+          <>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              <BrandLogo size={130} />
+            </View>
+            <View style={s.titleRow}>
+              <Text style={s.sallyText}>Sally</Text>
+              <Text style={[s.appNameText, { color: APP_COLOR }]}>Solitaire</Text>
+            </View>
+            <Text style={s.slideDesc}>
+              {t('slide1.desc') ?? 'A modern, elegant take on the classic card game.'}
+            </Text>
+          </>
+        ) : (
+          <>
+            <View style={s.slideIllustrationWrap}>
+              <OnboardIllustration variant={(item as any).illustration} size={140} />
+            </View>
+            <Text style={[s.slideTitle, { color: APP_COLOR }]}>{t((item as any).titleKey)}</Text>
+            <Text style={s.slideDesc}>{t((item as any).descKey)}</Text>
+          </>
+        )}
+      </View>
+    );
   };
 
   const isLast = currentIndex === SLIDES.length - 1;
@@ -220,7 +223,8 @@ const s = StyleSheet.create({
     flex: 1, justifyContent: 'center', alignItems: 'center',
     paddingHorizontal: 32,
   },
-  langHero: { fontSize: 70, marginBottom: 10 },
+  langLogoWrap: { marginBottom: 22, alignItems: 'center', justifyContent: 'center' },
+  slideIllustrationWrap: { marginBottom: 24, alignItems: 'center', justifyContent: 'center' },
   sallyHeader: {
     fontSize: 32, fontFamily: 'Inter-Black', color: '#fff',
     letterSpacing: 1, marginBottom: 24,
@@ -246,7 +250,6 @@ const s = StyleSheet.create({
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 28, marginBottom: 14 },
   sallyText: { fontSize: 38, fontFamily: 'Inter-Black', color: '#fff' },
   appNameText: { fontSize: 38, fontFamily: 'Inter-Black' },
-  slideIcon: { fontSize: 84, marginBottom: 24 },
   slideTitle: { fontSize: 28, fontFamily: 'Inter-Black', textAlign: 'center', marginBottom: 16 },
   slideDesc: { fontSize: 17, fontFamily: 'Inter-Regular', color: '#D1D5DB', textAlign: 'center', lineHeight: 26 },
   dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, paddingVertical: 24 },

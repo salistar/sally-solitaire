@@ -14,7 +14,16 @@
     "production": {
       "autoIncrement": true,
       "android": { "buildType": "app-bundle" },
-      "ios": { "image": "latest" }
+      "ios": { "image": "latest" },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.salistar.com/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "https://ws.salistar.com",
+        "EXPO_PUBLIC_TURN_HOST": "turn.salistar.com",
+        "EXPO_PUBLIC_TURN_PORT": "3478",
+        "EXPO_PUBLIC_TURN_USERNAME": "sallycards",
+        "EXPO_PUBLIC_BUILD_ENV": "production",
+        "EXPO_PUBLIC_RELEASE_CHANNEL": "prod"
+      }
     }
   },
   "submit": {

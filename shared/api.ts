@@ -1,5 +1,11 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import {
+  persistNewSession,
+  persistRotatedTokens,
+  bootstrapSession,
+  clearSession,
+} from './auth-storage';
 
 /**
  * Résout l'URL de l'API dynamiquement :
@@ -49,9 +55,29 @@ if (__DEV__) {
   console.log('[api] Socket →', SOCKET_URL);
 }
 
-// In-memory token storage
+// In-memory token storage. The persistence layer (auth-storage.ts) mirrors
+// these into AsyncStorage with a rolling 7-day / absolute 30-day policy.
+// `bootstrapAuth()` is called from useAuth's mount effect to rehydrate them.
 let authToken: string | null = null;
 let refreshToken: string | null = null;
+
+/**
+ * Restore the auth session from persistent storage on app start. Applies the
+ * 7-day rolling + 30-day absolute expiry rules; returns true if the session
+ * is still valid (tokens loaded into memory), false otherwise (storage
+ * cleared, user must re-login).
+ */
+export async function bootstrapAuth(): Promise<boolean> {
+  const session = await bootstrapSession();
+  if (!session) {
+    authToken = null;
+    refreshToken = null;
+    return false;
+  }
+  authToken = session.accessToken;
+  refreshToken = session.refreshToken;
+  return true;
+}
 
 export interface User {
   id: string;
@@ -105,6 +131,33 @@ export interface Bot {
 //   `_isRetry=true` empêche les boucles infinies si /auth/refresh renvoie 401.
 let _refreshInFlight: Promise<boolean> | null = null;
 
+/**
+ * Callback registered by the root layout — fired when a 401 + refresh
+ * cascade fails. The layout uses it to navigate to /auth/welcome and clear
+ * any user-derived state. Kept as a module-level setter (rather than a
+ * context) so the API module stays UI-framework-agnostic.
+ */
+type UnauthenticatedHandler = () => void;
+let _onUnauthenticated: UnauthenticatedHandler | null = null;
+export function setOnUnauthenticated(handler: UnauthenticatedHandler | null): void {
+  _onUnauthenticated = handler;
+}
+
+/**
+ * Clear in-memory + persisted session and fire the unauthenticated handler.
+ * Called when the refresh token is also dead (e.g. JWT secret rotated server-
+ * side, refresh older than 7 days, account deleted). Idempotent.
+ */
+async function handleUnauthenticated(): Promise<void> {
+  authToken = null;
+  refreshToken = null;
+  invalidateMeCache();
+  try { await clearSession(); } catch { /* best-effort */ }
+  if (_onUnauthenticated) {
+    try { _onUnauthenticated(); } catch { /* swallow — UI layer's job */ }
+  }
+}
+
 async function ensureRefreshedOnce(): Promise<boolean> {
   if (!refreshToken) return false;
   // Une seule requête de refresh à la fois (évite N appels parallèles).
@@ -117,13 +170,25 @@ async function ensureRefreshedOnce(): Promise<boolean> {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken }),
         });
-        if (!res.ok) return false;
+        if (!res.ok) {
+          // Refresh itself failed → the persisted session is dead. Wipe it
+          // so the next app launch goes through the auth flow cleanly
+          // instead of restoring a zombie token.
+          await handleUnauthenticated();
+          return false;
+        }
         const body = await res.json();
         const data = body.data ?? body;
         if (data.accessToken) authToken = data.accessToken;
         if (data.refreshToken) refreshToken = data.refreshToken;
+        if (data.accessToken) {
+          // Mirror rotated tokens to storage. issuedAt is preserved
+          // (30-day cap stays anchored to original login).
+          await persistRotatedTokens(data.accessToken, data.refreshToken ?? refreshToken);
+        }
         return !!data.accessToken;
       } catch {
+        await handleUnauthenticated();
         return false;
       } finally {
         _refreshInFlight = null;
@@ -179,14 +244,23 @@ async function fetchWithToken(
         if (errorData.error?.message) message = errorData.error.message;
         else if (errorData.message) message = errorData.message;
       } catch {}
-      throw new Error(message);
+      // Throw a typed error carrying the status so callers can branch
+      // without parsing the message string.
+      const err = new Error(message) as Error & { status?: number };
+      err.status = response.status;
+      throw err;
     }
 
     const json = await response.json();
     // API wraps responses in { success, data, timestamp } — unwrap
     return json.data !== undefined ? json.data : json;
-  } catch (error) {
-    console.error(`API call failed: ${endpoint}`, error);
+  } catch (error: any) {
+    // Quiet expected client-side states (401 anonymous, 429 throttle). The
+    // caller decides whether they want to surface these — most call sites
+    // have a fallback path. Only network/server errors stay loud.
+    const status: number | undefined = error?.status;
+    const isQuiet = status === 401 || status === 429;
+    if (!isQuiet) console.error(`API call failed: ${endpoint}`, error);
     throw error;
   }
 }
@@ -204,6 +278,12 @@ export async function login(email: string, password: string, options?: { gameTyp
     }
     if (data.refreshToken) {
       refreshToken = data.refreshToken;
+    }
+
+    // Persist with fresh issuedAt — starts the 30-day absolute clock.
+    if (data.accessToken) {
+      invalidateMeCache();
+      await persistNewSession(data.accessToken, data.refreshToken ?? null);
     }
 
     return data;
@@ -231,6 +311,11 @@ export async function register(
       refreshToken = data.refreshToken;
     }
 
+    if (data.accessToken) {
+      invalidateMeCache();
+      await persistNewSession(data.accessToken, data.refreshToken ?? null);
+    }
+
     return data;
   } catch (error) {
     console.error('Registration failed:', error);
@@ -238,16 +323,76 @@ export async function register(
   }
 }
 
-export async function getMe(): Promise<User> {
-  try {
-    const data = await fetchWithToken('/users/me', {
-      method: 'GET',
-    });
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch user profile:', error);
-    throw error;
+/**
+ * `getMe()` in-memory cache + in-flight dedupe.
+ *
+ * Why: many components mount in parallel (HomeScreen + Profile + Leaderboard
+ * tabs, every FrenchCard via useCardSkin → useInventory, every undo button
+ * via useUndos → useInventory) and each fires `getMe()` on mount. Without
+ * coalescing, a single Klondike screen with 30 visible cards triggers 30+
+ * concurrent /users/me calls and the server throttler (3 req/s) bursts into
+ * `ThrottlerException: Too Many Requests`.
+ *
+ * Strategy:
+ *   - Cache the resolved User for `GET_ME_CACHE_TTL_MS` (10s).
+ *   - While a request is in flight, return the same promise to all callers.
+ *   - `invalidateMeCache()` clears it on login / logout / handleUnauthenticated.
+ *
+ * Local-mode short-circuit: if there's no in-memory token (user picked the
+ * offline-only mode from /auth/mode-select OR never logged in), we throw a
+ * `NoSessionError` immediately without hitting the network. Avoids spamming
+ * `/users/me` 401s when no session is even possible. Callers should catch
+ * `NoSessionError` and treat the user as guest/anonymous locally.
+ */
+export class NoSessionError extends Error {
+  constructor() {
+    super('no-session');
+    this.name = 'NoSessionError';
   }
+}
+
+const GET_ME_CACHE_TTL_MS = 10_000;
+let _getMeCache: { value: User; at: number } | null = null;
+let _getMeInFlight: Promise<User> | null = null;
+let _getMeFailureCacheUntil = 0; // negative cache: avoid retry storm on 401
+
+export function invalidateMeCache(): void {
+  _getMeCache = null;
+  _getMeInFlight = null;
+  _getMeFailureCacheUntil = 0;
+}
+
+export async function getMe(): Promise<User> {
+  // No token at all → local-mode or fresh install. Short-circuit so callers
+  // don't trigger 30+ doomed /users/me requests.
+  if (!authToken && !refreshToken) {
+    throw new NoSessionError();
+  }
+  const now = Date.now();
+  // Negative-cache failed calls for a short window so a render storm of
+  // useCardSkin → useInventory → getMe doesn't repeatedly hit a 401.
+  if (now < _getMeFailureCacheUntil) {
+    throw new NoSessionError();
+  }
+  if (_getMeCache && now - _getMeCache.at < GET_ME_CACHE_TTL_MS) {
+    return _getMeCache.value;
+  }
+  if (_getMeInFlight) return _getMeInFlight;
+  _getMeInFlight = (async () => {
+    try {
+      const data = await fetchWithToken('/users/me', { method: 'GET' });
+      _getMeCache = { value: data, at: Date.now() };
+      return data;
+    } catch (error) {
+      // Treat 401 (incl. failed refresh) as "no session for now". Pin a
+      // 30 s negative-cache so the next render burst is silent.
+      _getMeFailureCacheUntil = Date.now() + 30_000;
+      throw error;
+    } finally {
+      _getMeInFlight = null;
+    }
+  })();
+  return _getMeInFlight;
 }
 
 export async function refreshTokenAsync(): Promise<{ token: string }> {
@@ -264,11 +409,18 @@ export async function refreshTokenAsync(): Promise<{ token: string }> {
       refreshToken = data.refreshToken;
     }
 
+    // Rotated tokens: keep the original issuedAt (30-day cap is anchored
+    // to first login), but bump lastSeenAt.
+    if (data.accessToken) {
+      await persistRotatedTokens(data.accessToken, data.refreshToken ?? refreshToken);
+    }
+
     return data;
   } catch (error) {
     console.error('Token refresh failed:', error);
     authToken = null;
     refreshToken = null;
+    await clearSession();
     throw error;
   }
 }
@@ -276,6 +428,8 @@ export async function refreshTokenAsync(): Promise<{ token: string }> {
 export async function logout() {
   authToken = null;
   refreshToken = null;
+  invalidateMeCache();
+  await clearSession();
 }
 
 export function getAuthToken(): string | null {
@@ -301,6 +455,12 @@ export async function createGuestSession(): Promise<{ token: string }> {
     }
     if (data.refreshToken) {
       refreshToken = data.refreshToken;
+    }
+
+    // Guests get the same rolling-window treatment as full users.
+    if (data.accessToken) {
+      invalidateMeCache();
+      await persistNewSession(data.accessToken, data.refreshToken ?? null);
     }
 
     return data;
@@ -343,14 +503,22 @@ export async function getMyRank(
   gameType: string,
   filter: 'season' | 'weekly' | 'allTime' = 'season'
 ): Promise<{ rank: number; elo: number; percentile: number }> {
+  // Skip the request if no session — rank requires auth.
+  if (!authToken && !refreshToken) {
+    return { rank: 0, elo: 0, percentile: 0 };
+  }
   try {
     const data = await fetchWithToken(
       `/leaderboards/${gameType}/my-rank?filter=${filter}`,
       { method: 'GET' }
     );
     return data;
-  } catch (error) {
-    console.error(`Failed to fetch rank for ${gameType}:`, error);
+  } catch (error: any) {
+    // Quiet expected anonymous / throttle states.
+    const status = error?.status;
+    if (status !== 401 && status !== 429) {
+      console.error(`Failed to fetch rank for ${gameType}:`, error);
+    }
     return { rank: 0, elo: 0, percentile: 0 };
   }
 }
@@ -841,42 +1009,75 @@ export interface SolitaireMatch {
   winnerId: string | null;
   startedAt: number | null;
   finishedAt: number | null;
+  /** Achievements unlocked by the winner side-effect of finishing this match. */
+  winnerAchievementsUnlocked?: AchievementDef[];
+  /** Same for the loser (ELO milestones can fire on loss). */
+  loserAchievementsUnlocked?: AchievementDef[];
 }
+
+/**
+ * Wrapper-result shape : retourne soit le match, soit une erreur structurée.
+ * Avant : `Promise<Match | null>` — toute panne (réseau, 4xx, 5xx, parse JSON)
+ * tombait sur `null` et l'UI affichait "backend offline" sans diagnostic.
+ * Maintenant : on remonte un objet `{ ok: false, error: string }` pour que
+ * le QuickMatchScreen puisse afficher la VRAIE cause (e.g. "BAD_REQUEST :
+ * variant manquante", "Network request failed", "API error: 500", etc.).
+ */
+export type MatchResult =
+  | { ok: true; match: SolitaireMatch }
+  | { ok: false; error: string };
 
 export async function quickMatch(payload: {
   variant: string; difficulty?: string; userId: string; displayName: string;
-}): Promise<SolitaireMatch | null> {
+}): Promise<MatchResult> {
+  // eslint-disable-next-line no-console
+  console.log('[api.quickMatch] POST /solitaire-matches/quick-match', { variant: payload.variant, userId: payload.userId, displayName: payload.displayName });
   try {
-    const res = await fetch(`${API_URL}/solitaire-matches/quick-match`, {
+    const data = await fetchWithToken('/solitaire-matches/quick-match', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    const json = await res.json();
-    return json?.success ? (json.data as SolitaireMatch) : null;
-  } catch { return null; }
+    // eslint-disable-next-line no-console
+    console.log('[api.quickMatch] ← response', { success: data?.success, code: data?.data?.code, status: data?.data?.status });
+    if (data?.success && data.data) return { ok: true, match: data.data as SolitaireMatch };
+    return { ok: false, error: data?.error ?? 'Réponse backend invalide' };
+  } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.warn('[api.quickMatch] ✗ failed', e?.message ?? e);
+    return { ok: false, error: e?.message ?? 'Erreur réseau' };
+  }
 }
 
 export async function joinMatch(code: string, payload: {
   userId: string; displayName: string;
-}): Promise<SolitaireMatch | null> {
+}): Promise<MatchResult> {
+  // eslint-disable-next-line no-console
+  console.log(`[api.joinMatch] POST /solitaire-matches/join/${code}`, { userId: payload.userId });
   try {
-    const res = await fetch(`${API_URL}/solitaire-matches/join/${encodeURIComponent(code)}`, {
+    const data = await fetchWithToken(`/solitaire-matches/join/${encodeURIComponent(code)}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    const json = await res.json();
-    return json?.success ? (json.data as SolitaireMatch) : null;
-  } catch { return null; }
+    // eslint-disable-next-line no-console
+    console.log('[api.joinMatch] ← response', { success: data?.success, code: data?.data?.code });
+    if (data?.success && data.data) return { ok: true, match: data.data as SolitaireMatch };
+    return { ok: false, error: data?.error ?? 'Code introuvable ou match plein' };
+  } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.warn('[api.joinMatch] ✗ failed', e?.message ?? e);
+    return { ok: false, error: e?.message ?? 'Erreur réseau' };
+  }
 }
 
 export async function getMatch(code: string): Promise<SolitaireMatch | null> {
   try {
-    const res = await fetch(`${API_URL}/solitaire-matches/${encodeURIComponent(code)}`);
-    const json = await res.json();
-    return json?.success ? (json.data as SolitaireMatch) : null;
-  } catch { return null; }
+    const data = await fetchWithToken(`/solitaire-matches/${encodeURIComponent(code)}`);
+    return data?.success ? (data.data as SolitaireMatch) : null;
+  } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.warn('[api.getMatch] ✗ polling failed', e?.message ?? e);
+    return null;
+  }
 }
 
 /**
@@ -909,6 +1110,96 @@ export async function reportMatchProgress(code: string, payload: {
   } catch { return null; }
 }
 
+/**
+ * Race replay snapshot returned by `GET /solitaire-matches/:code/replay`.
+ * `players[].actions` is the full per-player action log (each entry has a
+ * variant-specific shape — feed to the right `gameReducer` to step through).
+ * `actionsCount` is a convenience field so the UI doesn't have to walk the
+ * array to show "0/127 coups".
+ */
+export interface RaceReplay {
+  code: string;
+  variant: string;
+  difficulty: string;
+  initialState: any;
+  dealHash?: string;
+  status: 'waiting' | 'playing' | 'finished';
+  winnerId: string | null;
+  startedAt: number | null;
+  finishedAt: number | null;
+  /** True when the server flagged the match — ELO was skipped. */
+  flagged: boolean;
+  flagReasons: string[];
+  players: Array<{
+    userId: string;
+    displayName: string;
+    score: number;
+    moves: number;
+    finished: boolean;
+    finishedAt: number | null;
+    actionsCount: number;
+    actions: any[];
+  }>;
+}
+
+export async function fetchRaceReplay(code: string): Promise<RaceReplay | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/${encodeURIComponent(code)}/replay`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as RaceReplay) : null;
+  } catch { return null; }
+}
+
+/**
+ * Compact per-match summary for the "Mes races" history screen. The server
+ * trims out actions[] and initialState so this stays light even with 50+
+ * matches — the user clicks one to load the full replay via `fetchRaceReplay`.
+ *
+ * `youWon` is null when the match isn't finished yet (status='playing').
+ */
+export interface RaceHistoryEntry {
+  code: string;
+  variant: string;
+  difficulty: string;
+  status: 'waiting' | 'playing' | 'finished';
+  winnerId: string | null;
+  finishedAt: number | null;
+  startedAt: number | null;
+  createdAt: string;
+  selfScore: number;
+  selfMoves: number;
+  selfFinished: boolean;
+  /** Opponent userId — null when the match was created but nobody joined yet. */
+  opponentUserId: string | null;
+  opponentDisplayName: string | null;
+  opponentScore: number | null;
+  opponentMoves: number | null;
+  youWon: boolean | null;
+  /** True when server-side anti-cheat caught suspicious plausibility values
+   *  (too-fast finish, impossible score, too-few moves). ELO not applied. */
+  flagged: boolean;
+  /** Human-readable failure reasons populated alongside `flagged`. */
+  flagReasons: string[];
+}
+
+export async function fetchMyRaces(userId: string, opts?: {
+  limit?: number;
+  includeWaiting?: boolean;
+}): Promise<RaceHistoryEntry[]> {
+  try {
+    const q = new URLSearchParams();
+    if (opts?.limit) q.set('limit', String(opts.limit));
+    if (opts?.includeWaiting) q.set('includeWaiting', '1');
+    const url = `${API_URL}/solitaire-matches/user/${encodeURIComponent(userId)}/recent` +
+      (q.toString() ? `?${q.toString()}` : '');
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success && Array.isArray(json.data) ? (json.data as RaceHistoryEntry[]) : [];
+  } catch { return []; }
+}
+
 export interface LeaderboardEntry {
   rank: number;
   userId: string;
@@ -937,6 +1228,550 @@ export async function fetchSolitaireLeaderboard(
     const json = await res.json();
     return json?.success ? (json.data as LeaderboardEntry[]) : [];
   } catch { return []; }
+}
+
+// ─── Rewards (XP / coins / streak) ────────────────────────────────────
+// Server-side daily-challenge wallet. Each user has one document with their
+// current XP, coins, level, and consecutive-day streak. `awardDailyReward`
+// is idempotent per (userId, variant, day) — repeated calls for the same
+// variant on the same UTC day return `alreadyAwarded: true` without granting
+// anything.
+
+export interface UserRewards {
+  userId: string;
+  displayName: string;
+  coins: number;
+  xp: number;
+  level: number;
+  dailyStreak: number;
+  bestStreak: number;
+  totalDailyCompletions: number;
+  lastDailyDate: string;
+  todaysVariants: string[];
+}
+
+export interface AwardResult {
+  alreadyAwarded: boolean;
+  coinsAwarded: number;
+  xpAwarded: number;
+  newCoins: number;
+  newXp: number;
+  newLevel: number;
+  newStreak: number;
+  bestStreak: number;
+  /** Achievements unlocked as a side-effect of this award (server-computed). */
+  unlockedAchievements?: AchievementDef[];
+  /** True when `xp_boost_2x` was active and `xpAwarded` was doubled. */
+  xpBoosted?: boolean;
+  /** Epoch-ms expiry of the user's active XP boost, or null if none. */
+  xpBoostExpiresAt?: number | null;
+}
+
+export async function fetchUserRewards(userId: string): Promise<UserRewards | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/rewards/${encodeURIComponent(userId)}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as UserRewards | null) : null;
+  } catch { return null; }
+}
+
+export async function awardDailyReward(payload: {
+  userId: string; displayName: string; variant: string;
+}): Promise<AwardResult | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/rewards/award-daily`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as AwardResult) : null;
+  } catch { return null; }
+}
+
+// ─── Tournaments ─────────────────────────────────────────────────────
+// Single-elimination brackets at 4 / 8 / 16 players. Host creates →
+// players register → host starts → bracket auto-spawns 1v1 matches as
+// pairs become ready. Match results feed back into the bracket via the
+// existing /progress endpoint (the tournamentCode field on the match
+// triggers a server-side advance call).
+
+export interface TournamentParticipant {
+  userId: string;
+  displayName: string;
+  registeredAt: number;
+  eliminated: boolean;
+  finalRank?: number;
+}
+
+export interface TournamentBracketNode {
+  round: number;
+  position: number;
+  p1UserId: string | null;
+  p1DisplayName: string | null;
+  p2UserId: string | null;
+  p2DisplayName: string | null;
+  matchCode: string | null;
+  winnerUserId: string | null;
+  /** 'winners' | 'losers' | 'grand-final'. Absent on single-elim docs. */
+  bracketType?: 'winners' | 'losers' | 'grand-final';
+}
+
+export type TournamentFormat = 'single-elim' | 'double-elim' | 'round-robin';
+
+export interface Tournament {
+  code: string;
+  name: string;
+  variant: string;
+  difficulty: string;
+  status: 'registration' | 'playing' | 'finished';
+  format: TournamentFormat;
+  maxParticipants: number;
+  participants: TournamentParticipant[];
+  bracket: TournamentBracketNode[];
+  championUserId: string | null;
+  championDisplayName: string | null;
+  runnerUpUserId: string | null;
+  startedAt: number | null;
+  finishedAt: number | null;
+  hostUserId: string;
+  /** True once champion + runner-up have been credited. Idempotency guard. */
+  rewardsPaid: boolean;
+  /** Coins credited to the champion when status flipped to 'finished'. */
+  championCoinsRewarded: number;
+  /** Coins credited to the runner-up. */
+  runnerUpCoinsRewarded: number;
+  /** Champion's lifetime tournament wins snapshot at finish time. */
+  championLifetimeWins: number;
+  /** Per-person pot for each semifinalist (8p+ brackets only, else 0). */
+  semifinalistCoinsRewarded?: number;
+  /** Per-person pot for each quarterfinalist (16p only, else 0). */
+  quarterfinalistCoinsRewarded?: number;
+}
+
+export async function fetchTournaments(opts?: { variant?: string; limit?: number }): Promise<Tournament[]> {
+  try {
+    const q = new URLSearchParams();
+    if (opts?.variant) q.set('variant', opts.variant);
+    if (opts?.limit) q.set('limit', String(opts.limit));
+    const url = `${API_URL}/solitaire-tournaments${q.toString() ? `?${q.toString()}` : ''}`;
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success && Array.isArray(json.data) ? (json.data as Tournament[]) : [];
+  } catch { return []; }
+}
+
+export async function fetchTournament(code: string): Promise<Tournament | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-tournaments/${encodeURIComponent(code)}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as Tournament) : null;
+  } catch { return null; }
+}
+
+export async function createTournament(payload: {
+  name: string;
+  variant: string;
+  difficulty?: string;
+  maxParticipants: number;
+  hostUserId: string;
+  hostDisplayName: string;
+  format?: TournamentFormat;
+}): Promise<Tournament | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-tournaments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as Tournament) : null;
+  } catch { return null; }
+}
+
+export async function registerToTournament(code: string, userId: string, displayName: string): Promise<Tournament | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-tournaments/${encodeURIComponent(code)}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, displayName }),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as Tournament) : null;
+  } catch { return null; }
+}
+
+export async function startTournament(code: string, hostUserId: string): Promise<Tournament | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-tournaments/${encodeURIComponent(code)}/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hostUserId }),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as Tournament) : null;
+  } catch { return null; }
+}
+
+export interface PendingTournamentMatch {
+  tournamentCode: string;
+  tournamentName: string;
+  matchCode: string;
+  round: number;
+  position: number;
+  opponentDisplayName: string | null;
+  variant: string;
+}
+
+export async function registerPushToken(payload: {
+  userId: string;
+  token: string;
+  displayName?: string;
+  platform?: 'ios' | 'android' | 'web';
+}): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-tournaments/push-tokens/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return false;
+    const json = await res.json();
+    return !!json?.success;
+  } catch { return false; }
+}
+
+export interface NotificationPrefs {
+  userId: string;
+  matchReady: boolean;
+  achievement: boolean;
+  tournamentResult: boolean;
+  streakReminder: boolean;
+}
+
+export interface NotificationEntry {
+  id: string;
+  userId: string;
+  category: 'matchReady' | 'achievement' | 'tournamentResult' | 'streakReminder';
+  title: string;
+  body: string;
+  routeTo: string | null;
+  read: boolean;
+  createdAt: string;
+}
+
+export async function fetchNotifications(userId: string, limit = 30, offset = 0): Promise<NotificationEntry[]> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-tournaments/notifications/${encodeURIComponent(userId)}?limit=${limit}&offset=${offset}`,
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success && Array.isArray(json.data) ? (json.data as NotificationEntry[]) : [];
+  } catch { return []; }
+}
+
+export async function fetchUnreadNotificationCount(userId: string): Promise<number> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-tournaments/notifications/${encodeURIComponent(userId)}/unread-count`,
+    );
+    if (!res.ok) return 0;
+    const json = await res.json();
+    return json?.success ? (json.data?.count ?? 0) : 0;
+  } catch { return 0; }
+}
+
+export async function markAllNotificationsRead(userId: string): Promise<number> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-tournaments/notifications/${encodeURIComponent(userId)}/mark-all-read`,
+      { method: 'POST' },
+    );
+    if (!res.ok) return 0;
+    const json = await res.json();
+    return json?.success ? (json.data?.modified ?? 0) : 0;
+  } catch { return 0; }
+}
+
+export async function fetchNotificationPrefs(userId: string): Promise<NotificationPrefs | null> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-tournaments/notification-prefs/${encodeURIComponent(userId)}`,
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as NotificationPrefs) : null;
+  } catch { return null; }
+}
+
+export async function updateNotificationPrefs(
+  userId: string,
+  patch: Partial<Pick<NotificationPrefs, 'matchReady' | 'achievement' | 'tournamentResult'>>,
+): Promise<NotificationPrefs | null> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-tournaments/notification-prefs/${encodeURIComponent(userId)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      },
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as NotificationPrefs) : null;
+  } catch { return null; }
+}
+
+export async function setUserTimezone(userId: string, displayName: string, timezone: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/rewards/timezone`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, displayName, timezone }),
+    });
+    if (!res.ok) return false;
+    const json = await res.json();
+    return !!json?.success;
+  } catch { return false; }
+}
+
+export async function unregisterPushTokens(userId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-tournaments/push-tokens/unregister`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+    if (!res.ok) return false;
+    const json = await res.json();
+    return !!json?.success;
+  } catch { return false; }
+}
+
+/** Tournament bracket matches awaiting this user's play (for the home banner). */
+export async function fetchPendingTournamentMatches(userId: string): Promise<PendingTournamentMatch[]> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-tournaments/user/${encodeURIComponent(userId)}/pending`,
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success && Array.isArray(json.data) ? (json.data as PendingTournamentMatch[]) : [];
+  } catch { return []; }
+}
+
+// ─── Achievements ─────────────────────────────────────────────────────
+// Static catalog of unlockable badges (race wins, ELO milestones, daily
+// streaks, XP levels, shop purchases). Each unlock grants coins automatically.
+// Reward / shop / purchase endpoints return `unlockedAchievements: AchievementDef[]`
+// so the UI can show a toast when something is newly unlocked.
+
+export interface AchievementDef {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  coinsReward: number;
+  category: 'race' | 'daily' | 'collection' | 'progression';
+  order: number;
+}
+
+export interface UserAchievementUnlock {
+  achievementId: string;
+  unlockedAt: number;
+  coinsRewarded: number;
+  def: AchievementDef | null;
+}
+
+export interface UserAchievementsDto {
+  userId: string;
+  displayName: string;
+  unlocked: UserAchievementUnlock[];
+  totalCoinsFromAchievements: number;
+  progress: { unlocked: number; total: number };
+}
+
+export async function fetchAchievementsCatalog(): Promise<AchievementDef[]> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/achievements/catalog`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success ? (json.data as AchievementDef[]) : [];
+  } catch { return []; }
+}
+
+export async function fetchUserAchievements(userId: string): Promise<UserAchievementsDto | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/achievements/${encodeURIComponent(userId)}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as UserAchievementsDto) : null;
+  } catch { return null; }
+}
+
+// ─── Shop ─────────────────────────────────────────────────────────────
+// Coins-spendable catalog of consumables (hints, undos, streak saves),
+// cosmetics (skins) and boosts (XP multiplier). Each purchase debits the
+// user's reward wallet and grants the item to their inventory.
+
+export interface ShopItem {
+  id: string;
+  name: string;
+  description: string;
+  category: 'consumable' | 'cosmetic' | 'boost';
+  priceCoins: number;
+  icon: string;
+  qtyPerPurchase: number;
+  oneTime?: boolean;
+}
+
+export interface InventoryEntry {
+  itemId: string;
+  qty: number;
+  acquiredAt: number;
+  itemMeta: ShopItem | null;
+  /** Epoch-ms expiry for timed boosts (e.g. `xp_boost_2x`). Absent otherwise. */
+  activeUntil?: number | null;
+}
+
+export interface InventoryDto {
+  userId: string;
+  displayName: string;
+  items: InventoryEntry[];
+  totalPurchases: number;
+  totalCoinsSpent: number;
+}
+
+export type PurchaseResult =
+  | { ok: true; item: ShopItem; coinsBefore: number; coinsAfter: number; inventoryQty: number; unlockedAchievements?: AchievementDef[] }
+  | { ok: false; reason: 'unknown-item' | 'insufficient-coins' | 'already-owned' | 'BAD_REQUEST'; needed?: number; has?: number; unlockedAchievements?: AchievementDef[] };
+
+export async function fetchShopItems(): Promise<ShopItem[]> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/shop/items`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success ? (json.data as ShopItem[]) : [];
+  } catch { return []; }
+}
+
+export async function fetchInventory(userId: string): Promise<InventoryDto | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/shop/inventory/${encodeURIComponent(userId)}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as InventoryDto | null) : null;
+  } catch { return null; }
+}
+
+export async function purchaseShopItem(payload: {
+  userId: string; displayName: string; itemId: string;
+}): Promise<PurchaseResult | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/shop/purchase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as PurchaseResult) : null;
+  } catch { return null; }
+}
+
+export type ConsumeResult =
+  | { ok: true; itemId: string; remaining: number }
+  | { ok: false; reason: 'unknown-item' | 'not-owned' | 'insufficient-qty' | 'cosmetic-not-consumable' | 'BAD_REQUEST'; has?: number };
+
+/** Consume one or more units of an inventory item (typically a hint or undo). */
+export async function consumeInventoryItem(payload: {
+  userId: string; itemId: string; qty?: number;
+}): Promise<ConsumeResult | null> {
+  try {
+    const res = await fetch(`${API_URL}/solitaire-matches/shop/consume`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as ConsumeResult) : null;
+  } catch { return null; }
+}
+
+// ─── Daily leaderboard ────────────────────────────────────────────────
+// Top scores submitted TODAY (UTC) for a variant. The list resets at
+// midnight UTC, which gives players a daily FOMO loop. Pair with the
+// existing /game/solo?variant=X&daily=1 deep-link to drive engagement.
+
+export async function fetchDailyLeaderboard(
+  variant: string,
+  dateIso?: string,
+  limit: number = 20,
+): Promise<LeaderboardEntry[]> {
+  try {
+    const q = new URLSearchParams({ limit: String(limit) });
+    if (dateIso) q.set('date', dateIso);
+    const res = await fetch(
+      `${API_URL}/solitaire-matches/daily-leaderboard/${encodeURIComponent(variant)}?${q.toString()}`,
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success ? (json.data as LeaderboardEntry[]) : [];
+  } catch { return []; }
+}
+
+// ─── Race ELO ─────────────────────────────────────────────────────────
+// 1v1 race ELO ranking (variant='global' = aggregate across all 177 variants).
+// ELO is computed server-side at match finish using EloService.computeDuelDeltas.
+
+export interface RaceEloEntry {
+  rank: number;
+  userId: string;
+  displayName: string;
+  variant: string;
+  elo: number;
+  matches: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+}
+
+export async function fetchRaceLeaderboard(
+  variant: string = 'global',
+  limit: number = 50,
+): Promise<RaceEloEntry[]> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-matches/race-leaderboard?variant=${encodeURIComponent(variant)}&limit=${limit}`,
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.success ? (json.data as RaceEloEntry[]) : [];
+  } catch { return []; }
+}
+
+export async function fetchUserRaceElo(
+  userId: string,
+  variant: string = 'global',
+): Promise<RaceEloEntry | null> {
+  try {
+    const res = await fetch(
+      `${API_URL}/solitaire-matches/race-elo/${encodeURIComponent(userId)}?variant=${encodeURIComponent(variant)}`,
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.success ? (json.data as RaceEloEntry | null) : null;
+  } catch { return null; }
 }
 
 export async function submitSolitaireScore(payload: {

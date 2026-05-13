@@ -12,6 +12,8 @@
  * Pile rule: cannot deal if any column is empty.
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -87,7 +89,7 @@ export function buildDeck(suitMode: SuitMode): Card[] {
   return deck;
 }
 
-export function shuffleDeck(deck: Card[]): Card[] {
+export function shuffleDeck(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -871,69 +873,76 @@ export function createEmptyPlaceholderState(suitMode: SuitMode = 4): GameState {
   };
 }
 
-export function createInitialState(suitMode: SuitMode = 4): GameState {
-  const __t0 = Date.now();
+export function createInitialState(suitMode: SuitMode = 4, seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    const __t0 = Date.now();
 
-  // STRATÉGIE : DONNE RANDOM AUTHENTIQUE + ORACLE CASCADE
-  //   1. Génère un dealOnce random (visuel mélangé : pas de patterns K..A)
-  //   2. Simule la CASCADE complète (productive → DEAL_ROW → endgame solver
-  //      → coup de secours). Si elle gagne, le deal est SOLUBLE PAR LE
-  //      BOUTON INDICE (puisque le bouton utilise la même cascade).
-  //   3. Si oui → on stocke la solution complète, garantie victoire au hint
-  //   4. Sinon → on retente avec une nouvelle donne random (jusqu'à N essais)
-  //   5. En dernier recours → fallback V2 (rare, garantie absolue de solvabilité)
-  //
-  // PRIORITÉ AU RANDOM : pour 1-suit, on tente 20× avant V2 (quasi 100%
-  //   solvable au random + visuel propre). Pour 4-suit, V2 plus probable
-  //   car la solvabilité au random est plus faible.
+    // STRATÉGIE : DONNE RANDOM AUTHENTIQUE + ORACLE CASCADE
+    //   1. Génère un dealOnce random (visuel mélangé : pas de patterns K..A)
+    //   2. Simule la CASCADE complète (productive → DEAL_ROW → endgame solver
+    //      → coup de secours). Si elle gagne, le deal est SOLUBLE PAR LE
+    //      BOUTON INDICE (puisque le bouton utilise la même cascade).
+    //   3. Si oui → on stocke la solution complète, garantie victoire au hint
+    //   4. Sinon → on retente avec une nouvelle donne random (jusqu'à N essais)
+    //   5. En dernier recours → fallback V2 (rare, garantie absolue de solvabilité)
+    //
+    // PRIORITÉ AU RANDOM : pour 1-suit, on tente 20× avant V2 (quasi 100%
+    //   solvable au random + visuel propre). Pour 4-suit, V2 plus probable
+    //   car la solvabilité au random est plus faible.
 
-  const MAX_ATTEMPTS = suitMode === 1 ? 30 : suitMode === 2 ? 20 : 12;
-  const cascadeTimeout = suitMode === 1 ? 1200 : suitMode === 2 ? 1500 : 2000;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const candidate = dealOnce(suitMode);
-    const solution = simulateCascade(candidate, 500, cascadeTimeout);
-    if (solution !== null) {
-      // Re-vérification stricte
-      let s = candidate;
-      let won = false;
-      for (const action of solution) {
-        const next = gameReducer(s, action);
-        if (next === s) break;
-        s = next;
-        if (s.completed.length === 8) { won = true; break; }
-      }
-      if (won) {
-        _spiderSolution = solution;
-        const __elapsed = Date.now() - __t0;
-        console.log(
-          `[Spider Solver] ✅ DONNE RANDOM SOLUBLE (${__elapsed}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}, suitMode=${suitMode}) — stock=${candidate.stock.length}, solution=${solution.length} coups via cascade`,
-        );
-        return candidate;
+    const MAX_ATTEMPTS = suitMode === 1 ? 30 : suitMode === 2 ? 20 : 12;
+    const cascadeTimeout = suitMode === 1 ? 1200 : suitMode === 2 ? 1500 : 2000;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const candidate = dealOnce(suitMode);
+      const solution = simulateCascade(candidate, 500, cascadeTimeout);
+      if (solution !== null) {
+        // Re-vérification stricte
+        let s = candidate;
+        let won = false;
+        for (const action of solution) {
+          const next = gameReducer(s, action);
+          if (next === s) break;
+          s = next;
+          if (s.completed.length === 8) { won = true; break; }
+        }
+        if (won) {
+          _spiderSolution = solution;
+          const __elapsed = Date.now() - __t0;
+          console.log(
+            `[Spider Solver] ✅ DONNE RANDOM SOLUBLE (${__elapsed}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}, suitMode=${suitMode}) — stock=${candidate.stock.length}, solution=${solution.length} coups via cascade`,
+          );
+          return candidate;
+        }
       }
     }
-  }
 
-  // Tentative finale : stochasticSolve sur une donne random (puissance plus forte)
-  console.log(`[Spider Solver] ⚠️ Cascade a échoué ${MAX_ATTEMPTS}× — tentative stochasticSolve`);
-  const stochResult = findSolvableRandomDeal(suitMode, 6, 400);
-  if (stochResult) {
-    _spiderSolution = stochResult.solution;
+    // Tentative finale : stochasticSolve sur une donne random (puissance plus forte)
+    console.log(`[Spider Solver] ⚠️ Cascade a échoué ${MAX_ATTEMPTS}× — tentative stochasticSolve`);
+    const stochResult = findSolvableRandomDeal(suitMode, 6, 400);
+    if (stochResult) {
+      _spiderSolution = stochResult.solution;
+      const __elapsed = Date.now() - __t0;
+      console.log(
+        `[Spider Solver] ✅ DONNE STOCHASTIC SOLUBLE (${__elapsed}ms) — stock=${stochResult.state.stock.length}, solution=${stochResult.solution.length}`,
+      );
+      return stochResult.state;
+    }
+
+    // Fallback V2 (très rare) : garantie absolue de solvabilité
+    console.log(`[Spider Solver] ⚠️ Tous oracles ont échoué — fallback V2 (visuellement plus simple)`);
+    const { state, solution } = reverseDealSpider(suitMode);
+    _spiderSolution = solution;
     const __elapsed = Date.now() - __t0;
     console.log(
-      `[Spider Solver] ✅ DONNE STOCHASTIC SOLUBLE (${__elapsed}ms) — stock=${stochResult.state.stock.length}, solution=${stochResult.solution.length}`,
+      `[Spider Solver] ✅ DONNE FALLBACK V2 SOLUBLE (${__elapsed}ms) — stock=${state.stock.length}, solution=${solution.length}`,
     );
-    return stochResult.state;
+    return state;
+  } finally {
+    Math.random = _origRandom;
   }
-
-  // Fallback V2 (très rare) : garantie absolue de solvabilité
-  console.log(`[Spider Solver] ⚠️ Tous oracles ont échoué — fallback V2 (visuellement plus simple)`);
-  const { state, solution } = reverseDealSpider(suitMode);
-  _spiderSolution = solution;
-  const __elapsed = Date.now() - __t0;
-  console.log(
-    `[Spider Solver] ✅ DONNE FALLBACK V2 SOLUBLE (${__elapsed}ms) — stock=${state.stock.length}, solution=${solution.length}`,
-  );
-  return state;
 }
 
 /** Check if a contiguous slice of cards forms a "single-suit descending run". */

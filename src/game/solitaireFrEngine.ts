@@ -15,6 +15,8 @@
  *  - Win when all 52 cards reach the foundations
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 // ============================================================
 // TYPES
 // ============================================================
@@ -123,7 +125,7 @@ export function createDeck(): Card[] {
   return deck;
 }
 
-export function shuffleDeck(deck: Card[]): Card[] {
+export function shuffleDeck(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -722,85 +724,92 @@ function isStandardKlondikeLayout(s: { tableau: TableauColumn[]; stock: Card[]; 
   return true;
 }
 
-export function createInitialState(): GameState {
-  console.log('[Klondike Solver] 🎲 Reverse-Deal — solution forward par inversion d\'historique');
-  const t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log('[Klondike Solver] 🎲 Reverse-Deal — solution forward par inversion d\'historique');
+    const t0 = Date.now();
 
-  // STRATÉGIE PRIORITAIRE : utiliser l'historique des coups inverses pour
-  // émettre une SOLUTION FORWARD GARANTIE. Le greedy peut échouer pour Klondike
-  // (face-down cards bloquent la planification linéaire) → on s'appuie sur l'inversion.
-  //
-  // GARDE-FOU AJOUTÉ : on rejette les états qui ne respectent PAS la
-  // distribution Klondike standard (28 cartes tableau / 24 stock / 7 cols
-  // 1..7). Sans ce garde-fou, le pondérateur drainait parfois TOUTES les
-  // cartes vers le stock (tableau vide → user voit un jeu vide).
+    // STRATÉGIE PRIORITAIRE : utiliser l'historique des coups inverses pour
+    // émettre une SOLUTION FORWARD GARANTIE. Le greedy peut échouer pour Klondike
+    // (face-down cards bloquent la planification linéaire) → on s'appuie sur l'inversion.
+    //
+    // GARDE-FOU AJOUTÉ : on rejette les états qui ne respectent PAS la
+    // distribution Klondike standard (28 cartes tableau / 24 stock / 7 cols
+    // 1..7). Sans ce garde-fou, le pondérateur drainait parfois TOUTES les
+    // cartes vers le stock (tableau vide → user voit un jeu vide).
 
-  const MAX_ATTEMPTS = 12;
-  let bestCand: GameState | null = null;
-  let bestSol: GameAction[] = [];
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const { state: dealResult, history } = reverseDealKlondikeWithHistory();
-    if (!isStandardKlondikeLayout(dealResult)) {
-      // Distribution dégénérée → on n'utilise pas ce candidat.
-      continue;
+    const MAX_ATTEMPTS = 12;
+    let bestCand: GameState | null = null;
+    let bestSol: GameAction[] = [];
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const { state: dealResult, history } = reverseDealKlondikeWithHistory();
+      if (!isStandardKlondikeLayout(dealResult)) {
+        // Distribution dégénérée → on n'utilise pas ce candidat.
+        continue;
+      }
+      const cand: GameState = {
+        tableau: dealResult.tableau,
+        stock: dealResult.stock,
+        waste: dealResult.waste,
+        foundations: dealResult.foundations,
+        moves: 0,
+        score: 0,
+        phase: 'playing',
+        stockCycles: 0,
+        movesSinceLastProgress: 0,
+      };
+      // Tente d'abord la solution par inversion d'historique
+      const histSol = buildKlondikeForwardSolution(cand, history);
+      if (validateSolutionLeadsToWin(cand, histSol)) {
+        _klondikeSolution = histSol;
+        const elapsed = Date.now() - t0;
+        console.log(`[Klondike Solver] ✅ DONNE V2 SOLUBLE (${elapsed}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${histSol.length} coups`);
+        return cand;
+      }
+      // Sinon essayer le greedy
+      const greedySol = computeKlondikeSolution(cand);
+      if (validateSolutionLeadsToWin(cand, greedySol)) {
+        _klondikeSolution = greedySol;
+        const elapsed = Date.now() - t0;
+        console.log(`[Klondike Solver] ✅ DONNE GREEDY SOLUBLE (${elapsed}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution greedy = ${greedySol.length} coups`);
+        return cand;
+      }
+      const bestThis = histSol.length >= greedySol.length ? histSol : greedySol;
+      if (bestThis.length > bestSol.length) { bestCand = cand; bestSol = bestThis; }
     }
-    const cand: GameState = {
-      tableau: dealResult.tableau,
-      stock: dealResult.stock,
-      waste: dealResult.waste,
-      foundations: dealResult.foundations,
+
+    // Aucun reverse-deal n'a produit un layout Klondike standard ET soluble.
+    // FALLBACK FINAL : deal Klondike classique (shuffle + 1+2+...+7). Pas de
+    // solution garantie mais le user voit un VRAI plateau jouable. Le greedy
+    // tentera de calculer un hint best-effort.
+    if (bestCand && isStandardKlondikeLayout(bestCand)) {
+      _klondikeSolution = bestSol.length > 0 ? bestSol : computeKlondikeSolution(bestCand);
+      const elapsed = Date.now() - t0;
+      console.log(`[Klondike Solver] ⚠️ PARTIAL (${elapsed}ms) — ${_klondikeSolution.length} coups, deal standard partiellement soluble`);
+      return bestCand;
+    }
+    const dg = dealGame();
+    const fallback: GameState = {
+      tableau: dg.tableau,
+      stock: dg.stock,
+      waste: [],
+      foundations: SUITS.map((s) => ({ suit: s, cards: [] })),
       moves: 0,
       score: 0,
       phase: 'playing',
       stockCycles: 0,
       movesSinceLastProgress: 0,
     };
-    // Tente d'abord la solution par inversion d'historique
-    const histSol = buildKlondikeForwardSolution(cand, history);
-    if (validateSolutionLeadsToWin(cand, histSol)) {
-      _klondikeSolution = histSol;
-      const elapsed = Date.now() - t0;
-      console.log(`[Klondike Solver] ✅ DONNE V2 SOLUBLE (${elapsed}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${histSol.length} coups`);
-      return cand;
-    }
-    // Sinon essayer le greedy
-    const greedySol = computeKlondikeSolution(cand);
-    if (validateSolutionLeadsToWin(cand, greedySol)) {
-      _klondikeSolution = greedySol;
-      const elapsed = Date.now() - t0;
-      console.log(`[Klondike Solver] ✅ DONNE GREEDY SOLUBLE (${elapsed}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution greedy = ${greedySol.length} coups`);
-      return cand;
-    }
-    const bestThis = histSol.length >= greedySol.length ? histSol : greedySol;
-    if (bestThis.length > bestSol.length) { bestCand = cand; bestSol = bestThis; }
-  }
-
-  // Aucun reverse-deal n'a produit un layout Klondike standard ET soluble.
-  // FALLBACK FINAL : deal Klondike classique (shuffle + 1+2+...+7). Pas de
-  // solution garantie mais le user voit un VRAI plateau jouable. Le greedy
-  // tentera de calculer un hint best-effort.
-  if (bestCand && isStandardKlondikeLayout(bestCand)) {
-    _klondikeSolution = bestSol.length > 0 ? bestSol : computeKlondikeSolution(bestCand);
+    _klondikeSolution = computeKlondikeSolution(fallback);
     const elapsed = Date.now() - t0;
-    console.log(`[Klondike Solver] ⚠️ PARTIAL (${elapsed}ms) — ${_klondikeSolution.length} coups, deal standard partiellement soluble`);
-    return bestCand;
+    console.log(`[Klondike Solver] ⚠️ FALLBACK STANDARD DEAL (${elapsed}ms) — 28 cartes tableau, ${_klondikeSolution.length} coups solveur`);
+    return fallback;
+  } finally {
+    Math.random = _origRandom;
   }
-  const dg = dealGame();
-  const fallback: GameState = {
-    tableau: dg.tableau,
-    stock: dg.stock,
-    waste: [],
-    foundations: SUITS.map((s) => ({ suit: s, cards: [] })),
-    moves: 0,
-    score: 0,
-    phase: 'playing',
-    stockCycles: 0,
-    movesSinceLastProgress: 0,
-  };
-  _klondikeSolution = computeKlondikeSolution(fallback);
-  const elapsed = Date.now() - t0;
-  console.log(`[Klondike Solver] ⚠️ FALLBACK STANDARD DEAL (${elapsed}ms) — 28 cartes tableau, ${_klondikeSolution.length} coups solveur`);
-  return fallback;
 }
 
 function flipTopOf(col: TableauColumn): TableauColumn {

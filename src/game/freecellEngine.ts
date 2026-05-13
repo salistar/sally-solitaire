@@ -12,6 +12,8 @@
  * ~99.999% of deals are solvable — pure skill game.
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 export type CardColor = 'red' | 'black';
@@ -82,7 +84,7 @@ export function buildDeck(): Card[] {
   return deck;
 }
 
-export function shuffleDeck(deck: Card[]): Card[] {
+export function shuffleDeck(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -392,40 +394,47 @@ function hashStateCycle(s: any): string {
   return (h >>> 0).toString(36);
 }
 
-export function createInitialState(): GameState {
-  console.log("[FreeCell Solver] 🎲 Reverse-Deal FreeCell — donne + solution forward garanties");
-  const t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[FreeCell Solver] 🎲 Reverse-Deal FreeCell — donne + solution forward garanties");
+    const t0 = Date.now();
 
-  // STRATÉGIE inspirée Spider :
-  //   1) Génère une donne via reverseDealFreeCell + solution forward (par inversion de l'historique).
-  //      Cette solution est GARANTIE de mener à victoire (52/52 fondations).
-  //   2) Si la solution stockée est trop courte (<10 coups) ou ne gagne pas, on retry.
-  //   3) Fallback : computeFreeCellSolution sur la donne (greedy faible).
+    // STRATÉGIE inspirée Spider :
+    //   1) Génère une donne via reverseDealFreeCell + solution forward (par inversion de l'historique).
+    //      Cette solution est GARANTIE de mener à victoire (52/52 fondations).
+    //   2) Si la solution stockée est trop courte (<10 coups) ou ne gagne pas, on retry.
+    //   3) Fallback : computeFreeCellSolution sur la donne (greedy faible).
 
-  const MAX_ATTEMPTS = 5;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const { state, solution } = reverseDealFreeCell();
-    // Vérifie strict : la solution mène-t-elle à phase=won ?
-    let s = state;
-    let won = false;
-    for (const a of solution) {
-      const next = gameReducer(s, a);
-      if (next === s) break;
-      s = next;
-      if (s.phase === 'won') { won = true; break; }
+    const MAX_ATTEMPTS = 5;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const { state, solution } = reverseDealFreeCell();
+      // Vérifie strict : la solution mène-t-elle à phase=won ?
+      let s = state;
+      let won = false;
+      for (const a of solution) {
+        const next = gameReducer(s, a);
+        if (next === s) break;
+        s = next;
+        if (s.phase === 'won') { won = true; break; }
+      }
+      if (won && solution.length >= 30) {
+        _freecellSolution = solution;
+        console.log(`[FreeCell Solver] ✅ DONNE V2 SOLUBLE (${Date.now() - t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${solution.length} coups`);
+        return state;
+      }
     }
-    if (won && solution.length >= 30) {
-      _freecellSolution = solution;
-      console.log(`[FreeCell Solver] ✅ DONNE V2 SOLUBLE (${Date.now() - t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${solution.length} coups`);
-      return state;
-    }
+
+    // Fallback : reverseDeal + greedy (peu probable, mais conservé pour la robustesse)
+    const { state } = reverseDealFreeCell();
+    _freecellSolution = computeFreeCellSolution(state);
+    console.log(`[FreeCell Solver] ⚠️ FALLBACK (${Date.now() - t0}ms) — solution greedy = ${_freecellSolution.length} coups (peut être incomplète)`);
+    return state;
+  } finally {
+    Math.random = _origRandom;
   }
-
-  // Fallback : reverseDeal + greedy (peu probable, mais conservé pour la robustesse)
-  const { state } = reverseDealFreeCell();
-  _freecellSolution = computeFreeCellSolution(state);
-  console.log(`[FreeCell Solver] ⚠️ FALLBACK (${Date.now() - t0}ms) — solution greedy = ${_freecellSolution.length} coups (peut être incomplète)`);
-  return state;
 }
 
 export function canStackOnTableau(a: Card, b: Card): boolean {

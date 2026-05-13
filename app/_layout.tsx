@@ -11,7 +11,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -20,9 +20,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n/i18n.config';
 import { AppProviders, useTheme } from '../src/contexts/AppProviders';
+import { AchievementToastProvider } from '../src/contexts/AchievementToastContext';
+import { AppModeProvider } from '../src/contexts/useAppMode';
 import AnimatedSplash from '../src/components/AnimatedSplash';
 import { logger } from '../src/utils/logger';
 import { setupDailyChallengeNotification, pushNotificationsAvailable } from '../src/game/push-notifications';
+import { setOnUnauthenticated } from '../shared/api';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 setTimeout(() => { SplashScreen.hideAsync().catch(() => {}); }, 400);
@@ -72,6 +75,16 @@ export default function RootLayout() {
     log.screen('mounted');
     const t = setTimeout(() => setMinSplashDone(true), 2200);
 
+    // Wire the API's "session is dead" callback to a navigation reset. Fires
+    // when /auth/refresh itself returns 401 (refresh token expired, server
+    // JWT secret rotated, account deleted). Without this, the app keeps
+    // retrying authenticated calls forever with a zombie token after a
+    // Docker rebuild that rotated JWT_SECRET — exactly the case we just hit.
+    setOnUnauthenticated(() => {
+      log.explain('session expirée détectée par l\'API → redirect /auth/welcome');
+      try { router.replace('/auth/welcome'); } catch { /* router not ready yet — safe to ignore */ }
+    });
+
     // Schedule daily push notification (8h locales) si expo-notifications dispo
     if (pushNotificationsAvailable()) {
       setupDailyChallengeNotification().then((r) => {
@@ -103,7 +116,11 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <I18nextProvider i18n={i18n}>
           <AppProviders>
-            <RootStackInner />
+            <AppModeProvider>
+              <AchievementToastProvider>
+                <RootStackInner />
+              </AchievementToastProvider>
+            </AppModeProvider>
           </AppProviders>
           {splashVisible && <AnimatedSplash visible={splashVisible} />}
         </I18nextProvider>

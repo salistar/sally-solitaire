@@ -9,70 +9,109 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AppHeader from '../src/components/AppHeader';
 import { useTheme } from '../src/contexts/AppProviders';
+import { useIsLocal } from '../src/contexts/useAppMode';
 import * as api from '../shared/api';
+import { AVAILABLE_VARIANTS } from '../src/game/variants';
 
-const VARIANTS: { key: string; label: string }[] = [
-  { key: 'klondike-1', label: 'Klondike 1' },
-  { key: 'klondike-3', label: 'Klondike 3' },
-  { key: 'spider-1', label: 'Spider 1' },
-  { key: 'spider-2', label: 'Spider 2' },
-  { key: 'spider-4', label: 'Spider 4' },
-  { key: 'freecell', label: 'FreeCell' },
-  { key: 'yukon', label: 'Yukon' },
-  { key: 'golf', label: 'Golf' },
-  { key: 'pyramid', label: 'Pyramid' },
-  { key: 'tripeaks', label: 'TriPeaks' },
-  { key: 'forty-thieves', label: 'Forty Thieves' },
-  { key: 'accordion', label: 'Accordion' },
-];
+// All 177 playable variants are exposed to the matchmaking screen so a 1v1
+// race can be launched on any of them. Sorted alphabetically by display name
+// for predictable scrolling.
+const VARIANTS: { key: string; label: string }[] = AVAILABLE_VARIANTS
+  .map((v) => ({ key: v.key, label: v.name }))
+  .sort((a, b) => a.label.localeCompare(b.label));
 
-function genUserId(): string {
-  // Identifiant local éphémère (pas auth)
-  return 'user-' + Math.random().toString(36).substr(2, 9);
+function genGuestUserId(): string {
+  // Fallback : identifiant local éphémère utilisé UNIQUEMENT si l'auth
+  // backend n'a pas encore résolu un user id (cas rare — éphémère/guest).
+  return 'guest-' + Math.random().toString(36).substr(2, 9);
 }
 
 export default function QuickMatchScreen() {
   const router = useRouter();
   const { palette } = useTheme();
-  const [variant, setVariant] = useState('klondike-1');
+  const isLocal = useIsLocal();
+  // Pre-select the variant from the URL (`?variant=klondike-1`) — used by the
+  // race finish overlay's "Revanche" button to launch a new match on the
+  // variant just played. Falls back to klondike-1 when absent or invalid.
+  const { variant: variantParam } = useLocalSearchParams<{ variant?: string }>();
+  const initialVariant =
+    variantParam && AVAILABLE_VARIANTS.some((v) => v.key === variantParam)
+      ? variantParam
+      : 'klondike-1';
+  const [variant, setVariant] = useState(initialVariant);
   const [displayName, setDisplayName] = useState('Joueur');
   const [match, setMatch] = useState<api.SolitaireMatch | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [joinCode, setJoinCode] = useState('');
-  const [userId] = useState(genUserId());
+  // Le userId provient maintenant du backend (api.getMe()) au lieu d'un
+  // random local. Indispensable pour que les 2 joueurs d'un même match
+  // soient identifiés correctement côté serveur et puissent reprendre
+  // leurs progrès sur des sessions différentes.
+  const [userId, setUserId] = useState<string>(genGuestUserId());
+  const [meReady, setMeReady] = useState(false);
+
+  // Hydrate l'identité depuis /users/me (cloud uniquement — en local on
+  // garde le guest random et on bloque le matchmaking, parce qu'il
+  // dépend du backend).
+  useEffect(() => {
+    if (isLocal) { setMeReady(true); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const me = await api.getMe();
+        if (cancelled) return;
+        if (me?.id) {
+          setUserId(me.id);
+          if (me.username) setDisplayName(me.username);
+          // eslint-disable-next-line no-console
+          console.log('[QuickMatch] identité chargée', { userId: me.id, username: me.username });
+        }
+      } catch (e: any) {
+        // eslint-disable-next-line no-console
+        console.warn('[QuickMatch] /users/me failed — fallback guest id', e?.message ?? e);
+      } finally {
+        if (!cancelled) setMeReady(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isLocal]);
 
   const startQuickMatch = useCallback(async () => {
+    if (isLocal) {
+      setError('Le matchmaking nécessite le mode connecté. Passe par /auth/mode-select.');
+      return;
+    }
     setLoading(true);
     setError(null);
-    try {
-      const m = await api.quickMatch({ variant, userId, displayName });
-      if (!m) {
-        setError('Impossible de créer/rejoindre — backend offline ?');
-      } else {
-        setMatch(m);
-      }
-    } finally {
-      setLoading(false);
+    const res = await api.quickMatch({ variant, userId, displayName });
+    setLoading(false);
+    if (res.ok) {
+      setMatch(res.match);
+    } else {
+      // Affiche le message d'erreur réel (BAD_REQUEST, Network request
+      // failed, API error: 500, etc.) au lieu d'un générique trompeur.
+      setError(`Création/jointure impossible : ${res.error}`);
     }
-  }, [variant, userId, displayName]);
+  }, [variant, userId, displayName, isLocal]);
 
   const joinByCode = useCallback(async () => {
     if (!joinCode.trim()) return;
+    if (isLocal) {
+      setError('Le matchmaking nécessite le mode connecté.');
+      return;
+    }
     setLoading(true);
     setError(null);
-    try {
-      const m = await api.joinMatch(joinCode.trim().toUpperCase(), { userId, displayName });
-      if (!m) setError('Code invalide ou match plein.');
-      else setMatch(m);
-    } finally {
-      setLoading(false);
-    }
-  }, [joinCode, userId, displayName]);
+    const res = await api.joinMatch(joinCode.trim().toUpperCase(), { userId, displayName });
+    setLoading(false);
+    if (res.ok) setMatch(res.match);
+    else setError(`Impossible de rejoindre : ${res.error}`);
+  }, [joinCode, userId, displayName, isLocal]);
 
   // Polling toutes les 500ms (compromis : pas de SSE/WS natif sur mobile RN
   // sans polyfill — on garde du polling mais à fréquence + élevée. Le backend
@@ -86,8 +125,13 @@ export default function QuickMatchScreen() {
     return () => clearInterval(timer);
   }, [match]);
 
-  // Quand status passe à 'playing' → rediriger vers la partie ?
-  // Pour la v1, on affiche juste le code + l'état adverse.
+  // When match transitions to 'playing', auto-navigate to the embedded race
+  // screen. The race screen takes over polling + socket sync + voice chat.
+  useEffect(() => {
+    if (match?.status === 'playing' && match.code) {
+      router.replace(`/game/race/${match.code}`);
+    }
+  }, [match?.status, match?.code, router]);
 
   if (!match) {
     return (
@@ -216,9 +260,7 @@ export default function QuickMatchScreen() {
 
         {match.status === 'playing' ? (
           <Text style={[styles.note, { color: palette.textSecondary }]}>
-            ⚠️ Note v1 : le mobile ne synchronise pas encore le state du jeu.
-            Pour jouer, ouvre la variante {match.variant} dans Solo et reporte ton score
-            via cette page (à venir : embed direct du jeu).
+            ▶ Le jeu démarre — redirection vers la course en cours…
           </Text>
         ) : null}
 

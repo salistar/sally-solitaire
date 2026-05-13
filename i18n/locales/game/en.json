@@ -187,8 +187,8 @@
     "autoComplete": "Auto-complete",
     "botBoard": "Bot's board",
     "botBoardSub": "{{moves}} moves · {{difficulty}}",
-    "victoryVsBot": "Victory! You beat the bot 🎉",
-    "defeatVsBot": "Defeat — the bot finished first 🤖",
+    "victoryVsBot": "Victory! You beat the bot ",
+    "defeatVsBot": "Defeat — the bot finished first ",
     "victorySolo": "Victory!",
     "winSubBot": "You: {{u}}/{{tot}} · Bot: {{b}}/{{tot}} · {{m}} moves",
     "winSubSolo": "Finished in {{m}} moves",
@@ -198,12 +198,4312 @@
   "vsbot": {
     "botActive": "BOT ({{difficulty}})",
     "botWaiting": "BOT WAITING",
-    "statsLine": "🏆 {{foundations}} · 🎯 {{moves}} moves",
+    "statsLine": " {{foundations}} · {{moves}} moves",
     "activate": "Activate opponent bot",
     "modalUserWon": "You beat the bot!",
     "modalBotWon": "The bot finished first",
     "modalBotStats": "Bot: {{foundations}} foundations · {{moves}} moves",
     "replay": "Play again",
     "quit": "Quit"
+  },
+  "variant": {
+    "klondike_classic": {
+      "name": "Klondike (Classic)",
+      "shortDesc": "The iconic Windows solitaire — draw 1, infinite recycles.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Place all 52 cards on the 4 foundations, sorted by suit, from Ace to King."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "7 columns on the tableau (1, 2, 3, 4, 5, 6, 7 cards). Only the last card of each column is face-up. The remaining 24 cards form the stock."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs (King → Ace) with alternating colors: red on black, black on red. Example: 9♥ on 10♠."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "Tap the stock → 1 card to the waste. Infinite recycles: when the stock is empty, the waste flips back to form the stock."
+        },
+        "4": {
+          "title": "Win",
+          "body": "All 4 foundations complete (52 cards placed, Ace → King)."
+        }
+      }
+    },
+    "klondike_turn1": {
+      "name": "Klondike Turn 1",
+      "shortDesc": "Klondike with 1-card draw — the most beginner-friendly version.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Same as classic Klondike: fill the 4 foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Difference",
+          "body": "Tapping the stock reveals ONE card at a time — so every stock card is playable. This is the most winnable version."
+        },
+        "2": {
+          "title": "Recycles",
+          "body": "Unlimited. You can flip the waste back to stock as many times as needed."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Prefer uncovering a hidden card over playing from the waste."
+        }
+      }
+    },
+    "klondike_turn3": {
+      "name": "Klondike Turn 3",
+      "shortDesc": "Draw 3 cards at once — only the top one is immediately playable.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Same as classic Klondike: 4 foundations Ace → King."
+        },
+        "1": {
+          "title": "Difference",
+          "body": "Tapping the stock reveals 3 cards at once. Only the top one is immediately playable. To reach the others, play the top or wait for a recycle."
+        },
+        "2": {
+          "title": "Strategy",
+          "body": "Anticipate which triplets will come out. Remember positions at 1/3 and 2/3 — they may unlock later."
+        },
+        "3": {
+          "title": "Recycles",
+          "body": "Unlimited (standard); some stricter rules limit to 3 passes."
+        }
+      }
+    },
+    "vegas_solitaire": {
+      "name": "Vegas Solitaire",
+      "shortDesc": "Klondike Turn 3 with a $52 bet and only one pass through the stock.",
+      "rules": {
+        "0": {
+          "title": "Initial bet",
+          "body": "You wager $52 at start ($1 per card)."
+        },
+        "1": {
+          "title": "Score",
+          "body": "+$5 per card placed on the foundations. Goal: finish with more than $52 for a net win."
+        },
+        "2": {
+          "title": "Stock",
+          "body": "3 cards per draw, like Turn 3. Only ONE pass — no recycles."
+        },
+        "3": {
+          "title": "Min target",
+          "body": "Place at least 11 cards on the foundations to break even."
+        },
+        "4": {
+          "title": "Tip",
+          "body": "Be aggressive on foundations — no second chance."
+        }
+      }
+    },
+    "double_klondike": {
+      "name": "Double Klondike",
+      "shortDesc": "Klondike played with 2 decks — 8 foundations to complete.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "9 columns (1 to 9 cards). 8 empty foundations (2 per suit)."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending alternating colors, like classic Klondike."
+        },
+        "2": {
+          "title": "Foundations",
+          "body": "For each suit (♠ ♥ ♦ ♣), 2 foundations to fill independently, Ace → King."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "1 card at a time, unlimited recycles."
+        },
+        "4": {
+          "title": "Win",
+          "body": "8 foundations complete = 104 cards."
+        },
+        "5": {
+          "title": "Note",
+          "body": "This session plays with the standard 1-deck Klondike engine. 2-deck mode coming soon."
+        }
+      }
+    },
+    "westcliff": {
+      "name": "Westcliff",
+      "shortDesc": "Klondike with 10 columns of 3 — all face-up from the start.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "10 columns of 3 cards each (30 on tableau). 22 cards in the stock."
+        },
+        "1": {
+          "title": "Particularity",
+          "body": "All tableau cards are visible from the start — this is an 'open-air' Klondike."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending alternating colors, like standard Klondike."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "1 card per tap. The waste recycles only ONCE."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses the standard Klondike engine. 10-column layout coming soon."
+        }
+      }
+    },
+    "thumb_and_pouch": {
+      "name": "Thumb and Pouch",
+      "shortDesc": "Klondike with relaxed stacking — stack on any color except the same suit.",
+      "rules": {
+        "0": {
+          "title": "Key difference",
+          "body": "On the tableau, you can stack on ANY color, EXCEPT the same suit. More permissive than classic Klondike."
+        },
+        "1": {
+          "title": "Empty column",
+          "body": "Any card (not just a King) can occupy an empty column."
+        },
+        "2": {
+          "title": "Stock",
+          "body": "1 card at a time, unlimited recycles."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session plays with strict Klondike rules. Thumb-and-Pouch relaxation coming soon."
+        }
+      }
+    },
+    "spider_1suit": {
+      "name": "Spider 1 Suit",
+      "shortDesc": "Easy variant — 104 cards, but a single suit (all Spades).",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Build 8 complete runs King → Ace (all in spades). Each completed run is auto-moved to foundations."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "10 columns (4 of 6 cards, 6 of 5 cards — 54 total, all but last face-down). 50 cards remaining in stock (5 deals of 10)."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs (King → Ace). In 1 suit, all cards are 'compatible' — you can always move a complete run."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "Tap the stock → deals 1 card to each of the 10 columns. FORBIDDEN if any column is empty."
+        },
+        "4": {
+          "title": "Win",
+          "body": "8 complete King → Ace runs removed from the tableau."
+        }
+      }
+    },
+    "spider_2suits": {
+      "name": "Spider 2 Suits",
+      "shortDesc": "Medium — 2 suits (♠ + ♥) randomly mixed.",
+      "rules": {
+        "0": {
+          "title": "Difference vs 1 suit",
+          "body": "Uses ♠ AND ♥. You can stack on any color in a descending run, BUT you can only MOVE a run if it's entirely the same suit."
+        },
+        "1": {
+          "title": "Strategy",
+          "body": "Build pure sub-runs (all ♠ or all ♥) before moving them in bulk."
+        },
+        "2": {
+          "title": "Stock",
+          "body": "Deals 1 card per column. Forbidden if any column is empty."
+        }
+      }
+    },
+    "spider_4suits": {
+      "name": "Spider 4 Suits",
+      "shortDesc": "Hardest — all 4 suits (♠ ♥ ♦ ♣ × 2 decks).",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "2 complete decks (♠ ♥ ♦ ♣ × 2)."
+        },
+        "1": {
+          "title": "Challenge",
+          "body": "You must isolate each suit in sub-runs before moving them. Reserved for patient experts."
+        },
+        "2": {
+          "title": "Tip",
+          "body": "Keep at least one empty column for reorganization. Dealing from stock is very costly."
+        }
+      }
+    },
+    "spiderette": {
+      "name": "Spiderette",
+      "shortDesc": "Mini-Spider with 1 deck (52 cards) — 7 columns, 4 runs to build.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 columns (Klondike layout 1-2-3-4-5-6-7), 4 foundations (instead of 8). 24 cards in stock."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Same as Spider 1 Suit: descending runs, same color (free movement)."
+        },
+        "2": {
+          "title": "Win",
+          "body": "4 complete King → Ace runs (instead of 8)."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses the standard 2-deck Spider engine."
+        }
+      }
+    },
+    "freecell_classic": {
+      "name": "FreeCell (Classic)",
+      "shortDesc": "99.999% of deals solvable — pure logic, no hidden chance.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Place all 52 cards on the 4 foundations (Ace → King by suit)."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "8 columns (4 of 7 cards, 4 of 6). All cards visible. 4 free cells + 4 empty foundations."
+        },
+        "2": {
+          "title": "Free cells",
+          "body": "Each cell holds 1 card — temporary parking."
+        },
+        "3": {
+          "title": "Tableau",
+          "body": "Descending + alternating colors. Empty column accepts any card."
+        },
+        "4": {
+          "title": "Multi-moves",
+          "body": "Officially 1 card at a time. In practice, multi-moves are allowed if you have enough free cells + empty columns."
+        }
+      }
+    },
+    "bakers_game": {
+      "name": "Baker's Game",
+      "shortDesc": "FreeCell with same-suit stacking — much harder.",
+      "rules": {
+        "0": {
+          "title": "Difference",
+          "body": "Tableau stacking is by SAME suit descending (♠ on ♠, ♥ on ♥) instead of alternating colors."
+        },
+        "1": {
+          "title": "Otherwise identical",
+          "body": "8 columns, 4 free cells, 4 foundations. All visible."
+        },
+        "2": {
+          "title": "Strategy",
+          "body": "Much more constraining. Save free cells for late-game crunch moments."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard FreeCell (alternating colors). Same-suit mode coming soon."
+        }
+      }
+    },
+    "eight_off": {
+      "name": "Eight Off",
+      "shortDesc": "FreeCell with 8 cells instead of 4 — much more forgiving.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "8 columns of 6 cards (48 cards), 4 cards pre-placed in 4 of the 8 free cells."
+        },
+        "1": {
+          "title": "Free cells",
+          "body": "8 total cells (4 free + 4 pre-occupied). Much more wiggle room."
+        },
+        "2": {
+          "title": "Stacking",
+          "body": "Same suit descending (like Baker's Game)."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard FreeCell (4 cells, alternating colors)."
+        }
+      }
+    },
+    "seahaven_towers": {
+      "name": "Seahaven Towers",
+      "shortDesc": "10 columns of 5 cards + 2 pre-occupied cells — subtle balance.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "10 columns of 5 cards (50 total). 4 free cells with 2 pre-occupied at start."
+        },
+        "1": {
+          "title": "Stacking",
+          "body": "Same suit descending."
+        },
+        "2": {
+          "title": "Empty column",
+          "body": "Only a King can occupy an empty column."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard FreeCell. 10-column layout coming soon."
+        }
+      }
+    },
+    "yukon_classic": {
+      "name": "Yukon (Classic)",
+      "shortDesc": "Klondike with no stock — all cards on tableau, free bulk-moves.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 columns: 1 / 6 / 7 / 8 / 9 / 10 / 11. No stock — all 52 cards on the tableau."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending with alternating colors (like Klondike)."
+        },
+        "2": {
+          "title": "Unique flexibility",
+          "body": "You can move ANY face-up card AND everything below it, even if not a valid run."
+        },
+        "3": {
+          "title": "Empty column",
+          "body": "Only a King (with its pile) can occupy an empty column."
+        },
+        "4": {
+          "title": "Foundations",
+          "body": "Ace → King by suit. Win = 4 foundations complete."
+        }
+      }
+    },
+    "russian_solitaire": {
+      "name": "Russian Solitaire",
+      "shortDesc": "Yukon with same-suit stacking — much harder.",
+      "rules": {
+        "0": {
+          "title": "Difference vs Yukon",
+          "body": "Tableau stacking is by SAME suit descending (♠ on ♠), not alternating colors."
+        },
+        "1": {
+          "title": "Yukon flexibility kept",
+          "body": "You can still move any card with everything below it."
+        },
+        "2": {
+          "title": "Note",
+          "body": "This session uses the standard Yukon engine (alternating colors)."
+        }
+      }
+    },
+    "alaska": {
+      "name": "Alaska",
+      "shortDesc": "Yukon where stacking accepts up OR down on the SAME suit.",
+      "rules": {
+        "0": {
+          "title": "Difference",
+          "body": "Same-suit stacking, but ascending OR descending — you can put 9♠ on either 8♠ or 10♠."
+        },
+        "1": {
+          "title": "Yukon flexibility",
+          "body": "Move any card with what's below it (no strict run required)."
+        },
+        "2": {
+          "title": "Note",
+          "body": "This session uses standard Yukon. Alaska rule coming soon."
+        }
+      }
+    },
+    "golf_classic": {
+      "name": "Golf (Classic)",
+      "shortDesc": "Score = cards remaining (goal: 0, like in real golf).",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Empty the tableau. Like golf, your score is the number of cards left — LESS is better."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "7 columns of 5 face-up cards (35 on tableau). 17 cards in stock, 1 in the waste."
+        },
+        "2": {
+          "title": "Rule",
+          "body": "Move a top-of-column card to the waste if its value is ±1 vs the waste card. Suit doesn't matter."
+        },
+        "3": {
+          "title": "Terminal King",
+          "body": "King (13) is terminal — nothing chains after. You must draw."
+        },
+        "4": {
+          "title": "Stock",
+          "body": "Tap = 1 card to waste. No recycle."
+        },
+        "5": {
+          "title": "Win",
+          "body": "Tableau fully cleared (score = 0)."
+        }
+      }
+    },
+    "putt_putt": {
+      "name": "Putt Putt",
+      "shortDesc": "Circular Golf — Ace chains on King and vice versa.",
+      "rules": {
+        "0": {
+          "title": "Difference",
+          "body": "Like classic Golf, BUT the sequence is circular: an Ace can follow a King and a King can follow an Ace. The King is no longer terminal."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "7 columns of 5, 17 cards in stock, 1 in waste."
+        },
+        "2": {
+          "title": "Note",
+          "body": "This session uses standard Golf (terminal King). Circular mode coming soon."
+        }
+      }
+    },
+    "pyramid_classic": {
+      "name": "Pyramid (Classic)",
+      "shortDesc": "Remove pairs that sum to 13 to empty the pyramid.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Empty the whole pyramid (28 cards) by removing pairs summing to 13."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "7 rows in a pyramid (1, 2, 3, 4, 5, 6, 7 cards). A card is usable only if no card overlaps it below."
+        },
+        "2": {
+          "title": "Values",
+          "body": "Ace = 1, 2-10 = face value, Jack = 11, Queen = 12, King = 13."
+        },
+        "3": {
+          "title": "Valid pairs",
+          "body": "A+Q, 2+J, 3+10, 4+9, 5+8, 6+7. King removes alone."
+        },
+        "4": {
+          "title": "Stock",
+          "body": "Tap → 1 card to waste. Pair pyramid card with waste card."
+        },
+        "5": {
+          "title": "Win",
+          "body": "Pyramid fully empty."
+        }
+      }
+    },
+    "pyramid_relaxed": {
+      "name": "Pyramid (Relaxed)",
+      "shortDesc": "Pyramid with unlimited stock recycles — much more playable.",
+      "rules": {
+        "0": {
+          "title": "Difference",
+          "body": "Like classic Pyramid, BUT the stock can be recycled as many times as you want."
+        },
+        "1": {
+          "title": "Strategy",
+          "body": "You can let a pair slip by — it'll come back. Focus on the removal order in the pyramid."
+        },
+        "2": {
+          "title": "Note",
+          "body": "This session uses classic Pyramid (no recycle). Relaxed mode coming soon."
+        }
+      }
+    },
+    "tripeaks_classic": {
+      "name": "TriPeaks (Classic)",
+      "shortDesc": "3 peaks — chain cards ±1 to clear the tableau.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Clear the 3 peaks — 28 cards on the tableau."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "3 peaks sharing a base row. Only the bottom row is face-up at start."
+        },
+        "2": {
+          "title": "Rule",
+          "body": "Remove a face-up card if its value is ±1 vs the waste card. Suit irrelevant."
+        },
+        "3": {
+          "title": "Circular",
+          "body": "Ace ↔ King: an Ace can follow a King and vice versa."
+        },
+        "4": {
+          "title": "Combos",
+          "body": "Each chained card without drawing doubles the score: 1, 2, 4, 8, 16, 32... Drawing resets the combo."
+        },
+        "5": {
+          "title": "Stock",
+          "body": "No recycle — 23 cards max in the stock."
+        }
+      }
+    },
+    "forty_thieves_classic": {
+      "name": "Forty Thieves (Classic)",
+      "shortDesc": "Very hard — 2 decks, 1 card at a time, no recycle.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "2 full decks (104 cards). 10 columns of 4 (all visible). 64 cards in stock. 8 empty foundations."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending SAME-SUIT (♠ on ♠, ♥ on ♥). NO alternating colors."
+        },
+        "2": {
+          "title": "1 card at a time",
+          "body": "You can only move ONE card (top of column or waste). No bulk moves."
+        },
+        "3": {
+          "title": "Empty column",
+          "body": "Any card can occupy an empty column."
+        },
+        "4": {
+          "title": "Stock",
+          "body": "1 card per tap, NO recycle."
+        },
+        "5": {
+          "title": "Foundations",
+          "body": "8 foundations (2 per suit). Ace → King by suit. Win = all complete (104 cards)."
+        }
+      }
+    },
+    "accordion_classic": {
+      "name": "Accordion (Classic)",
+      "shortDesc": "Compress 52 cards into ONE single pile — extreme patience puzzle.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "52 cards in a line, all face-up."
+        },
+        "1": {
+          "title": "Rule",
+          "body": "Move a card onto its immediate left neighbor OR 3 spots to the left, if they share VALUE OR SUIT."
+        },
+        "2": {
+          "title": "Stacking",
+          "body": "The moved card goes on top of the target pile. Cards to the right slide left to fill the gap."
+        },
+        "3": {
+          "title": "Strategy",
+          "body": "Don't rush — a wrong stack blocks the game permanently. Plan several moves ahead."
+        },
+        "4": {
+          "title": "Win",
+          "body": "Reduce 52 cards to ONE single pile. Very rare (~0.3% of deals) — the ultimate patience challenge."
+        }
+      }
+    },
+    "triple_klondike": {
+      "name": "Triple Klondike",
+      "shortDesc": "Klondike played with 3 decks — 12 foundations to complete.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "13 columns (1 to 13 cards). 12 empty foundations (3 per suit)."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending alternating colors, like Klondike."
+        },
+        "2": {
+          "title": "Foundations",
+          "body": "For each suit: 3 foundations to fill independently, Ace → King."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "1 card at a time, unlimited recycles."
+        },
+        "4": {
+          "title": "Win",
+          "body": "12 foundations complete = 156 cards."
+        },
+        "5": {
+          "title": "Note",
+          "body": "This session plays with the standard 1-deck Klondike engine."
+        }
+      }
+    },
+    "easthaven": {
+      "name": "Easthaven",
+      "shortDesc": "Klondike-Spider hybrid — row-by-row deal from the stock.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 columns of 3 cards (21 cards). 31 cards in stock."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending alternating colors (like Klondike)."
+        },
+        "2": {
+          "title": "Spider-style stock",
+          "body": "Stock tap deals 1 card to EACH column at once (instead of a waste pile)."
+        },
+        "3": {
+          "title": "Foundations",
+          "body": "Ace → King by suit, 4 foundations."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses the standard Klondike waste-pile stock."
+        }
+      }
+    },
+    "agnes_sorel": {
+      "name": "Agnes Sorel",
+      "shortDesc": "Klondike where the first stock card sets the foundation base rank.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 Klondike columns. First stock card flipped sets the base rank of all 4 foundations."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending SAME-SUIT (not alternating like classic Klondike)."
+        },
+        "2": {
+          "title": "Foundations",
+          "body": "Start at the revealed rank and wrap (e.g. 7 → 6 → 5 → … → 8)."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "No stock to draw after initial deal — all or nothing."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses standard Klondike rules."
+        }
+      }
+    },
+    "agnes_bernauer": {
+      "name": "Agnes Bernauer",
+      "shortDesc": "Agnes Sorel variant with a 7-card reserve.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 Klondike columns + 7 face-up reserve cards. First stock card sets foundation base."
+        },
+        "1": {
+          "title": "Reserve",
+          "body": "Play any reserve card directly to tableau or foundations at any time."
+        },
+        "2": {
+          "title": "Tableau & foundations",
+          "body": "Like Agnes Sorel: descending same-suit, base from revealed rank."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses the standard Klondike engine."
+        }
+      }
+    },
+    "black_widow": {
+      "name": "Black Widow",
+      "shortDesc": "Spider 4 suits with alternating-color stacking instead of same suit.",
+      "rules": {
+        "0": {
+          "title": "Difference vs Spider 4 Suits",
+          "body": "Tableau stacks by ALTERNATING colors (red on black) instead of same suit."
+        },
+        "1": {
+          "title": "Run movement",
+          "body": "A run is movable if it respects the color alternation — many more valid combos."
+        },
+        "2": {
+          "title": "Setup",
+          "body": "2 full decks (104 cards), 10 columns, 50 cards in stock."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard Spider (same suit)."
+        }
+      }
+    },
+    "scorpion": {
+      "name": "Scorpion",
+      "shortDesc": "1-deck Spider, 7 columns of 7 — free pile movement.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 columns of 7 cards (49 cards), mixed face up/down. 3 cards left in stock (1 deal)."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending SAME suit (♠ on ♠)."
+        },
+        "2": {
+          "title": "Unique flexibility",
+          "body": "Move ANY card with everything ABOVE it — even if not a valid run."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "Single 3-card deal."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses standard 2-deck Spider."
+        }
+      }
+    },
+    "wasp": {
+      "name": "Wasp",
+      "shortDesc": "Scorpion variant — any run accepts an empty column.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 columns of 7 cards, like Scorpion."
+        },
+        "1": {
+          "title": "Difference vs Scorpion",
+          "body": "Any sequence can occupy an empty column (not just a King)."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Same-suit descending, free movement."
+        }
+      }
+    },
+    "simple_simon": {
+      "name": "Simple Simon",
+      "shortDesc": "1-deck Spider, all face-up, staggered deal — no stock.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "10 columns in deal 8-7-6-5-4-3-2-1-8-8 (52 total). All face-up."
+        },
+        "1": {
+          "title": "No stock",
+          "body": "All cards on tableau from start."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Same-suit descending. Complete King → Ace run auto-removes."
+        },
+        "3": {
+          "title": "Win",
+          "body": "4 complete runs formed."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses standard 2-deck Spider."
+        }
+      }
+    },
+    "relaxed_spider": {
+      "name": "Relaxed Spider",
+      "shortDesc": "Spider 4 suits with relaxed rules — stock deals allowed with empty columns.",
+      "rules": {
+        "0": {
+          "title": "Difference",
+          "body": "You can deal from stock even if there's an empty column. Game-changer."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Identical to Spider 4 suits (2 decks, 10 columns)."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Same-suit descending."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses strict Spider rules."
+        }
+      }
+    },
+    "forecell": {
+      "name": "ForeCell",
+      "shortDesc": "Strict FreeCell variant — the 4 Kings start in the free cells.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "8 columns of 6 cards (48 cards), the 4 Kings pre-placed in the 4 free cells."
+        },
+        "1": {
+          "title": "Free cells",
+          "body": "4 cells start OCCUPIED by Kings — you must release them by placing on tableau."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending alternating colors, like FreeCell."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard FreeCell (empty cells)."
+        }
+      }
+    },
+    "relaxed_freecell": {
+      "name": "FreeCell Relaxed",
+      "shortDesc": "FreeCell with smart auto-move and easier multi-card moves.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "Identical to classic FreeCell: 8 columns, 4 free cells, 4 foundations."
+        },
+        "1": {
+          "title": "Relaxation",
+          "body": "Multi-card moves are auto-allowed if you have room; no manual calculation needed."
+        },
+        "2": {
+          "title": "Auto-foundations",
+          "body": "Cards that can safely go to foundations are auto-moved."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard FreeCell."
+        }
+      }
+    },
+    "challenge_freecell": {
+      "name": "Challenge FreeCell",
+      "shortDesc": "FreeCell with a biased shuffle for harder deals.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "8 columns, 4 cells, 4 foundations — like classic FreeCell."
+        },
+        "1": {
+          "title": "Difference",
+          "body": "Deal algorithm biases toward hard configurations: Aces and 2s deep, Kings on top."
+        },
+        "2": {
+          "title": "Strategy",
+          "body": "Identify problem columns early. Anticipate need for Kings in reserve."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard FreeCell shuffle."
+        }
+      }
+    },
+    "australian_patience": {
+      "name": "Australian Patience",
+      "shortDesc": "Yukon with same-suit stacking and a small stock to draw from.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "7 columns of 4 cards (28 cards), 24 cards in stock."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending SAME suit (♠ on ♠)."
+        },
+        "2": {
+          "title": "Yukon flexibility",
+          "body": "Move any card with what's below it."
+        },
+        "3": {
+          "title": "Stock",
+          "body": "1 card at a time, no recycle."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses standard Yukon (alternating colors, no stock)."
+        }
+      }
+    },
+    "moosehide": {
+      "name": "Moosehide",
+      "shortDesc": "Yukon where stacking requires DIFFERENT suits (not just alternating colors).",
+      "rules": {
+        "0": {
+          "title": "Difference vs Yukon",
+          "body": "Tableau stacks on ANY suit DIFFERENT from itself (more than alternating colors)."
+        },
+        "1": {
+          "title": "Yukon flexibility",
+          "body": "Free bulk movement kept."
+        },
+        "2": {
+          "title": "Note",
+          "body": "This session uses standard Yukon (strict alternating colors)."
+        }
+      }
+    },
+    "black_hole": {
+      "name": "Black Hole",
+      "shortDesc": "Radial Golf — 17 piles of 3 around a central Ace ('the black hole').",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "17 mini-piles of 3 face-up cards around the Ace of Spades center (the 'black hole')."
+        },
+        "1": {
+          "title": "Rule",
+          "body": "Move a top-of-pile card to the black hole if value is ±1 vs the current center card. Suit irrelevant."
+        },
+        "2": {
+          "title": "Circular",
+          "body": "Ace ↔ King — the sequence is circular."
+        },
+        "3": {
+          "title": "No stock",
+          "body": "All 52 cards visible from start."
+        },
+        "4": {
+          "title": "Win",
+          "body": "All 51 outer cards absorbed by the black hole."
+        },
+        "5": {
+          "title": "Note",
+          "body": "This session uses standard Golf (7 columns)."
+        }
+      }
+    },
+    "giza": {
+      "name": "Giza",
+      "shortDesc": "Pyramid with 3 reserves of 8 cards — much more playable.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "Standard 28-card pyramid + 3 reserves of 8 face-up cards (24 total)."
+        },
+        "1": {
+          "title": "Reserves",
+          "body": "Pair the bottom card of each reserve with anything from pyramid or another reserve."
+        },
+        "2": {
+          "title": "No stock",
+          "body": "Everything is visible — no stock pile."
+        },
+        "3": {
+          "title": "Pairs",
+          "body": "Sum = 13, King alone. Like classic Pyramid."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses classic Pyramid (no reserves)."
+        }
+      }
+    },
+    "two_pyramids": {
+      "name": "Two Pyramids",
+      "shortDesc": "Two pyramids to empty in parallel — 56 cards instead of 28.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "2 side-by-side pyramids (28 + 28 = 56 cards from 2 decks)."
+        },
+        "1": {
+          "title": "Pairs",
+          "body": "Sum = 13 between pyramids or with waste."
+        },
+        "2": {
+          "title": "Stock",
+          "body": "Like classic Pyramid."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session plays a single pyramid."
+        }
+      }
+    },
+    "pharaoh": {
+      "name": "Pharaoh",
+      "shortDesc": "Extended pyramid with Ace → King foundations alongside pair removal.",
+      "rules": {
+        "0": {
+          "title": "Dual goal",
+          "body": "Empty the pyramid by pairs (sum=13) OR fill 4 foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Pyramid",
+          "body": "7 rows face-up, like classic Pyramid."
+        },
+        "2": {
+          "title": "Foundations",
+          "body": "Ace → King by suit. Place a card from pyramid or waste."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses classic Pyramid without foundations."
+        }
+      }
+    },
+    "tripeaks": {
+      "name": "TriPeaks",
+      "shortDesc": "Dataset-canonical TriPeaks — 3 peaks, ±1 circular.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Clear the 3 peaks (28 cards)."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "3 peaks sharing a base row. Bottom row face-up; others hidden."
+        },
+        "2": {
+          "title": "Rule",
+          "body": "Remove a face-up card if value is ±1 vs waste card."
+        },
+        "3": {
+          "title": "Circular",
+          "body": "Ace ↔ King."
+        },
+        "4": {
+          "title": "Combos",
+          "body": "Chained cards without drawing double the score."
+        },
+        "5": {
+          "title": "Stock",
+          "body": "23 cards max, no recycle."
+        }
+      }
+    },
+    "all_in_a_row": {
+      "name": "All in a Row",
+      "shortDesc": "Linear TriPeaks — 52 cards in 4 rows, ±1 circular.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "52 cards in 4 rows of 13, all face-up."
+        },
+        "1": {
+          "title": "Rule",
+          "body": "Remove an 'exposed' card (at row ends or uncovered) if value is ±1 vs waste."
+        },
+        "2": {
+          "title": "Circular",
+          "body": "Ace ↔ King."
+        },
+        "3": {
+          "title": "No stock",
+          "body": "All cards visible — no stock pile."
+        },
+        "4": {
+          "title": "Win",
+          "body": "All 52 cards removed."
+        },
+        "5": {
+          "title": "Note",
+          "body": "This session uses standard TriPeaks (3 peaks)."
+        }
+      }
+    },
+    "limited": {
+      "name": "Limited",
+      "shortDesc": "Shorter Forty Thieves — 12 columns of 3 (instead of 10×4).",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "2 decks (104 cards). 12 columns of 3 cards (36 on tableau). 68 cards in stock. 8 empty foundations."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending same suit, 1 card at a time."
+        },
+        "2": {
+          "title": "More accessible",
+          "body": "Fewer cards on tableau initially — more stock margin."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard Forty Thieves (10×4)."
+        }
+      }
+    },
+    "lucas": {
+      "name": "Lucas",
+      "shortDesc": "Forty Thieves with 13×3 columns — the 8 Aces pre-placed.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "The 8 Aces are removed and placed as foundation bases. 13 columns of 3 cards (39 on tableau). 57 cards in stock."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Descending same suit, 1 card at a time."
+        },
+        "2": {
+          "title": "Advantage",
+          "body": "Aces already placed — you only need to go from 2 to King by suit."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard Forty Thieves."
+        }
+      }
+    },
+    "napoleon_st_helena": {
+      "name": "Napoleon at St. Helena",
+      "shortDesc": "Forty Thieves with 4×10 layout and double Ace/King foundations.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "2 decks, 10 columns of 4 cards. 8 foundations: 4 ascending Ace → King and 4 descending King → Ace."
+        },
+        "1": {
+          "title": "Tableau",
+          "body": "Same-suit descending, 1 card at a time."
+        },
+        "2": {
+          "title": "Challenge",
+          "body": "Dual foundations force planning where each card will go."
+        },
+        "3": {
+          "title": "Note",
+          "body": "This session uses standard Forty Thieves (ascending only)."
+        }
+      }
+    },
+    "methuselah": {
+      "name": "Methuselah",
+      "shortDesc": "Accordion with relaxed rules — jumps ±1, ±3, AND ±5 left.",
+      "rules": {
+        "0": {
+          "title": "Setup",
+          "body": "52 cards in a line, face-up — like classic Accordion."
+        },
+        "1": {
+          "title": "Difference",
+          "body": "Move a card onto its neighbor 1, 3, OR 5 spots to the left (instead of just 1 or 3)."
+        },
+        "2": {
+          "title": "Stacking",
+          "body": "Same value OR same suit. Cards to the right slide left."
+        },
+        "3": {
+          "title": "Win",
+          "body": "Reduce to 1 pile. Much more playable than classic Accordion."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses classic Accordion (±1/±3)."
+        }
+      }
+    },
+    "royal_marriage": {
+      "name": "Royal Marriage",
+      "shortDesc": "Reunite the King and Queen of Hearts by removing cards between them.",
+      "rules": {
+        "0": {
+          "title": "Romantic goal",
+          "body": "Bring the Queen of Hearts (placed at the deck bottom) and the King of Hearts (placed on top) together."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Queen of Hearts laid down first, then 50 other cards in a line, King of Hearts at the end."
+        },
+        "2": {
+          "title": "Removal rule",
+          "body": "Remove any card (except King and Queen) if its 2 neighbors share its SUIT OR VALUE."
+        },
+        "3": {
+          "title": "Win",
+          "body": "King and Queen of Hearts adjacent (all cards between them removed)."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This session uses classic Accordion."
+        }
+      }
+    },
+    "canfield_classic": {
+      "name": "Canfield (classic)",
+      "shortDesc": "Canfield (classic) variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Canfield (classic) layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "demon": {
+      "name": "Demon",
+      "shortDesc": "Demon variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Demon layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "storehouse": {
+      "name": "Storehouse",
+      "shortDesc": "Storehouse variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Storehouse layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "selective_canfield": {
+      "name": "Selective Canfield",
+      "shortDesc": "Selective Canfield variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Selective Canfield layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "rainbow": {
+      "name": "Rainbow",
+      "shortDesc": "Rainbow variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Rainbow layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "american_toad": {
+      "name": "American Toad",
+      "shortDesc": "American Toad variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "American Toad layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "duchess": {
+      "name": "Duchess",
+      "shortDesc": "Duchess variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Duchess layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "eagle_wing": {
+      "name": "Eagle Wing",
+      "shortDesc": "Eagle Wing variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Eagle Wing layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "acme": {
+      "name": "Acme",
+      "shortDesc": "Acme variant from the canfield family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Acme layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "beleaguered_castle": {
+      "name": "Beleaguered Castle",
+      "shortDesc": "Beleaguered Castle variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Beleaguered Castle layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "citadel": {
+      "name": "Citadel",
+      "shortDesc": "Citadel variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Citadel layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "streets_and_alleys": {
+      "name": "Streets and Alleys",
+      "shortDesc": "Streets and Alleys variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Streets and Alleys layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "castles_end": {
+      "name": "Castles End",
+      "shortDesc": "Castles End variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Castles End layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "stronghold": {
+      "name": "Stronghold",
+      "shortDesc": "Stronghold variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Stronghold layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "fortress": {
+      "name": "Fortress",
+      "shortDesc": "Fortress variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Fortress layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "chessboard": {
+      "name": "Chessboard",
+      "shortDesc": "Chessboard variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Chessboard layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "bastion": {
+      "name": "Bastion",
+      "shortDesc": "Bastion variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Bastion layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "penelope": {
+      "name": "Penelope",
+      "shortDesc": "Penelope variant from the castle family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Penelope layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "la_belle_lucie": {
+      "name": "La Belle Lucie",
+      "shortDesc": "La Belle Lucie variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Belle Lucie layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "trefoil": {
+      "name": "Trefoil",
+      "shortDesc": "Trefoil variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Trefoil layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "shamrocks": {
+      "name": "Shamrocks",
+      "shortDesc": "Shamrocks variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Shamrocks layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "bristol": {
+      "name": "Bristol",
+      "shortDesc": "Bristol variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Bristol layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "fan": {
+      "name": "Fan",
+      "shortDesc": "Fan variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Fan layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "house_in_the_wood": {
+      "name": "House in the Wood",
+      "shortDesc": "House in the Wood variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "House in the Wood layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "house_on_the_hill": {
+      "name": "House on the Hill",
+      "shortDesc": "House on the Hill variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "House on the Hill layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "falling_star": {
+      "name": "Falling Star",
+      "shortDesc": "Falling Star variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Falling Star layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "clover_leaf": {
+      "name": "Clover Leaf",
+      "shortDesc": "Clover Leaf variant from the fans family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Clear the tableau to win."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Clover Leaf layout — see in-game help for specifics."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check \"Specific rules\" for stacking details."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify columns blocking Aces and 2s early — freeing them is priority."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine. Ultra-specific nuances coming in future updates."
+        }
+      }
+    },
+    "clock_solitaire": {
+      "name": "Clock Solitaire (classic)",
+      "shortDesc": "Clock Solitaire (classic) variant from the clock family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Complete all clock piles by revealing each card at its target position."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Clock Solitaire (classic) layout."
+        },
+        "2": {
+          "title": "Mechanic",
+          "body": "A revealed card is placed on its target pile (by rank). You then flip a new card from that pile."
+        },
+        "3": {
+          "title": "Win",
+          "body": "All cards face-up. Loss if last card points to a complete pile."
+        },
+        "4": {
+          "title": "Note",
+          "body": "Uses the generic clock-distribution engine."
+        }
+      }
+    },
+    "big_ben": {
+      "name": "Big Ben",
+      "shortDesc": "Big Ben variant from the clock family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Complete all clock piles by revealing each card at its target position."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Big Ben layout."
+        },
+        "2": {
+          "title": "Mechanic",
+          "body": "A revealed card is placed on its target pile (by rank). You then flip a new card from that pile."
+        },
+        "3": {
+          "title": "Win",
+          "body": "All cards face-up. Loss if last card points to a complete pile."
+        },
+        "4": {
+          "title": "Note",
+          "body": "Uses the generic clock-distribution engine."
+        }
+      }
+    },
+    "grandfathers_clock": {
+      "name": "Grandfather's Clock",
+      "shortDesc": "Grandfather's Clock variant from the clock family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Complete all clock piles by revealing each card at its target position."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Grandfather's Clock layout."
+        },
+        "2": {
+          "title": "Mechanic",
+          "body": "A revealed card is placed on its target pile (by rank). You then flip a new card from that pile."
+        },
+        "3": {
+          "title": "Win",
+          "body": "All cards face-up. Loss if last card points to a complete pile."
+        },
+        "4": {
+          "title": "Note",
+          "body": "Uses the generic clock-distribution engine."
+        }
+      }
+    },
+    "king_albert": {
+      "name": "King Albert",
+      "shortDesc": "King Albert — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. King Albert layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "King Albert-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "raglan": {
+      "name": "Raglan",
+      "shortDesc": "Raglan — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Raglan layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Raglan-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "brigade": {
+      "name": "Brigade",
+      "shortDesc": "Brigade — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Brigade layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Brigade-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "belvedere": {
+      "name": "Belvedere",
+      "shortDesc": "Belvedere — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Belvedere layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Belvedere-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "salic_law": {
+      "name": "Salic Law",
+      "shortDesc": "Salic Law — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Salic Law layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Salic Law-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "glencoe": {
+      "name": "Glencoe",
+      "shortDesc": "Glencoe — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Glencoe layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Glencoe-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "british_square": {
+      "name": "British Square",
+      "shortDesc": "British Square — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. British Square layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "British Square-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "royal_cotillion": {
+      "name": "Royal Cotillion",
+      "shortDesc": "Royal Cotillion — royal coronation family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Royal Cotillion layout from the royal_coronation family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Royal Cotillion-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "gypsy": {
+      "name": "Gypsy",
+      "shortDesc": "Gypsy — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Gypsy layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Gypsy-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "easy_gypsy": {
+      "name": "Easy Gypsy",
+      "shortDesc": "Easy Gypsy — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Easy Gypsy layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Easy Gypsy-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "whitehead": {
+      "name": "Whitehead",
+      "shortDesc": "Whitehead — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Whitehead layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Whitehead-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "blockade": {
+      "name": "Blockade",
+      "shortDesc": "Blockade — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Blockade layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Blockade-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "milligan": {
+      "name": "Milligan",
+      "shortDesc": "Milligan — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Milligan layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Milligan-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "trusty_twelve": {
+      "name": "Trusty Twelve",
+      "shortDesc": "Trusty Twelve — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Trusty Twelve layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Trusty Twelve-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "irmgard": {
+      "name": "Irmgard",
+      "shortDesc": "Irmgard — gypsy family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Irmgard layout from the gypsy family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Irmgard-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "russian_patience": {
+      "name": "Russian Patience",
+      "shortDesc": "Russian Patience — russian bezique family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Russian Patience layout from the russian_bezique family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Russian Patience-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "crapette": {
+      "name": "Crapette (Russian Bank)",
+      "shortDesc": "Crapette — russian bezique family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Crapette layout from the russian_bezique family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Crapette-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "bezique_solitaire": {
+      "name": "Bezique Solitaire",
+      "shortDesc": "Bezique Solitaire — russian bezique family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Bezique Solitaire layout from the russian_bezique family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Bezique Solitaire-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "boudoir": {
+      "name": "Boudoir",
+      "shortDesc": "Boudoir — russian bezique family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Boudoir layout from the russian_bezique family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Boudoir-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "bakers_dozen": {
+      "name": "Baker's Dozen",
+      "shortDesc": "Baker's Dozen — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Baker's Dozen layout from the modern_hybrid family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Baker's Dozen-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "freecell_two_decks": {
+      "name": "FreeCell Two Decks",
+      "shortDesc": "FreeCell Two Decks — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. FreeCell Two Decks layout from the modern_hybrid family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "FreeCell Two Decks-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "carlton": {
+      "name": "Carlton",
+      "shortDesc": "Carlton — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Carlton layout from the modern_hybrid family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Carlton-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "patience_carree": {
+      "name": "Square Patience",
+      "shortDesc": "Patience Carrée — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Patience Carrée layout from the french_traditional family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Patience Carrée-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "quatre_coins": {
+      "name": "Four Corners Patience",
+      "shortDesc": "Patience des Quatre Coins — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Patience des Quatre Coins layout from the french_traditional family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Patience des Quatre Coins-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "glouton": {
+      "name": "Glutton",
+      "shortDesc": "Glouton — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Fill the foundations Ace → King by suit. Glouton layout from the french_traditional family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Glouton-specific layout — see the in-game catalog description."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules. Check stacking specifics in the catalog."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early — Aces stuck deep are the priority to free."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "maria": {
+      "name": "Maria",
+      "shortDesc": "Maria — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Maria from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Maria-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "streets": {
+      "name": "Streets",
+      "shortDesc": "Streets — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Streets from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Streets-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "number_ten": {
+      "name": "Number Ten",
+      "shortDesc": "Number Ten — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Number Ten from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Number Ten-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "rank_and_file": {
+      "name": "Rank and File",
+      "shortDesc": "Rank and File — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Rank and File from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Rank and File-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "indian": {
+      "name": "Indian",
+      "shortDesc": "Indian — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Indian from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Indian-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "josephine": {
+      "name": "Josephine",
+      "shortDesc": "Joséphine — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Joséphine from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Joséphine-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "deuces": {
+      "name": "Deuces",
+      "shortDesc": "Deuces — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Deuces from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Deuces-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "corona": {
+      "name": "Corona",
+      "shortDesc": "Corona — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Corona from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Corona-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "famous_fifty": {
+      "name": "Famous Fifty",
+      "shortDesc": "Famous Fifty — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Famous Fifty from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Famous Fifty-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "big_forty": {
+      "name": "Big Forty",
+      "shortDesc": "Big Forty — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Big Forty from the forty thieves family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Big Forty-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "drapeaux": {
+      "name": "Flags Patience",
+      "shortDesc": "La Réussite des Drapeaux — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "La Réussite des Drapeaux from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Réussite des Drapeaux-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "tapis_vert": {
+      "name": "The Green Carpet",
+      "shortDesc": "Le Tapis Vert — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Le Tapis Vert from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Le Tapis Vert-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "belle_lucie_fr": {
+      "name": "La Belle Lucie (French)",
+      "shortDesc": "La Belle Lucie (FR) — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "La Belle Lucie (FR) from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Belle Lucie (FR)-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "les_huit": {
+      "name": "The Eights",
+      "shortDesc": "Les Huit — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Les Huit from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Les Huit-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "le_cadran": {
+      "name": "The Dial",
+      "shortDesc": "Le Cadran — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Le Cadran from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Le Cadran-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "la_tour": {
+      "name": "The Tower",
+      "shortDesc": "La Tour — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "La Tour from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Tour-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "la_pendule": {
+      "name": "The Pendulum",
+      "shortDesc": "La Pendule — french traditional family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "La Pendule from the french traditional family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Pendule-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "curds_and_whey": {
+      "name": "Curds and Whey",
+      "shortDesc": "Curds and Whey — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Curds and Whey from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Curds and Whey-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "scuffle": {
+      "name": "Scuffle",
+      "shortDesc": "Scuffle — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Scuffle from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Scuffle-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "la_cigale": {
+      "name": "La Cigale",
+      "shortDesc": "La Cigale — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "La Cigale from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Cigale-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "la_fourmi": {
+      "name": "La Fourmi",
+      "shortDesc": "La Fourmi — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "La Fourmi from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "La Fourmi-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "step_by_step": {
+      "name": "Step by Step",
+      "shortDesc": "Step by Step — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Step by Step from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Step by Step-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "spiderwort": {
+      "name": "Spiderwort",
+      "shortDesc": "Spiderwort — spider family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Spiderwort from the spider family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Spiderwort-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "will_o_wisp": {
+      "name": "Will o' the Wisp",
+      "shortDesc": "Will o' the Wisp — spider family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Will o' the Wisp from the spider family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Will o' the Wisp-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "beetle": {
+      "name": "Beetle",
+      "shortDesc": "Beetle — spider family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Beetle from the spider family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Beetle-specific layout — see the in-game help for details."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Tip",
+          "body": "Identify problem columns early."
+        },
+        "4": {
+          "title": "Note",
+          "body": "This version uses the generic tableau-foundation engine."
+        }
+      }
+    },
+    "mrs_mop": {
+      "name": "Mrs. Mop",
+      "shortDesc": "Mrs. Mop — spider family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Mrs. Mop from the spider family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Mrs. Mop-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "penguin": {
+      "name": "Penguin",
+      "shortDesc": "Penguin — freecell family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Penguin from the freecell family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Penguin-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "stalactites": {
+      "name": "Stalactites",
+      "shortDesc": "Stalactites — freecell family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Stalactites from the freecell family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Stalactites-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "bath": {
+      "name": "Bath",
+      "shortDesc": "Bath — freecell family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Bath from the freecell family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Bath-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "super_challenge_freecell": {
+      "name": "Super Challenge FreeCell",
+      "shortDesc": "Super Challenge FreeCell — freecell family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Super Challenge FreeCell from the freecell family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Super Challenge FreeCell-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "tuts_tomb": {
+      "name": "Tut's Tomb",
+      "shortDesc": "Tut's Tomb — pyramid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Tut's Tomb from the pyramid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Tut's Tomb-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "apophis": {
+      "name": "Apophis",
+      "shortDesc": "Apophis — pyramid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Apophis from the pyramid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Apophis-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "cheops": {
+      "name": "Cheops",
+      "shortDesc": "Cheops — pyramid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Cheops from the pyramid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Cheops-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "relaxed_pyramid": {
+      "name": "Relaxed Pyramid",
+      "shortDesc": "Relaxed Pyramid — pyramid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Relaxed Pyramid from the pyramid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Relaxed Pyramid-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "triangle": {
+      "name": "Triangle",
+      "shortDesc": "Triangle — pyramid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Triangle from the pyramid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Triangle-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "golf": {
+      "name": "Golf",
+      "shortDesc": "Golf (dataset) — tripeaks golf family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Golf (dataset) from the tripeaks golf family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Golf (dataset)-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "triple_peaks": {
+      "name": "Triple Peaks",
+      "shortDesc": "Triple Peaks — tripeaks golf family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Triple Peaks from the tripeaks golf family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Triple Peaks-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "pumpkin": {
+      "name": "Pumpkin",
+      "shortDesc": "Pumpkin — tripeaks golf family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Pumpkin from the tripeaks golf family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Pumpkin-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "diamond_mine": {
+      "name": "Diamond Mine",
+      "shortDesc": "Diamond Mine — tripeaks golf family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Diamond Mine from the tripeaks golf family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Diamond Mine-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "robert": {
+      "name": "Robert",
+      "shortDesc": "Robert — tripeaks golf family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Robert from the tripeaks golf family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Robert-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "tower_of_hanoy": {
+      "name": "Tower of Hanoy",
+      "shortDesc": "Tower of Hanoy — accordion family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Tower of Hanoy from the accordion family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Tower of Hanoy-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "idle_year": {
+      "name": "Idle Year",
+      "shortDesc": "Idle Year — accordion family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Idle Year from the accordion family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Idle Year-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "streets_and_alleys_acc": {
+      "name": "Streets and Alleys (Accordion)",
+      "shortDesc": "Streets and Alleys (Accordéon) — accordion family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Streets and Alleys (Accordéon) from the accordion family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Streets and Alleys (Accordéon)-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "maze": {
+      "name": "Maze",
+      "shortDesc": "Maze — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Maze from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Maze-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "display": {
+      "name": "Display",
+      "shortDesc": "Display — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Display from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Display-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "strategy_modern": {
+      "name": "Strategy (modern)",
+      "shortDesc": "Strategy (moderne) — modern hybrid family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Strategy (moderne) from the modern hybrid family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Strategy (moderne)-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "monte_carlo": {
+      "name": "Monte Carlo",
+      "shortDesc": "Monte Carlo — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Monte Carlo from the pairs family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Monte Carlo-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "aces_up": {
+      "name": "Aces Up",
+      "shortDesc": "Aces Up — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Aces Up from the pairs family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Aces Up-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine. Plays as tableau-foundation."
+        }
+      }
+    },
+    "hickory_dickory_dock": {
+      "name": "Hickory Dickory Dock",
+      "shortDesc": "Hickory Dickory Dock — clock family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Hickory Dickory Dock from the clock family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Hickory Dickory Dock-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "travellers": {
+      "name": "Travellers",
+      "shortDesc": "Travellers (Voyageurs) — clock family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Travellers (Voyageurs) from the clock family. Fill the foundations Ace → King by suit."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Travellers (Voyageurs)-specific layout — see the in-game help."
+        },
+        "2": {
+          "title": "Tableau",
+          "body": "Descending runs per variant rules."
+        },
+        "3": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "yukon_cells": {
+      "name": "Yukon Cells",
+      "shortDesc": "Yukon Cells — yukon family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Yukon Cells from the yukon family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Yukon Cells-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "forty_thieves": {
+      "name": "Forty Thieves (classic)",
+      "shortDesc": "Forty Thieves (dataset) — forty thieves family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Forty Thieves (dataset) from the forty thieves family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Forty Thieves (dataset)-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Generic tableau-foundation engine."
+        }
+      }
+    },
+    "nestor": {
+      "name": "Nestor",
+      "shortDesc": "Nestor — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Nestor from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Nestor-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "tens": {
+      "name": "Tens",
+      "shortDesc": "Tens — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Tens from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Tens-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "pairs": {
+      "name": "Pairs",
+      "shortDesc": "Pairs — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Pairs from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Pairs-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "decade": {
+      "name": "Decade",
+      "shortDesc": "Decade — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Decade from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Decade-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "vertical": {
+      "name": "Vertical",
+      "shortDesc": "Vertical — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Vertical from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Vertical-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "quinze": {
+      "name": "Quinze",
+      "shortDesc": "Quinze — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Quinze from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Quinze-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "idiots_delight": {
+      "name": "Idiot's Delight",
+      "shortDesc": "Idiot's Delight — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Idiot's Delight from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Idiot's Delight-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "aces_and_kings": {
+      "name": "Aces and Kings",
+      "shortDesc": "Aces and Kings — pairs family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Aces and Kings from the pairs family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Aces and Kings-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "calculation": {
+      "name": "Calculation",
+      "shortDesc": "Calculation — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Calculation from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Calculation-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "betsy_ross": {
+      "name": "Betsy Ross",
+      "shortDesc": "Betsy Ross — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Betsy Ross from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Betsy Ross-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "auld_lang_syne": {
+      "name": "Auld Lang Syne",
+      "shortDesc": "Auld Lang Syne — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Auld Lang Syne from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Auld Lang Syne-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "sir_tommy": {
+      "name": "Sir Tommy",
+      "shortDesc": "Sir Tommy — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Sir Tommy from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Sir Tommy-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "strategy": {
+      "name": "Strategy",
+      "shortDesc": "Strategy — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Strategy from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Strategy-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "lady_betty": {
+      "name": "Lady Betty",
+      "shortDesc": "Lady Betty — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Lady Betty from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Lady Betty-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "quadrille": {
+      "name": "Quadrille",
+      "shortDesc": "Quadrille — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Quadrille from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Quadrille-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "above_and_below": {
+      "name": "Above and Below",
+      "shortDesc": "Above and Below — numeric math family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Above and Below from the numeric math family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Above and Below-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "mahjong_cards": {
+      "name": "Mahjong Solitaire (cards)",
+      "shortDesc": "Mahjong Solitaire (cartes) — mahjong cards family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Mahjong Solitaire (cartes) from the mahjong cards family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Mahjong Solitaire (cartes)-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "pegged": {
+      "name": "Pegged",
+      "shortDesc": "Pegged — mahjong cards family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Pegged from the mahjong cards family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Pegged-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "crystal_cluster": {
+      "name": "Crystal Cluster",
+      "shortDesc": "Crystal Cluster — mahjong cards family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Crystal Cluster from the mahjong cards family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Crystal Cluster-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Family-specific mechanic not simulated by the generic engine."
+        }
+      }
+    },
+    "spite_and_malice": {
+      "name": "Spite and Malice",
+      "shortDesc": "Spite and Malice — multiplayer family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Spite and Malice from the multiplayer family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Spite and Malice-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Solo mode only; true 2-player mode (TURN/STUN/Socket) yet to be implemented."
+        }
+      }
+    },
+    "crapette_2p": {
+      "name": "Crapette (2 players)",
+      "shortDesc": "Crapette (2 joueurs) — multiplayer family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Crapette (2 joueurs) from the multiplayer family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Crapette (2 joueurs)-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Solo mode only; true 2-player mode (TURN/STUN/Socket) yet to be implemented."
+        }
+      }
+    },
+    "nerts": {
+      "name": "Nerts (Pounce)",
+      "shortDesc": "Nerts (Pounce) — multiplayer family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Nerts (Pounce) from the multiplayer family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Nerts (Pounce)-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Solo mode only; true 2-player mode (TURN/STUN/Socket) yet to be implemented."
+        }
+      }
+    },
+    "racing_demon": {
+      "name": "Racing Demon",
+      "shortDesc": "Racing Demon — multiplayer family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Racing Demon from the multiplayer family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Racing Demon-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Solo mode only; true 2-player mode (TURN/STUN/Socket) yet to be implemented."
+        }
+      }
+    },
+    "double_solitaire": {
+      "name": "Double Solitaire",
+      "shortDesc": "Double Solitaire — multiplayer family.",
+      "rules": {
+        "0": {
+          "title": "Goal",
+          "body": "Double Solitaire from the multiplayer family."
+        },
+        "1": {
+          "title": "Setup",
+          "body": "Double Solitaire-specific layout."
+        },
+        "2": {
+          "title": "Note",
+          "body": "Solo mode only; true 2-player mode (TURN/STUN/Socket) yet to be implemented."
+        }
+      }
+    }
   }
 }

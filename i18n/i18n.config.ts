@@ -15,6 +15,16 @@ import gameAr from './locales/game/ar.json';
 import gameEs from './locales/game/es.json';
 import gameDarija from './locales/game/darija.json';
 
+// Solitaire-specific screen strings (mode-select, spend, tournaments,
+// notifications inbox, race-history, race-replay, user profile…). Kept
+// in their own namespace so the existing `common` / `game` JSON files
+// don't have to be touched on every new screen.
+import screensEn from './locales/screens/en.json';
+import screensFr from './locales/screens/fr.json';
+import screensAr from './locales/screens/ar.json';
+import screensEs from './locales/screens/es.json';
+import screensDarija from './locales/screens/darija.json';
+
 export type SupportedLocale = 'en' | 'fr' | 'ar' | 'es' | 'darija';
 
 export const RTL_LANGUAGES: SupportedLocale[] = ['ar', 'darija'];
@@ -32,11 +42,11 @@ export const LANGUAGE_META: Record<
 };
 
 const resources = {
-  en: { common: en, game: gameEn },
-  fr: { common: fr, game: gameFr },
-  ar: { common: ar, game: gameAr },
-  es: { common: es, game: gameEs },
-  darija: { common: darija, game: gameDarija },
+  en: { common: en, game: gameEn, screens: screensEn },
+  fr: { common: fr, game: gameFr, screens: screensFr },
+  ar: { common: ar, game: gameAr, screens: screensAr },
+  es: { common: es, game: gameEs, screens: screensEs },
+  darija: { common: darija, game: gameDarija, screens: screensDarija },
 };
 
 // Detect device locale, fallback to 'fr'
@@ -56,7 +66,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: initialLocale,
   fallbackLng: 'fr',
-  ns: ['common', 'game'],
+  ns: ['common', 'game', 'screens'],
   defaultNS: 'common',
   interpolation: {
     escapeValue: false,

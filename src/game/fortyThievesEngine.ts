@@ -16,6 +16,8 @@
  * Win: 8 foundations of 13 cards each = 104.
  */
 
+import { rngFromSeed } from './engines/_shuffleSeeded';
+
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -76,7 +78,7 @@ function buildDeck(): Card[] {
   return deck;
 }
 
-function shuffle(deck: Card[]): Card[] {
+function shuffle(deck: Card[], rng: () => number = Math.random): Card[] {
   const out = [...deck];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -381,32 +383,39 @@ function hashStateCycle(s: any): string {
   return (h >>> 0).toString(36);
 }
 
-export function createInitialState(): GameState {
-  console.log("[FortyThieves Solver] 🎲 Reverse-Deal — solution forward par inversion d'historique");
-  const __t0 = Date.now();
+export function createInitialState(seed?: number | string | null): GameState {
+  const _rng = rngFromSeed(seed);
+  const _origRandom = Math.random;
+  Math.random = _rng;
+  try {
+    console.log("[FortyThieves Solver] 🎲 Reverse-Deal — solution forward par inversion d'historique");
+    const __t0 = Date.now();
 
-  // STRATÉGIE PRIORITAIRE : utiliser l'historique des coups inverses pour
-  // émettre une SOLUTION FORWARD GARANTIE. Le greedy était trop faible pour
-  // résoudre Forty Thieves en 600 itérations → on ne dépend plus de lui.
-  const MAX_ATTEMPTS = 12;
-  let bestCand: GameState | null = null;
-  let bestSol: GameAction[] = [];
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const { state, history } = reverseDealFortyThievesWithHistory();
-    const sol = buildForwardSolutionFromHistory(state, history);
-    if (validateFortyThievesSolution(state, sol)) {
-      _ftSolution = sol;
-      console.log(`[FortyThieves Solver] ✅ DONNE V2 SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${sol.length} coups`);
-      return state;
+    // STRATÉGIE PRIORITAIRE : utiliser l'historique des coups inverses pour
+    // émettre une SOLUTION FORWARD GARANTIE. Le greedy était trop faible pour
+    // résoudre Forty Thieves en 600 itérations → on ne dépend plus de lui.
+    const MAX_ATTEMPTS = 12;
+    let bestCand: GameState | null = null;
+    let bestSol: GameAction[] = [];
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const { state, history } = reverseDealFortyThievesWithHistory();
+      const sol = buildForwardSolutionFromHistory(state, history);
+      if (validateFortyThievesSolution(state, sol)) {
+        _ftSolution = sol;
+        console.log(`[FortyThieves Solver] ✅ DONNE V2 SOLUBLE (${Date.now() - __t0}ms, attempt ${attempt + 1}/${MAX_ATTEMPTS}) — solution forward garantie = ${sol.length} coups`);
+        return state;
+      }
+      if (sol.length > bestSol.length) { bestCand = state; bestSol = sol; }
     }
-    if (sol.length > bestSol.length) { bestCand = state; bestSol = sol; }
-  }
 
-  // Fallback (quasi-impossible) : meilleure tentative partielle
-  const fallback = bestCand ?? reverseDealFortyThieves();
-  _ftSolution = bestSol.length > 0 ? bestSol : computeFortyThievesSolution(fallback);
-  console.log(`[FortyThieves Solver] ⚠️ FALLBACK (${Date.now() - __t0}ms) — ${_ftSolution.length} coups partiels`);
-  return fallback;
+    // Fallback (quasi-impossible) : meilleure tentative partielle
+    const fallback = bestCand ?? reverseDealFortyThieves();
+    _ftSolution = bestSol.length > 0 ? bestSol : computeFortyThievesSolution(fallback);
+    console.log(`[FortyThieves Solver] ⚠️ FALLBACK (${Date.now() - __t0}ms) — ${_ftSolution.length} coups partiels`);
+    return fallback;
+  } finally {
+    Math.random = _origRandom;
+  }
 }
 
 export function canStackOnTableau(a: Card, b: Card): boolean {
