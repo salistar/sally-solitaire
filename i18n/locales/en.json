@@ -1,652 +1,658 @@
 {
- "play": "Play",
- "settings": "Settings",
- "profile": "Profile",
- "leaderboard": "Leaderboard",
- "friends": "Friends",
- "lobby": "Lobby",
- "createRoom": "Create Room",
- "joinRoom": "Join Room",
- "startGame": "Start Game",
- "yourTurn": "Your Turn",
- "score": "Score",
- "winner": "Winner",
- "draw": "Draw",
- "rematch": "Rematch",
- "quit": "Quit",
- "language": "Language",
- "sound": "Sound",
- "haptics": "Haptics",
- "theme": "Theme",
- "darkMode": "Dark Mode",
- "notifications": "Notifications",
- "online": "Online",
- "offline": "Offline",
- "bluetooth": "Bluetooth",
- "loading": "Loading...",
- "error": "Error",
- "retry": "Retry",
- "back": "Back",
- "next": "Next",
- "confirm": "Confirm",
- "cancel": "Cancel",
- "login": "Log In",
- "email": "Email",
- "password": "Password",
- "loginButton": "Sign In",
- "guestMode": "Continue as Guest",
- "testAccount": "Test Account:",
- "loginError": "Login failed",
- "fillAllFields": "Please fill in all fields",
- "guestError": "Guest mode error",
- "playOnline": "Play Online",
- "playVsBot": "vs Bot",
- "playLocal": "Local Play",
- "findOpponent": "Find an opponent worldwide",
- "dailyChallenge": "Daily Challenge",
- "gamesPlayed": "Games Played",
- "winRate": "Win Rate",
- "bluffSuccess": "Bluff Success",
- "welcome": "Welcome",
- "getStarted": "Get Started",
- "skipIntro": "Skip",
- "chooseLanguage": "Choose your language",
- "slide1.title": "Welcome to",
- "slide1.desc": "Your favorite card game on mobile.",
- "slide2.title": "Multiplayer",
- "slide2.desc": "Play in real-time against players worldwide.",
- "slide3.title": "AI Bots",
- "slide3.desc": "8 bots with adaptive artificial intelligence.",
- "slide4.title": "5 Languages",
- "slide4.desc": "Arabic, French, Darija, English, Spanish.",
- "loginTitle": "Sign In",
- "loginSubtitle": "Sign in to play.",
- "demoAccount": "Test Account",
- "or": "or",
- "noAccount": "No account?",
- "register": "Create Account",
- "guest": "Guest Mode",
- "gamesWon": "Won",
- "elo": "ELO",
- "achievements": "Badges",
- "coins": "Coins",
- "shop": "Shop",
- "edit": "Edit",
- "memberSince": "Member since",
- "noGames": "No games yet",
- "noData": "No data",
- "season": "Season",
- "weekly": "Weekly",
- "allTime": "All Time",
- "challengeDesc": "Finish a Klondike without using a hint. 50 bonus coins!",
- "startChallenge": "Start Challenge",
- "vsBot": "vs Bot",
- "localPlay": "Local",
- "light": "Light",
- "dark": "Dark",
- "system": "System",
- "general": "General",
- "audioHaptics": "Audio & Haptics",
- "soundEffects": "Sound Effects",
- "haptic": "Haptic",
- "pushNotif": "Push Notifications",
- "account": "Account",
- "exportData": "Export My Data",
- "signOut": "Sign Out",
- "dangerZone": "Danger Zone",
- "deleteAccount": "Delete Account",
- "delete": "Delete",
- "appTagline": "Solo · Strategy · Victory",
- "heroWelcomeUser": "Welcome, {{name}}!",
- "heroWelcomeGuest": "Welcome!",
- "live": "LIVE",
- "new": "NEW",
- "create": "Create",
- "createSub": "2 to 10 players",
- "join": "Join",
- "joinSub": "By code or list",
- "vsGemini": "vs Bot",
- "vsGeminiSub": "Expert AI",
- "dailyChallengeReward": "+{{coins}} coins",
- "simulation": "Simulation",
- "simulationSub": "2 to 10 bots from DB + audio/video call",
- "statGames": "Games",
- "statWins": "Wins",
- "statWinRate": "Win Rate",
- "statBestStreak": "Best Streak",
- "matchmakingUnavailable": "Matchmaking unavailable.",
- "defaultCity": "Casablanca",
- "scopeWorld": "World",
- "scopeCountry": "Country",
- "scopeCity": "City",
- "filterAllTime": "All Time",
- "filterWeekly": "Weekly",
- "filterSeason": "Season",
- "leaderboardSubtitle": "Season · {{scope}}",
- "statBest": "Best",
- "statStreak": "Streak",
- "topPlayers": "Top players",
- "winsShort": "W",
- "lossesShort": "L",
- "walletCoins": "Sally Coins",
- "walletDiamonds": "Diamonds",
- "recentGames": "Recent games",
- "noRecentGames": "No recent games",
- "vsOpponent": "vs {{name}}",
- "minShort": "min",
- "createRoomTitle": "Create a room",
- "joinRoomTitle": "Join a room",
- "lobbyTitle": "Waiting room",
- "simulationTitle": "Simulation",
- "host": "Host",
- "player": "Player",
- "invalidCode": "Invalid code",
- "invalidCodeDesc": "The code must be 6 characters long.",
- "codeCopied": "Code copied",
- "cantCreateRoom": "Could not create the room.",
- "cantJoinRoom": "Could not join the room.",
- "cantStartGame": "Could not start the game.",
- "cantSimulate": "Could not start the simulation.",
- "purchaseFailed": "Purchase failed.",
- "notYourTurn": "Not your turn",
- "waitingFor": "Waiting for {{name}} to play",
- "quitGame": "Quit",
- "quitGameDesc": "Quit the game?",
- "exportPrepared": "Your data will be prepared.",
- "deleteWarning": "Permanent action.",
- "shopTitle": "Shop",
- "maxPlayersLabel": "Max number of players",
- "visibilityLabel": "Visibility",
- "public": "Public",
- "publicDesc": "Visible in the public list",
- "private": "Private",
- "privateDesc": "Accessible only with the code",
- "confirmPurchase": "Confirm purchase",
- "purchaseSuccess": "Purchase successful!",
- "purchaseSuccessDesc": "+{{amount}} coins\nNew balance: {{balance}}",
- "inviteCode": "Invite code",
- "publicRooms": "PUBLIC ROOMS",
- "noPublicRooms": "No public rooms yet",
- "createOne": "Create one!",
- "playersWord": "players",
- "home": {
- "playCta": "Play a game",
- "playCtaSub": "11 variants — Klondike, Spider, FreeCell…",
- "soloBadge": "SOLO",
- "klondikeShort": "The classic",
- "spider2Short": "2 suits",
- "freecellShort": "~99% solvable",
- "vsBotShort": "AI coach — tips",
- "shortKlondike": "Klondike",
- "shortSpider": "Spider",
- "shortFreeCell": "FreeCell"
- },
- "multiplayer": {
- "tab": "Multi",
- "title": "Multiplayer",
- "subtitle": "Challenge other players or create your room",
- "intro": "Solitaire in versus mode: same deal, two players, first to finish or score the most wins.",
- "quickMatch": "Quick Match",
- "quickMatchSub": "1v1 on the same deal",
- "createRoom": "Create a room",
- "createRoomSub": "Invite an opponent (1v1)",
- "joinRoom": "Join a room",
- "joinRoomSub": "Enter an invite code",
- "dailyChallenge": "Daily challenge",
- "dailyChallengeSub": "Automatic matchmaking",
- "note": "Tip: Quick Match uses the same deal for both players — luck is out of the equation, only efficiency counts.",
- "shortHub": "Rooms · Versus",
- "shortQM": "1v1 · same deal",
- "waitingForOpponent": "Waiting for a 2nd player…",
- "soloIs1v1": "Solitaire is 1v1 — max 2 players.",
- "playVsBot": "Play vs Bot",
- "activateBot": "Activate Bot"
- },
- "variants": {
- "title": "Choose Solitaire",
- "subtitle": "{{count}} variants — all playable",
- "intro": "Pick a variant. You'll see the detailed rules first, then you can start the game.",
- "soonBadge": "SOON"
- },
- "rules": {
- "notFoundTitle": "Rules not found",
- "notFoundBody": "Unknown variant.",
- "metaDifficulty": "DIFFICULTY",
- "metaWin": "WIN RATE",
- "metaDuration": "DURATION",
- "metaCards": "CARDS",
- "sectionTitle": " Detailed rules",
- "playNow": "Play now",
- "comingSoon": "This variant will be available in a future update.",
- "chooseAnother": "Choose another variant",
- "pickDifficulty": "Pick a difficulty",
- "diff": {
- "easy": "Easy",
- "medium": "Medium",
- "hard": "Hard",
- "hints": "hints",
- "noHints": "No hints"
- }
- },
- "solo": {
- "unavailableTitle": "Variant unavailable",
- "unavailableBody": "This variant isn't implemented yet.",
- "moves": "MOVES",
- "scoreLabel": "SCORE",
- "remaining": "REMAINING",
- "tableau": "Tableau",
- "tableauCols": "Tableau ({{n}} columns)",
- "tableauCards": "Tableau ({{n}} cards)",
- "restart": "Restart",
- "auto": "Auto",
- "draw": "Draw",
- "deal": "Deal",
- "autoFoundations": "Auto foundations",
- "waste": "WASTE",
- "empty": "EMPTY",
- "klondikeSubtitle": "Klondike Draw {{drawCount}}",
- "spiderSubtitle": "{{suitMode}} suit(s) — 8 runs to build",
- "freecellSubtitle": "Pure logic — 99.999% solvable",
- "yukonSubtitle": "Yukon — no stock pile",
- "golfSubtitle": "Golf — minimum cards remaining",
- "pyramidSubtitle": "Pyramid — pairs sum to 13",
- "tripeaksSubtitle": "TriPeaks — combo x{{combo}}",
- "fortyThievesSubtitle": "Forty Thieves — 2 decks, 1 card",
- "accordionSubtitle": "Accordion — {{count}} piles",
- "hintKlondikeSelected": " A card is selected. Tap a destination column, or tap again to cancel.",
- "hintKlondikeIdle": "Tap a card → tries to send to foundation. Tap again → move mode.",
- "hintSpiderSelected": " Tap a destination column",
- "hintSpiderIdle": "Tap a card or the bottom of a run to select it.",
- "hintFreeCellSelected": " Tap a destination (column, free cell, or foundation)",
- "hintFreeCellIdle": "Tap a card to select it.",
- "hintYukonSelected": " Tap a destination column",
- "hintYukonIdle": "Tap a face-up card. Yukon: you can move any group.",
- "hintGolfIdle": "Tap the top card of a column whose value is ±1 from the waste card.",
- "hintGolfLost": " No more legal moves. Restart!",
- "hintPyramid": "Pair 2 cards summing to 13. The King (13) is removed alone. A=1, J=11, Q=12, K=13.",
- "hintTriPeaks": "Tap a card ±1 from the waste. A↔K (circular). Not drawing = combo doubles the score.",
- "hintFortyThieves": "Descending SAME suit. 1 card at a time. Tap = try foundation, otherwise select to move.",
- "hintAccordion": "Tap a card then tap one 1 or 3 spaces left (same value OR same suit). Reduce all to 1 single pile.",
- "hintAccordionLost": " No more legal moves.",
- "spiderRunsLabel": "Runs: {{done}} / {{total}}",
- "freeCellStatus": "Free cells: {{freeCells}}/4 · Empty cols: {{emptyCols}}/8 · Max move: {{maxMove}} cards",
- "winTitle": "Well done — you won!",
- "winStats": "{{moves}} moves · Score {{score}}",
- "playAgain": "Play again",
- "quit": "Quit",
- "diff": {
- "easy": "EASY",
- "medium": "MEDIUM",
- "hard": "HARD",
- "noHint": "None"
- },
- "ai": {
- "start": "AI",
- "stop": "STOP",
- "speed": "Speed",
- "tutorialTitle": " AI Mode",
- "tutorialBody": "AI plays the optimal solution automatically. The blue badge shows the next move before it's played. Cycle speed with the counter (0.5× to Turbo).",
- "tutorialOk": "Got it!"
- },
- "noHintTitle": "No move",
- "noHintBody": "No legal move found. Restart or draw.",
- "stuck": {
- "title": " Game stuck",
- "body": "No legal move is possible anymore. You can restart for a new deal, keep exploring the board, or quit.",
- "again": "New game",
- "continue": "Keep exploring"
- },
- "hintDrawTitle": " No useful move",
- "hintDrawBody": "No real move possible with visible cards. Tap the stock to reveal new cards — your hint is preserved.",
- "hintDealBody": "No move possible. Tap the stock to deal a row — your hint is preserved.",
- "impossible": {
- "title": " Game impossible",
- "body": "You've gone through the stock 2 times without making progress. This deal has no solution. Start a new game for a better deal!",
- "again": "New game"
- }
- },
- "variant": {
- "klondike-1": {
- "name": "Klondike (Draw 1)",
- "shortDesc": "Classic Solitaire — draw 1 card at a time.",
- "rules": [
- {
- "title": "Goal",
- "body": "Place all 52 cards onto the 4 foundations, organized by suit, from Ace → King."
- },
- {
- "title": "Setup",
- "body": "7 columns on the tableau (1, 2, 3, 4, 5, 6, 7 cards). Only the bottom card of each column is face-up. The remaining 24 cards form the stock."
- },
- {
- "title": "On the tableau",
- "body": "Descending sequence (King → Ace) with alternating colors: red on black, black on red. Example: 9 on 10."
- },
- {
- "title": "On the foundations",
- "body": "Ascending Ace → King, same suit ( on , etc.)."
- },
- {
- "title": "Empty column",
- "body": "Only a King may occupy an empty column."
- },
- {
- "title": "Move a sequence",
- "body": "You may move an entire face-up sequence if it follows the rule (descending + alternating colors)."
- },
- {
- "title": "Stock",
- "body": "Tap the stock → 1 card to the waste. When the stock is empty, it recycles from the waste (unlimited)."
- },
- {
- "title": "Win",
- "body": "All 4 foundations complete (52 cards placed)."
- }
- ]
- },
- "klondike-3": {
- "name": "Klondike (Draw 3)",
- "shortDesc": "Harder variant — draw 3 cards but only the 3rd is playable.",
- "rules": [
- {
- "title": "Goal",
- "body": "Same as Klondike Draw 1 — place all 52 cards on the 4 foundations."
- },
- {
- "title": "Difference",
- "body": "Tap the stock → 3 cards revealed at once. Only the 3rd is immediately playable."
- },
- {
- "title": "Strategy",
- "body": "Anticipate which triplets will appear. Harder than Draw 1 since only 1/3 of cards are directly accessible."
- },
- {
- "title": "Re-deal",
- "body": "Unlimited (Standard variant)."
- }
- ]
- },
- "klondike-vegas": {
- "name": "Klondike Vegas",
- "shortDesc": "Initial $52 stake. +$5 per card on foundations. Max 3 passes.",
- "rules": [
- {
- "title": "Initial stake",
- "body": "$52 wagered at start ($1 per card)."
- },
- {
- "title": "Score",
- "body": "+$5 per card placed on foundations. Goal: finish above $52 to win."
- },
- {
- "title": "Stock",
- "body": "3 cards per draw. Maximum 3 passes — after that, you can't draw anymore."
- },
- {
- "title": "Target",
- "body": "Place at least 11 cards on foundations to break even."
- }
- ]
- },
- "spider-1": {
- "name": "Spider 1 suit",
- "shortDesc": "Easy variant — 104 cards but a single suit ().",
- "rules": [
- {
- "title": "Goal",
- "body": "Build 8 complete King → Ace runs of the same suit. Each run is auto-removed."
- },
- {
- "title": "Setup",
- "body": "10 columns on the tableau (4 columns of 6, 6 columns of 5). Only the last card of each column is visible. 50 remaining cards in the stock (5 deals of 10)."
- },
- {
- "title": "Tableau",
- "body": "Descending (King → Ace). Any suit may stack on top, BUT you can only move a run if it's all the same suit."
- },
- {
- "title": "Stock",
- "body": "Tap stock → deals 1 card on each of the 10 columns. You CANNOT deal if any column is empty."
- },
- {
- "title": "Win",
- "body": "8 King → Ace runs removed from the tableau."
- }
- ]
- },
- "spider-2": {
- "name": "Spider 2 suits",
- "shortDesc": "Medium difficulty — 2 suits ( + ).",
- "rules": [
- {
- "title": "Setup",
- "body": "Like Spider 1 suit, but with AND ."
- },
- {
- "title": "Added difficulty",
- "body": "Suits alternate randomly. Harder to form pure runs to move."
- }
- ]
- },
- "spider-4": {
- "name": "Spider 4 suits",
- "shortDesc": "The hardest version — all 4 suits.",
- "rules": [
- {
- "title": "Setup",
- "body": "2 full decks of 52 cards ( × 2)."
- },
- {
- "title": "The challenge",
- "body": "You must isolate each suit to move them as a block. For experts only."
- }
- ]
- },
- "freecell": {
- "name": "FreeCell",
- "shortDesc": "99.999% of deals are solvable — pure thinking.",
- "rules": [
- {
- "title": "Goal",
- "body": "Place all 52 cards on the 4 foundations (Ace → King by suit)."
- },
- {
- "title": "Setup",
- "body": "8 columns (4 of 7 cards, 4 of 6 cards). All cards face-up from the start. 4 free cells + 4 empty foundations."
- },
- {
- "title": "Free cells",
- "body": "Each one holds a single card (any), like a temporary parking spot."
- },
- {
- "title": "Tableau",
- "body": "Descending + alternating colors (red on black, black on red). An empty column accepts any card."
- },
- {
- "title": "Multi-card moves",
- "body": "Officially 1 card at a time. In practice, you can move (free cells + 1) × 2^(empty columns) cards in one move."
- },
- {
- "title": "Strategy",
- "body": "Always keep at least 1 free cell and 1 empty column in reserve. Spot Aces and 2s buried under high cards."
- }
- ]
- },
- "pyramid": {
- "name": "Pyramid",
- "shortDesc": "Remove pairs that sum to 13.",
- "rules": [
- {
- "title": "Goal",
- "body": "Empty the entire pyramid (28 cards) by removing pairs of cards summing to 13."
- },
- {
- "title": "Setup",
- "body": "7 rows in pyramid (1, 2, 3, 4, 5, 6, 7 cards). A card is usable only if no card overlaps it from below."
- },
- {
- "title": "Values",
- "body": "Ace = 1, 2-10 = face value, Jack = 11, Queen = 12, King = 13."
- },
- {
- "title": "Valid pairs",
- "body": "A + Q (1+12), 2 + J (2+11), 3 + 10, 4 + 9, 5 + 8, 6 + 7. The King = 13 is removed alone."
- },
- {
- "title": "Stock",
- "body": "Tap the stock to reveal a card on the waste. You may pair a pyramid card with the waste."
- },
- {
- "title": "Win",
- "body": "Whole pyramid removed. The more cards you remove, the higher your score."
- }
- ]
- },
- "tripeaks": {
- "name": "TriPeaks",
- "shortDesc": "3 peaks — chain cards ±1.",
- "rules": [
- {
- "title": "Goal",
- "body": "Empty all 3 peaks — 28 tableau cards."
- },
- {
- "title": "Setup",
- "body": "3 peaks sharing a bottom row. Only the bottom row is face-up at start."
- },
- {
- "title": "Rule",
- "body": "You may remove a face-up card if its value is ±1 from the waste card. Suit doesn't matter."
- },
- {
- "title": "Circular",
- "body": "Ace ↔ King: an Ace can follow a King and vice versa."
- },
- {
- "title": "Combos",
- "body": "Each chained card without drawing doubles the score: 1, 2, 4, 8, 16, 32 points… Tapping the stock resets the combo."
- },
- {
- "title": "Stock",
- "body": "No re-deal: 23 cards max in the stock."
- }
- ]
- },
- "yukon": {
- "name": "Yukon",
- "shortDesc": "Klondike with no stock — all cards on tableau.",
- "rules": [
- {
- "title": "Setup",
- "body": "7 columns: 1 card / 6 / 7 / 8 / 9 / 10 / 11. No stock, all 52 cards are dealt onto the tableau."
- },
- {
- "title": "Tableau",
- "body": "Descending sequence with alternating colors (red on black, black on red)."
- },
- {
- "title": "Unique flexibility",
- "body": "You may move ANY face-up card with ALL the cards below it, even if they don't form a valid run."
- },
- {
- "title": "Empty column",
- "body": "Only a King (with whatever follows) may occupy an empty column."
- },
- {
- "title": "Foundations",
- "body": "Ace → King by suit ( )."
- },
- {
- "title": "Win",
- "body": "All 4 foundations complete (52 cards)."
- }
- ]
- },
- "golf": {
- "name": "Golf",
- "shortDesc": "Score = remaining cards (goal: 0).",
- "rules": [
- {
- "title": "Goal",
- "body": "Empty the tableau. Like in golf, your score = remaining cards: MINIMUM = better."
- },
- {
- "title": "Setup",
- "body": "7 columns of 5 cards face-up (35 cards). 17 cards in stock, 1 card on waste."
- },
- {
- "title": "Rule",
- "body": "Place a card from the top of a column onto the waste if its value is ±1 from the waste card. Suit irrelevant."
- },
- {
- "title": "Terminal King",
- "body": "The King (13) is terminal: nothing chains after. You must draw."
- },
- {
- "title": "Stock",
- "body": "Tap the stock → 1 card to waste. No re-deal."
- },
- {
- "title": "Win",
- "body": "Tableau fully cleared."
- }
- ]
- },
- "forty-thieves": {
- "name": "Forty Thieves",
- "shortDesc": "Very hard — 2 decks, 1 card at a time.",
- "rules": [
- {
- "title": "Setup",
- "body": "2 full decks. 10 columns of 4 cards (all visible). 64 cards in stock. 8 empty foundations."
- },
- {
- "title": "Tableau",
- "body": "Descending SAME SUIT ( on , on ). NO alternation."
- },
- {
- "title": "1 card at a time",
- "body": "You may only move ONE card at a time (the last of a column or the waste)."
- },
- {
- "title": "Empty column",
- "body": "Any card may occupy an empty column."
- },
- {
- "title": "Stock",
- "body": "Tap the stock → 1 card to waste. No re-deal."
- },
- {
- "title": "Foundations",
- "body": "8 foundations (2 per suit). Ace → King by suit. Win = all complete (104 cards)."
- }
- ]
- },
- "accordion": {
- "name": "Accordion",
- "shortDesc": "Reduce 52 cards to a single pile.",
- "rules": [
- {
- "title": "Setup",
- "body": "52 cards laid in a row, all face-up."
- },
- {
- "title": "Rule",
- "body": "Place a card on its immediate left neighbor (1 space) or on the 3rd card to its left, if SAME VALUE OR SAME SUIT."
- },
- {
- "title": "Stacking",
- "body": "The moved card lands on top of the target pile. Cards to the right shift left to fill the gap."
- },
- {
- "title": "Strategy",
- "body": "Don't rush: a wrong stack can permanently lock the game. Think several moves ahead."
- },
- {
- "title": "Win",
- "body": "Reduce all 52 cards to ONE single pile. Very rare (~0.3% of deals), it's a patience challenge."
- }
- ]
- }
- }
+  "play": "Play",
+  "settings": "Settings",
+  "profile": "Profile",
+  "leaderboard": "Leaderboard",
+  "friends": "Friends",
+  "lobby": "Lobby",
+  "createRoom": "Create Room",
+  "joinRoom": "Join Room",
+  "startGame": "Start Game",
+  "yourTurn": "Your Turn",
+  "score": "Score",
+  "winner": "Winner",
+  "draw": "Draw",
+  "rematch": "Rematch",
+  "quit": "Quit",
+  "language": "Language",
+  "sound": "Sound",
+  "haptics": "Haptics",
+  "theme": "Theme",
+  "darkMode": "Dark Mode",
+  "notifications": "Notifications",
+  "online": "Online",
+  "offline": "Offline",
+  "bluetooth": "Bluetooth",
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry",
+  "back": "Back",
+  "next": "Next",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "login": "Log In",
+  "email": "Email",
+  "password": "Password",
+  "loginButton": "Sign In",
+  "guestMode": "Continue as Guest",
+  "testAccount": "Test Account:",
+  "loginError": "Login failed",
+  "fillAllFields": "Please fill in all fields",
+  "guestError": "Guest mode error",
+  "playOnline": "Play Online",
+  "playVsBot": "vs Bot",
+  "playLocal": "Local Play",
+  "findOpponent": "Find an opponent worldwide",
+  "dailyChallenge": "Daily Challenge",
+  "gamesPlayed": "Games Played",
+  "winRate": "Win Rate",
+  "bluffSuccess": "Bluff Success",
+  "welcome": "Welcome",
+  "getStarted": "Get Started",
+  "skipIntro": "Skip",
+  "chooseLanguage": "Choose your language",
+  "slide1.title": "Welcome to",
+  "slide1.desc": "Your favorite card game on mobile.",
+  "slide2.title": "Multiplayer",
+  "slide2.desc": "Play in real-time against players worldwide.",
+  "slide3.title": "AI Bots",
+  "slide3.desc": "8 bots with adaptive artificial intelligence.",
+  "slide4.title": "5 Languages",
+  "slide4.desc": "Arabic, French, Darija, English, Spanish.",
+  "loginTitle": "Sign In",
+  "loginSubtitle": "Sign in to play.",
+  "demoAccount": "Test Account",
+  "or": "or",
+  "noAccount": "No account?",
+  "register": "Create Account",
+  "guest": "Guest Mode",
+  "gamesWon": "Won",
+  "elo": "ELO",
+  "achievements": "Badges",
+  "coins": "Coins",
+  "shop": "Shop",
+  "edit": "Edit",
+  "memberSince": "Member since",
+  "noGames": "No games yet",
+  "noData": "No data",
+  "season": "Season",
+  "weekly": "Weekly",
+  "allTime": "All Time",
+  "challengeDesc": "Finish a Klondike without using a hint. 50 bonus coins!",
+  "startChallenge": "Start Challenge",
+  "vsBot": "vs Bot",
+  "localPlay": "Local play",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "general": "General",
+  "audioHaptics": "Audio & Haptics",
+  "soundEffects": "Sound Effects",
+  "haptic": "Haptic",
+  "pushNotif": "Push Notifications",
+  "account": "Account",
+  "exportData": "Export My Data",
+  "signOut": "Sign Out",
+  "dangerZone": "Danger Zone",
+  "deleteAccount": "Delete Account",
+  "delete": "Delete",
+  "appTagline": "Solo · Strategy · Victory",
+  "heroWelcomeUser": "Welcome, {{name}}!",
+  "heroWelcomeGuest": "Welcome!",
+  "live": "LIVE",
+  "new": "NEW",
+  "create": "Create",
+  "createSub": "2 to 10 players",
+  "join": "Join",
+  "joinSub": "By code or list",
+  "vsGemini": "vs Bot",
+  "vsGeminiSub": "Expert AI",
+  "dailyChallengeReward": "+{{coins}} coins",
+  "simulation": "Simulation",
+  "simulationSub": "2 to 10 bots from DB + audio/video call",
+  "statGames": "Games",
+  "statWins": "Wins",
+  "statWinRate": "Win Rate",
+  "statBestStreak": "Best Streak",
+  "matchmakingUnavailable": "Matchmaking unavailable.",
+  "defaultCity": "Casablanca",
+  "scopeWorld": "World",
+  "scopeCountry": "Country",
+  "scopeCity": "City",
+  "filterAllTime": "All Time",
+  "filterWeekly": "Weekly",
+  "filterSeason": "Season",
+  "leaderboardSubtitle": "Season · {{scope}}",
+  "statBest": "Best",
+  "statStreak": "Streak",
+  "topPlayers": "Top players",
+  "winsShort": "W",
+  "lossesShort": "L",
+  "walletCoins": "Sally Coins",
+  "walletDiamonds": "Diamonds",
+  "recentGames": "Recent games",
+  "noRecentGames": "No recent games",
+  "vsOpponent": "vs {{name}}",
+  "minShort": "min",
+  "createRoomTitle": "Create a room",
+  "joinRoomTitle": "Join a room",
+  "lobbyTitle": "Waiting room",
+  "simulationTitle": "Simulation",
+  "host": "Host",
+  "player": "Player",
+  "invalidCode": "Invalid code",
+  "invalidCodeDesc": "The code must be 6 characters long.",
+  "codeCopied": "Code copied",
+  "cantCreateRoom": "Could not create the room.",
+  "cantJoinRoom": "Could not join the room.",
+  "cantStartGame": "Could not start the game.",
+  "cantSimulate": "Could not start the simulation.",
+  "purchaseFailed": "Purchase failed.",
+  "notYourTurn": "Not your turn",
+  "waitingFor": "Waiting for {{name}} to play",
+  "quitGame": "Quit",
+  "quitGameDesc": "Quit the game?",
+  "exportPrepared": "Your data will be prepared.",
+  "deleteWarning": "Permanent action.",
+  "shopTitle": "Shop",
+  "maxPlayersLabel": "Max number of players",
+  "visibilityLabel": "Visibility",
+  "public": "Public",
+  "publicDesc": "Visible in the public list",
+  "private": "Private",
+  "privateDesc": "Accessible only with the code",
+  "confirmPurchase": "Confirm purchase",
+  "purchaseSuccess": "Purchase successful!",
+  "purchaseSuccessDesc": "+{{amount}} coins\nNew balance: {{balance}}",
+  "inviteCode": "Invite code",
+  "publicRooms": "PUBLIC ROOMS",
+  "noPublicRooms": "No public rooms yet",
+  "createOne": "Create one!",
+  "playersWord": "players",
+  "home": {
+    "playCta": "Play a game",
+    "playCtaSub": "11 variants — Klondike, Spider, FreeCell…",
+    "soloBadge": "SOLO",
+    "klondikeShort": "The classic",
+    "spider2Short": "2 suits",
+    "freecellShort": "~99% solvable",
+    "vsBotShort": "AI coach — tips",
+    "shortKlondike": "Klondike",
+    "shortSpider": "Spider",
+    "shortFreeCell": "FreeCell"
+  },
+  "multiplayer": {
+    "tab": "Multi",
+    "title": "Multiplayer",
+    "subtitle": "Challenge other players or create your room",
+    "intro": "Solitaire in versus mode: same deal, two players, first to finish or score the most wins.",
+    "quickMatch": "Quick Match",
+    "quickMatchSub": "1v1 on the same deal",
+    "createRoom": "Create a room",
+    "createRoomSub": "Invite an opponent (1v1)",
+    "joinRoom": "Join a room",
+    "joinRoomSub": "Enter an invite code",
+    "dailyChallenge": "Daily challenge",
+    "dailyChallengeSub": "Automatic matchmaking",
+    "note": "Tip: Quick Match uses the same deal for both players — luck is out of the equation, only efficiency counts.",
+    "shortHub": "Rooms · Versus",
+    "shortQM": "1v1 · same deal",
+    "waitingForOpponent": "Waiting for a 2nd player…",
+    "soloIs1v1": "Solitaire is 1v1 — max 2 players.",
+    "playVsBot": "Play vs Bot",
+    "activateBot": "Activate Bot"
+  },
+  "variants": {
+    "title": "Choose Solitaire",
+    "subtitle": "{{count}} variants — all playable",
+    "intro": "Pick a variant. You'll see the detailed rules first, then you can start the game.",
+    "soonBadge": "SOON"
+  },
+  "rules": {
+    "notFoundTitle": "Rules not found",
+    "notFoundBody": "Unknown variant.",
+    "metaDifficulty": "DIFFICULTY",
+    "metaWin": "WIN RATE",
+    "metaDuration": "DURATION",
+    "metaCards": "CARDS",
+    "sectionTitle": " Detailed rules",
+    "playNow": "Play now",
+    "comingSoon": "This variant will be available in a future update.",
+    "chooseAnother": "Choose another variant",
+    "pickDifficulty": "Pick a difficulty",
+    "diff": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "hints": "hints",
+      "noHints": "No hints"
+    }
+  },
+  "solo": {
+    "unavailableTitle": "Variant unavailable",
+    "unavailableBody": "This variant isn't implemented yet.",
+    "moves": "MOVES",
+    "scoreLabel": "SCORE",
+    "remaining": "REMAINING",
+    "tableau": "Tableau",
+    "tableauCols": "Tableau ({{n}} columns)",
+    "tableauCards": "Tableau ({{n}} cards)",
+    "restart": "Restart",
+    "auto": "Auto",
+    "draw": "Draw",
+    "deal": "Deal",
+    "autoFoundations": "Auto foundations",
+    "waste": "WASTE",
+    "empty": "EMPTY",
+    "klondikeSubtitle": "Klondike Draw {{drawCount}}",
+    "spiderSubtitle": "{{suitMode}} suit(s) — 8 runs to build",
+    "freecellSubtitle": "Pure logic — 99.999% solvable",
+    "yukonSubtitle": "Yukon — no stock pile",
+    "golfSubtitle": "Golf — minimum cards remaining",
+    "pyramidSubtitle": "Pyramid — pairs sum to 13",
+    "tripeaksSubtitle": "TriPeaks — combo x{{combo}}",
+    "fortyThievesSubtitle": "Forty Thieves — 2 decks, 1 card",
+    "accordionSubtitle": "Accordion — {{count}} piles",
+    "hintKlondikeSelected": " A card is selected. Tap a destination column, or tap again to cancel.",
+    "hintKlondikeIdle": "Tap a card → tries to send to foundation. Tap again → move mode.",
+    "hintSpiderSelected": " Tap a destination column",
+    "hintSpiderIdle": "Tap a card or the bottom of a run to select it.",
+    "hintFreeCellSelected": " Tap a destination (column, free cell, or foundation)",
+    "hintFreeCellIdle": "Tap a card to select it.",
+    "hintYukonSelected": " Tap a destination column",
+    "hintYukonIdle": "Tap a face-up card. Yukon: you can move any group.",
+    "hintGolfIdle": "Tap the top card of a column whose value is ±1 from the waste card.",
+    "hintGolfLost": " No more legal moves. Restart!",
+    "hintPyramid": "Pair 2 cards summing to 13. The King (13) is removed alone. A=1, J=11, Q=12, K=13.",
+    "hintTriPeaks": "Tap a card ±1 from the waste. A↔K (circular). Not drawing = combo doubles the score.",
+    "hintFortyThieves": "Descending SAME suit. 1 card at a time. Tap = try foundation, otherwise select to move.",
+    "hintAccordion": "Tap a card then tap one 1 or 3 spaces left (same value OR same suit). Reduce all to 1 single pile.",
+    "hintAccordionLost": " No more legal moves.",
+    "spiderRunsLabel": "Runs: {{done}} / {{total}}",
+    "freeCellStatus": "Free cells: {{freeCells}}/4 · Empty cols: {{emptyCols}}/8 · Max move: {{maxMove}} cards",
+    "winTitle": "Well done — you won!",
+    "winStats": "{{moves}} moves · Score {{score}}",
+    "playAgain": "Play again",
+    "quit": "Quit",
+    "diff": {
+      "easy": "EASY",
+      "medium": "MEDIUM",
+      "hard": "HARD",
+      "noHint": "None"
+    },
+    "ai": {
+      "start": "AI",
+      "stop": "STOP",
+      "speed": "Speed",
+      "tutorialTitle": " AI Mode",
+      "tutorialBody": "AI plays the optimal solution automatically. The blue badge shows the next move before it's played. Cycle speed with the counter (0.5× to Turbo).",
+      "tutorialOk": "Got it!"
+    },
+    "noHintTitle": "No move",
+    "noHintBody": "No legal move found. Restart or draw.",
+    "stuck": {
+      "title": " Game stuck",
+      "body": "No legal move is possible anymore. You can restart for a new deal, keep exploring the board, or quit.",
+      "again": "New game",
+      "continue": "Keep exploring"
+    },
+    "hintDrawTitle": " No useful move",
+    "hintDrawBody": "No real move possible with visible cards. Tap the stock to reveal new cards — your hint is preserved.",
+    "hintDealBody": "No move possible. Tap the stock to deal a row — your hint is preserved.",
+    "impossible": {
+      "title": " Game impossible",
+      "body": "You've gone through the stock 2 times without making progress. This deal has no solution. Start a new game for a better deal!",
+      "again": "New game"
+    }
+  },
+  "variant": {
+    "klondike-1": {
+      "name": "Klondike (Draw 1)",
+      "shortDesc": "Classic Solitaire — draw 1 card at a time.",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Place all 52 cards onto the 4 foundations, organized by suit, from Ace → King."
+        },
+        {
+          "title": "Setup",
+          "body": "7 columns on the tableau (1, 2, 3, 4, 5, 6, 7 cards). Only the bottom card of each column is face-up. The remaining 24 cards form the stock."
+        },
+        {
+          "title": "On the tableau",
+          "body": "Descending sequence (King → Ace) with alternating colors: red on black, black on red. Example: 9 on 10."
+        },
+        {
+          "title": "On the foundations",
+          "body": "Ascending Ace → King, same suit ( on , etc.)."
+        },
+        {
+          "title": "Empty column",
+          "body": "Only a King may occupy an empty column."
+        },
+        {
+          "title": "Move a sequence",
+          "body": "You may move an entire face-up sequence if it follows the rule (descending + alternating colors)."
+        },
+        {
+          "title": "Stock",
+          "body": "Tap the stock → 1 card to the waste. When the stock is empty, it recycles from the waste (unlimited)."
+        },
+        {
+          "title": "Win",
+          "body": "All 4 foundations complete (52 cards placed)."
+        }
+      ]
+    },
+    "klondike-3": {
+      "name": "Klondike (Draw 3)",
+      "shortDesc": "Harder variant — draw 3 cards but only the 3rd is playable.",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Same as Klondike Draw 1 — place all 52 cards on the 4 foundations."
+        },
+        {
+          "title": "Difference",
+          "body": "Tap the stock → 3 cards revealed at once. Only the 3rd is immediately playable."
+        },
+        {
+          "title": "Strategy",
+          "body": "Anticipate which triplets will appear. Harder than Draw 1 since only 1/3 of cards are directly accessible."
+        },
+        {
+          "title": "Re-deal",
+          "body": "Unlimited (Standard variant)."
+        }
+      ]
+    },
+    "klondike-vegas": {
+      "name": "Klondike Vegas",
+      "shortDesc": "Initial $52 stake. +$5 per card on foundations. Max 3 passes.",
+      "rules": [
+        {
+          "title": "Initial stake",
+          "body": "$52 wagered at start ($1 per card)."
+        },
+        {
+          "title": "Score",
+          "body": "+$5 per card placed on foundations. Goal: finish above $52 to win."
+        },
+        {
+          "title": "Stock",
+          "body": "3 cards per draw. Maximum 3 passes — after that, you can't draw anymore."
+        },
+        {
+          "title": "Target",
+          "body": "Place at least 11 cards on foundations to break even."
+        }
+      ]
+    },
+    "spider-1": {
+      "name": "Spider 1 suit",
+      "shortDesc": "Easy variant — 104 cards but a single suit ().",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Build 8 complete King → Ace runs of the same suit. Each run is auto-removed."
+        },
+        {
+          "title": "Setup",
+          "body": "10 columns on the tableau (4 columns of 6, 6 columns of 5). Only the last card of each column is visible. 50 remaining cards in the stock (5 deals of 10)."
+        },
+        {
+          "title": "Tableau",
+          "body": "Descending (King → Ace). Any suit may stack on top, BUT you can only move a run if it's all the same suit."
+        },
+        {
+          "title": "Stock",
+          "body": "Tap stock → deals 1 card on each of the 10 columns. You CANNOT deal if any column is empty."
+        },
+        {
+          "title": "Win",
+          "body": "8 King → Ace runs removed from the tableau."
+        }
+      ]
+    },
+    "spider-2": {
+      "name": "Spider 2 suits",
+      "shortDesc": "Medium difficulty — 2 suits ( + ).",
+      "rules": [
+        {
+          "title": "Setup",
+          "body": "Like Spider 1 suit, but with AND ."
+        },
+        {
+          "title": "Added difficulty",
+          "body": "Suits alternate randomly. Harder to form pure runs to move."
+        }
+      ]
+    },
+    "spider-4": {
+      "name": "Spider 4 suits",
+      "shortDesc": "The hardest version — all 4 suits.",
+      "rules": [
+        {
+          "title": "Setup",
+          "body": "2 full decks of 52 cards ( × 2)."
+        },
+        {
+          "title": "The challenge",
+          "body": "You must isolate each suit to move them as a block. For experts only."
+        }
+      ]
+    },
+    "freecell": {
+      "name": "FreeCell",
+      "shortDesc": "99.999% of deals are solvable — pure thinking.",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Place all 52 cards on the 4 foundations (Ace → King by suit)."
+        },
+        {
+          "title": "Setup",
+          "body": "8 columns (4 of 7 cards, 4 of 6 cards). All cards face-up from the start. 4 free cells + 4 empty foundations."
+        },
+        {
+          "title": "Free cells",
+          "body": "Each one holds a single card (any), like a temporary parking spot."
+        },
+        {
+          "title": "Tableau",
+          "body": "Descending + alternating colors (red on black, black on red). An empty column accepts any card."
+        },
+        {
+          "title": "Multi-card moves",
+          "body": "Officially 1 card at a time. In practice, you can move (free cells + 1) × 2^(empty columns) cards in one move."
+        },
+        {
+          "title": "Strategy",
+          "body": "Always keep at least 1 free cell and 1 empty column in reserve. Spot Aces and 2s buried under high cards."
+        }
+      ]
+    },
+    "pyramid": {
+      "name": "Pyramid",
+      "shortDesc": "Remove pairs that sum to 13.",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Empty the entire pyramid (28 cards) by removing pairs of cards summing to 13."
+        },
+        {
+          "title": "Setup",
+          "body": "7 rows in pyramid (1, 2, 3, 4, 5, 6, 7 cards). A card is usable only if no card overlaps it from below."
+        },
+        {
+          "title": "Values",
+          "body": "Ace = 1, 2-10 = face value, Jack = 11, Queen = 12, King = 13."
+        },
+        {
+          "title": "Valid pairs",
+          "body": "A + Q (1+12), 2 + J (2+11), 3 + 10, 4 + 9, 5 + 8, 6 + 7. The King = 13 is removed alone."
+        },
+        {
+          "title": "Stock",
+          "body": "Tap the stock to reveal a card on the waste. You may pair a pyramid card with the waste."
+        },
+        {
+          "title": "Win",
+          "body": "Whole pyramid removed. The more cards you remove, the higher your score."
+        }
+      ]
+    },
+    "tripeaks": {
+      "name": "TriPeaks",
+      "shortDesc": "3 peaks — chain cards ±1.",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Empty all 3 peaks — 28 tableau cards."
+        },
+        {
+          "title": "Setup",
+          "body": "3 peaks sharing a bottom row. Only the bottom row is face-up at start."
+        },
+        {
+          "title": "Rule",
+          "body": "You may remove a face-up card if its value is ±1 from the waste card. Suit doesn't matter."
+        },
+        {
+          "title": "Circular",
+          "body": "Ace ↔ King: an Ace can follow a King and vice versa."
+        },
+        {
+          "title": "Combos",
+          "body": "Each chained card without drawing doubles the score: 1, 2, 4, 8, 16, 32 points… Tapping the stock resets the combo."
+        },
+        {
+          "title": "Stock",
+          "body": "No re-deal: 23 cards max in the stock."
+        }
+      ]
+    },
+    "yukon": {
+      "name": "Yukon",
+      "shortDesc": "Klondike with no stock — all cards on tableau.",
+      "rules": [
+        {
+          "title": "Setup",
+          "body": "7 columns: 1 card / 6 / 7 / 8 / 9 / 10 / 11. No stock, all 52 cards are dealt onto the tableau."
+        },
+        {
+          "title": "Tableau",
+          "body": "Descending sequence with alternating colors (red on black, black on red)."
+        },
+        {
+          "title": "Unique flexibility",
+          "body": "You may move ANY face-up card with ALL the cards below it, even if they don't form a valid run."
+        },
+        {
+          "title": "Empty column",
+          "body": "Only a King (with whatever follows) may occupy an empty column."
+        },
+        {
+          "title": "Foundations",
+          "body": "Ace → King by suit ( )."
+        },
+        {
+          "title": "Win",
+          "body": "All 4 foundations complete (52 cards)."
+        }
+      ]
+    },
+    "golf": {
+      "name": "Golf",
+      "shortDesc": "Score = remaining cards (goal: 0).",
+      "rules": [
+        {
+          "title": "Goal",
+          "body": "Empty the tableau. Like in golf, your score = remaining cards: MINIMUM = better."
+        },
+        {
+          "title": "Setup",
+          "body": "7 columns of 5 cards face-up (35 cards). 17 cards in stock, 1 card on waste."
+        },
+        {
+          "title": "Rule",
+          "body": "Place a card from the top of a column onto the waste if its value is ±1 from the waste card. Suit irrelevant."
+        },
+        {
+          "title": "Terminal King",
+          "body": "The King (13) is terminal: nothing chains after. You must draw."
+        },
+        {
+          "title": "Stock",
+          "body": "Tap the stock → 1 card to waste. No re-deal."
+        },
+        {
+          "title": "Win",
+          "body": "Tableau fully cleared."
+        }
+      ]
+    },
+    "forty-thieves": {
+      "name": "Forty Thieves",
+      "shortDesc": "Very hard — 2 decks, 1 card at a time.",
+      "rules": [
+        {
+          "title": "Setup",
+          "body": "2 full decks. 10 columns of 4 cards (all visible). 64 cards in stock. 8 empty foundations."
+        },
+        {
+          "title": "Tableau",
+          "body": "Descending SAME SUIT ( on , on ). NO alternation."
+        },
+        {
+          "title": "1 card at a time",
+          "body": "You may only move ONE card at a time (the last of a column or the waste)."
+        },
+        {
+          "title": "Empty column",
+          "body": "Any card may occupy an empty column."
+        },
+        {
+          "title": "Stock",
+          "body": "Tap the stock → 1 card to waste. No re-deal."
+        },
+        {
+          "title": "Foundations",
+          "body": "8 foundations (2 per suit). Ace → King by suit. Win = all complete (104 cards)."
+        }
+      ]
+    },
+    "accordion": {
+      "name": "Accordion",
+      "shortDesc": "Reduce 52 cards to a single pile.",
+      "rules": [
+        {
+          "title": "Setup",
+          "body": "52 cards laid in a row, all face-up."
+        },
+        {
+          "title": "Rule",
+          "body": "Place a card on its immediate left neighbor (1 space) or on the 3rd card to its left, if SAME VALUE OR SAME SUIT."
+        },
+        {
+          "title": "Stacking",
+          "body": "The moved card lands on top of the target pile. Cards to the right shift left to fill the gap."
+        },
+        {
+          "title": "Strategy",
+          "body": "Don't rush: a wrong stack can permanently lock the game. Think several moves ahead."
+        },
+        {
+          "title": "Win",
+          "body": "Reduce all 52 cards to ONE single pile. Very rare (~0.3% of deals), it's a patience challenge."
+        }
+      ]
+    }
+  },
+  "diffEasy": "Easy",
+  "diffMedium": "Medium",
+  "diffHard": "Hard",
+  "drawsShort": "D",
+  "yourMove": "Your move",
+  "wallet": "Wallet"
 }
