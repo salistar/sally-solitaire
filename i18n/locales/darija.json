@@ -179,7 +179,9 @@
     "vsBotShort": "كوتش الذكاء الاصطناعي",
     "shortKlondike": "كلوندايك",
     "shortSpider": "سبايدر",
-    "shortFreeCell": "فري سيل"
+    "shortFreeCell": "فري سيل",
+    "shortClassicSub": "4×4 / 4×6 / 6×6",
+    "shortTriplets": "ثلاثيات"
   },
   "multiplayer": {
     "tab": "ملتي",
@@ -654,5 +656,8 @@
   "diffHard": "صعيب",
   "drawsShort": "ت",
   "yourMove": "دورك",
-  "wallet": "البورس"
+  "wallet": "البورس",
+  "slide3": {
+    "title": "روبوهات ذكية"
+  }
 }

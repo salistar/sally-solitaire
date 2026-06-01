@@ -179,7 +179,9 @@
     "vsBotShort": "مدرب الذكاء الاصطناعي",
     "shortKlondike": "كلوندايك",
     "shortSpider": "سبايدر",
-    "shortFreeCell": "فري سيل"
+    "shortFreeCell": "فري سيل",
+    "shortClassicSub": "4×4 / 4×6 / 6×6",
+    "shortTriplets": "ثلاثيات"
   },
   "multiplayer": {
     "tab": "متعدد",
@@ -654,5 +656,8 @@
   "diffHard": "صعب",
   "drawsShort": "ت",
   "yourMove": "دورك",
-  "wallet": "المحفظة"
+  "wallet": "المحفظة",
+  "slide3": {
+    "title": "ذكاء صناعي"
+  }
 }

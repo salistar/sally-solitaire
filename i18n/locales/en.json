@@ -105,7 +105,7 @@
   "createSub": "2 to 10 players",
   "join": "Join",
   "joinSub": "By code or list",
-  "vsGemini": "vs Bot",
+  "vsGemini": "vs Gemini",
   "vsGeminiSub": "Expert AI",
   "dailyChallengeReward": "+{{coins}} coins",
   "simulation": "Simulation",
@@ -172,14 +172,16 @@
   "home": {
     "playCta": "Play a game",
     "playCtaSub": "11 variants — Klondike, Spider, FreeCell…",
-    "soloBadge": "SOLO",
+    "soloBadge": "MEMORY",
     "klondikeShort": "The classic",
     "spider2Short": "2 suits",
     "freecellShort": "~99% solvable",
     "vsBotShort": "AI coach — tips",
     "shortKlondike": "Klondike",
     "shortSpider": "Spider",
-    "shortFreeCell": "FreeCell"
+    "shortFreeCell": "FreeCell",
+    "shortClassicSub": "4x4 / 4x6 / 6x6",
+    "shortTriplets": "Triplets"
   },
   "multiplayer": {
     "tab": "Multi",
@@ -654,5 +656,8 @@
   "diffHard": "Hard",
   "drawsShort": "D",
   "yourMove": "Your move",
-  "wallet": "Wallet"
+  "wallet": "Wallet",
+  "slide3": {
+    "title": "AI Bots"
+  }
 }
