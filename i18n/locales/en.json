@@ -659,5 +659,6 @@
   "wallet": "Wallet",
   "slide3": {
     "title": "AI Bots"
-  }
+  },
+  "guestDisplayName": "Guest"
 }

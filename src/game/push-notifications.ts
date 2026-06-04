@@ -1,75 +1,72 @@
 /**
  * @file push-notifications.ts
- * @description Wrapper pour les push notifs natives via `expo-notifications`.
- *
- * **STATUS : STUBS no-op par défaut.**
- *
- * Pour activer les vraies push système :
- *   1. `pnpm add expo-notifications`
- *   2. Décommenter le bloc `// === IMPL ===` ci-dessous
- *   3. Le bloc `// === STUBS ===` peut rester en fallback ou être supprimé
- *
- * Pourquoi les stubs ? Metro bundler analyse statiquement les imports — un
- * `require('expo-notifications')` dans un try/catch plante quand même au
- * bundle si la lib n'est pas dans node_modules. Donc on encapsule l'import
- * dans un bloc commenté que l'utilisateur active manuellement.
+ * @description Real expo-notifications integration replacing the stubs.
  */
+import { useEffect } from 'react';
 
-// === STUBS (actifs par défaut) =======================================
+let Notifications: any = null;
+try { Notifications = require('expo-notifications'); } catch {}
+
+const DAILY_REMINDER_HOUR = 20; // 8 PM local
+const DAILY_REMINDER_MINUTE = 0;
 
 export async function setupDailyChallengeNotification(): Promise<{
-  scheduled: boolean;
-  reason?: string;
+  scheduled: boolean; reason?: string;
 }> {
-  return { scheduled: false, reason: 'expo-notifications not installed (stub)' };
+  if (!Notifications) return { scheduled: false, reason: 'expo-notifications not installed' };
+  try {
+    const perm = await Notifications.requestPermissionsAsync();
+    if (!perm.granted) return { scheduled: false, reason: 'Permissions refusées' };
+
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+
+    // Cancel previous
+    await Notifications.cancelAllScheduledNotificationsAsync();
+
+    // Schedule daily reminder at 20:00 local
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Ton défi quotidien t\'attend !',
+        body: 'Joue une partie pour gagner +50 pièces',
+        sound: true,
+      },
+      trigger: {
+        hour: DAILY_REMINDER_HOUR,
+        minute: DAILY_REMINDER_MINUTE,
+        repeats: true,
+      },
+    });
+    return { scheduled: true };
+  } catch (e) {
+    return { scheduled: false, reason: (e as any)?.message };
+  }
 }
 
 export async function cancelDailyChallengeNotification(): Promise<void> {
-  // no-op
+  if (!Notifications) return;
+  try { await Notifications.cancelAllScheduledNotificationsAsync(); } catch {}
 }
 
-export function pushNotificationsAvailable(): boolean {
-  return false;
+export async function sendLocalTestNotification(title: string, body: string): Promise<void> {
+  if (!Notifications) return;
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: { title, body, sound: true },
+      trigger: { seconds: 1 },
+    });
+  } catch {}
 }
 
-// === IMPL (à décommenter quand expo-notifications est installé) ======
-//
-// import * as Notifications from 'expo-notifications';
-//
-// export async function setupDailyChallengeNotification(): Promise<{
-//   scheduled: boolean; reason?: string;
-// }> {
-//   try {
-//     const perm = await Notifications.requestPermissionsAsync();
-//     if (!perm.granted) return { scheduled: false, reason: 'Permissions refusées' };
-//
-//     Notifications.setNotificationHandler({
-//       handleNotification: async () => ({
-//         shouldShowAlert: true,
-//         shouldPlaySound: false,
-//         shouldSetBadge: false,
-//       }),
-//     });
-//
-//     await Notifications.cancelAllScheduledNotificationsAsync().catch(() => {});
-//
-//     await Notifications.scheduleNotificationAsync({
-//       content: {
-//         title: '🃏 Daily Challenge dispo !',
-//         body: "Le deal du jour t'attend. Bonne chance !",
-//         sound: false,
-//         data: { route: '/daily-challenge' },
-//       },
-//       trigger: { hour: 8, minute: 0, repeats: true } as any,
-//     });
-//     return { scheduled: true };
-//   } catch (err: any) {
-//     return { scheduled: false, reason: String(err?.message ?? err) };
-//   }
-// }
-//
-// export async function cancelDailyChallengeNotification(): Promise<void> {
-//   try { await Notifications.cancelAllScheduledNotificationsAsync(); } catch {}
-// }
-//
-// export function pushNotificationsAvailable(): boolean { return true; }
+export function pushNotificationsAvailable(): boolean { return !!Notifications; }
+
+export function usePushSetup() {
+  useEffect(() => {
+    setupDailyChallengeNotification().catch(() => {});
+  }, []);
+}

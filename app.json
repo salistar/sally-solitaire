@@ -1,16 +1,39 @@
 {
   "expo": {
-    "name": "Solitaire",
+    "name": "Sally Solitaire",
     "slug": "solitaire",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#4F46E5" },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4F46E5"
+    },
     "scheme": "sallycards",
-    "ios": { "bundleIdentifier": "com.sallycards.solitaire", "supportsTablet": true },
-    "android": { "package": "com.sallycards.solitaire", "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#4F46E5" }, "usesCleartextTraffic": true },
-    "plugins": ["expo-router", "expo-localization", "expo-font"],
-    "newArchEnabled": false, "extra": { "eas": { "projectId": "sallycards-solitaire" }, "usesCleartextTraffic": true }
+    "ios": {
+      "bundleIdentifier": "com.sallycards.solitaire",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.sallycards.solitaire",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#4F46E5"
+      },
+      "usesCleartextTraffic": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-font"
+    ],
+    "newArchEnabled": false,
+    "extra": {
+      "eas": {
+        "projectId": "sallycards-solitaire"
+      },
+      "usesCleartextTraffic": true
+    }
   }
 }
-

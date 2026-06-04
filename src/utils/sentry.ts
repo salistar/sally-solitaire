@@ -1,52 +1,62 @@
 /**
  * @file sentry.ts
- * @description Wrapper Sentry léger côté mobile.
- *
- * **STATUS : STUBS no-op par défaut.**
- *
- * Pour activer Sentry :
- *   1. `pnpm add sentry-expo` (ou `@sentry/react-native`)
- *   2. Décommenter le bloc `// === IMPL ===` ci-dessous
- *   3. Configurer la DSN dans app.json (extra.sentryDsn) puis appeler
- *      Sentry.init() au boot de l'app
- *
- * Pourquoi les stubs ? Metro bundler ne tolère pas un require dynamique
- * vers un module absent — l'erreur "Requiring unknown module 'undefined'"
- * apparaît au bundle. On commente proprement à la place.
+ * @description Sentry error tracking — defensive (no-op if @sentry/react-native missing).
+ * Setup: 1) Add @sentry/react-native to package.json
+ *        2) Set EXPO_PUBLIC_SENTRY_DSN in .env.production
+ *        3) Sentry.init({ dsn: SENTRY_DSN }) called automatically at module load
  */
+let Sentry: any = null;
+try { Sentry = require('@sentry/react-native'); } catch {}
 
-// === STUBS (actifs par défaut) =======================================
+const DSN = process.env.EXPO_PUBLIC_SENTRY_DSN || '';
 
-export function captureException(err: any): void {
+if (Sentry && DSN) {
+  try {
+    Sentry.init({
+      dsn: DSN,
+      tracesSampleRate: 0.1,
+      enableInExpoDevelopment: false,
+      debug: false,
+      environment: process.env.EXPO_PUBLIC_BUILD_ENV || 'production',
+    });
+  } catch (e) {
+    console.warn('[SENTRY] init failed:', (e as any)?.message);
+  }
+}
+
+export function captureException(err: any, context?: Record<string, any>): void {
+  if (Sentry?.captureException) {
+    try { Sentry.captureException(err, { contexts: { custom: context || {} } }); }
+    catch {}
+  }
   console.error('[SENTRY-LOCAL]', err?.message ?? err, err?.stack);
 }
 
-export function captureMessage(msg: string): void {
-  console.log('[SENTRY-LOCAL]', msg);
+export function captureMessage(msg: string, level: 'info'|'warning'|'error' = 'info'): void {
+  if (Sentry?.captureMessage) {
+    try { Sentry.captureMessage(msg, level); } catch {}
+  }
+  console.log(`[SENTRY-LOCAL/${level.toUpperCase()}]`, msg);
+}
+
+export function setUser(user: { id: string; email?: string; username?: string }): void {
+  if (Sentry?.setUser) {
+    try { Sentry.setUser(user); } catch {}
+  }
+}
+
+export function addBreadcrumb(category: string, message: string, data?: Record<string, any>): void {
+  if (Sentry?.addBreadcrumb) {
+    try {
+      Sentry.addBreadcrumb({
+        category, message, data,
+        level: 'info',
+        timestamp: Date.now() / 1000,
+      });
+    } catch {}
+  }
 }
 
 export function sentryAvailable(): boolean {
-  return false;
+  return !!Sentry && !!DSN;
 }
-
-// === IMPL (à décommenter quand sentry-expo est installé) =============
-//
-// import * as Sentry from 'sentry-expo';
-//
-// export function initSentry(dsn: string) {
-//   Sentry.init({
-//     dsn,
-//     enableInExpoDevelopment: false,
-//     debug: false,
-//   });
-// }
-//
-// export function captureException(err: any): void {
-//   Sentry.Native?.captureException(err);
-// }
-//
-// export function captureMessage(msg: string): void {
-//   Sentry.Native?.captureMessage(msg);
-// }
-//
-// export function sentryAvailable(): boolean { return true; }

@@ -1,46 +1,54 @@
 /**
  * @file analytics.ts
- * @description Wrapper analytics mobile — POST fire-and-forget vers le
- * backend `/analytics/track`. Aucune dépendance externe (pas de Mixpanel/PostHog).
+ * @description Firebase Analytics tracking — defensive.
+ * Setup: 1) Install @react-native-firebase/app + @react-native-firebase/analytics
+ *        2) Place google-services.json in android/app/
+ *        3) Events queued and flushed automatically by Firebase SDK
  */
+let analytics: any = null;
+try {
+  const a = require('@react-native-firebase/analytics');
+  analytics = a.default ? a.default() : null;
+} catch {}
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+type EventName =
+  | 'app_open' | 'login' | 'sign_up' | 'guest_login'
+  | 'onboarding_start' | 'onboarding_complete' | 'onboarding_skip'
+  | 'game_start' | 'game_end' | 'game_win' | 'game_lose'
+  | 'shop_open' | 'purchase_start' | 'purchase_complete' | 'purchase_failed'
+  | 'achievement_unlock' | 'friend_invite' | 'tournament_join'
+  | 'daily_reward_claim' | 'rewarded_ad_view' | 'screen_view';
 
-let _userId: string | null = null;
-
-export function setAnalyticsUser(userId: string | null): void {
-  _userId = userId;
+export function track(event: EventName, params?: Record<string, any>): void {
+  if (analytics?.logEvent) {
+    try { analytics.logEvent(event, params || {}); } catch {}
+  }
+  // Local debug log
+  if (__DEV__) console.log('[ANALYTICS]', event, params);
 }
 
-/**
- * Track un événement. Fire-and-forget : ne bloque jamais l'UI, ne crashe jamais.
- */
-export function track(event: string, props?: Record<string, any>): void {
-  // setTimeout pour différer derrière les renders critiques
-  setTimeout(() => {
-    fetch(`${API_URL}/analytics/track`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event,
-        userId: _userId,
-        variant: props?.variant,
-        props,
-      }),
-    }).catch(() => { /* silent */ });
-  }, 0);
+export function setUserId(id: string): void {
+  if (analytics?.setUserId) {
+    try { analytics.setUserId(id); } catch {}
+  }
 }
 
-/** Helpers typés pour les events principaux. */
-export const Analytics = {
-  matchCreated: (variant: string) => track('match_created', { variant }),
-  matchJoined: (code: string) => track('match_joined', { code }),
-  aiUsed: (variant: string, speed: string) => track('ai_used', { variant, speed }),
-  hintUsed: (variant: string) => track('hint_used', { variant }),
-  gameWon: (variant: string, difficulty: string, durationMs: number) =>
-    track('game_won', { variant, difficulty, durationMs }),
-  dailyPlayed: (variant: string) => track('daily_played', { variant }),
-  achievementUnlocked: (id: string) => track('achievement_unlocked', { id }),
-  skinSelected: (skinId: string) => track('skin_selected', { skinId }),
-  tutorialDismissed: () => track('tutorial_dismissed', {}),
-};
+export function setUserProperty(key: string, value: string): void {
+  if (analytics?.setUserProperty) {
+    try { analytics.setUserProperty(key, value); } catch {}
+  }
+}
+
+export function screenView(screenName: string, screenClass?: string): void {
+  if (analytics?.logScreenView) {
+    try {
+      analytics.logScreenView({
+        screen_name: screenName,
+        screen_class: screenClass || screenName,
+      });
+    } catch {}
+  }
+  if (__DEV__) console.log('[ANALYTICS] screen:', screenName);
+}
+
+export function analyticsAvailable(): boolean { return !!analytics; }
